@@ -4,7 +4,7 @@ A tidy, pipe-friendly grammar for `{targets}`, internally based on [targets fact
 
 Compose pipelines with pipes (`|>`) and run them locally, on HPC, or in the cloud. `tt_initialise()` constructs a `tidytargets` object; `tt_iterate()`, `tt_single()`, `tt_merge()`, `tt_report()`, and `tt_evaluate()` are methods on that class. Those calls are factories that write a `{targets}` dependency graph. Compute backends (for example `{crew}` or `{crew.cluster}`) are optional and passed in at `tt_initialise()`.
 
-The grammar is **lazy** and **incremental**. Piping steps only appends factories to the targets script; nothing is computed until `tt_evaluate()` (or printing the object). You can add inputs or steps later and `{targets}` re-runs only the outdated branches of the graph.
+The grammar is **lazy** and **incremental**. Piping steps only appends factories to the targets script; nothing is computed until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console). You can add inputs or steps later and `{targets}` re-runs only the outdated branches of the graph.
 
 ## Installation
 
