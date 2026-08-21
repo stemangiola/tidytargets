@@ -42,6 +42,18 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/building-blocks.html">Building blocks of tidytargets</a>
+    </li>
+  </ul>
+</li>
 <li>
   <a href="news/index.html">Changelog</a>
 </li>
@@ -68,12 +80,15 @@
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"MangiolaLaboratory/tidytargets"</span><span class="op">)</span></span></code></pre></div>
+<p>A full walkthrough of every grammar function, with the <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> script each step writes, is in the vignette:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"building-blocks"</span>, package <span class="op">=</span> <span class="st">"tidytargets"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="a-minimal-pipeline">A minimal pipeline<a class="anchor" aria-label="anchor" href="#a-minimal-pipeline"></a>
 </h2>
 <p><code><a href="reference/hpc_initialise.html">hpc_initialise()</a></code> takes a named vector of inputs (typically file paths). Use <code><a href="reference/is_target.html">is_target()</a></code> to point a step at an upstream target. With no <code>computing_resources</code>, the pipeline runs sequentially.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">tidytargets</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -154,14 +169,14 @@
 <div class="section level3">
 <h3 id="local-parallel-computing">Local parallel computing<a class="anchor" aria-label="anchor" href="#local-parallel-computing"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">computing_resources</span> <span class="op">&lt;-</span> <span class="fu">crew</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew/reference/crew_controller_local.html" class="external-link">crew_controller_local</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p>Pass this to <code>hpc_initialise(computing_resources = ...)</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="slurm">SLURM<a class="anchor" aria-label="anchor" href="#slurm"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">computing_resources</span> <span class="op">&lt;-</span> <span class="fu">crew.cluster</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew.cluster/reference/crew_controller_slurm.html" class="external-link">crew_controller_slurm</a></span><span class="op">(</span></span>
 <span>  workers <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  tasks_max <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -175,7 +190,7 @@
 <h3 id="tiers">Tiers<a class="anchor" aria-label="anchor" href="#tiers"></a>
 </h3>
 <p>Assign inputs to resource tiers so large jobs use a different named controller. The controller names must match the <code>tier</code> labels.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">computing_resources</span> <span class="op">&lt;-</span> <span class="fu">crew</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew/reference/crew_controller_group.html" class="external-link">crew_controller_group</a></span><span class="op">(</span></span>
 <span>  <span class="fu">crew</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew/reference/crew_controller_local.html" class="external-link">crew_controller_local</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"1"</span>, workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span>
 <span>  <span class="fu">crew</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew/reference/crew_controller_local.html" class="external-link">crew_controller_local</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"2"</span>, workers <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
