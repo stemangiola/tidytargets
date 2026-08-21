@@ -56,7 +56,7 @@ can extend before the pipeline is executed with <code><a href="evaluate_hpc.html
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">initialise_hpc</span><span class="op">(</span></span>
 <span>  <span class="va">input_hpc</span>,</span>
 <span>  store <span class="op">=</span> <span class="fu">targets</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/targets/reference/tar_config_get.html" class="external-link">tar_config_get</a></span><span class="op">(</span><span class="st">"store"</span><span class="op">)</span>,</span>
-<span>  computing_resources <span class="op">=</span> <span class="fu"><a href="https://wlandau.github.io/crew/reference/crew_controller_local.html" class="external-link">crew_controller_local</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  computing_resources <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tier <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">input_hpc</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  debug_step <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbosity <span class="op">=</span> <span class="fu">targets</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/targets/reference/tar_config_get.html" class="external-link">tar_config_get</a></span><span class="op">(</span><span class="st">"reporter_make"</span><span class="op">)</span>,</span>
@@ -83,8 +83,11 @@ are used.</p></dd>
 
 
 <dt id="arg-computing-resources">computing_resources<a class="anchor" aria-label="anchor" href="#arg-computing-resources"></a></dt>
-<dd><p>A <code>crew</code> controller object (or list of controllers)
-specifying the computing back-end. Defaults to a local single-worker controller.</p></dd>
+<dd><p>A controller object accepted by
+<code>targets::tar_option_set(controller = )</code>, such as a <code>crew</code> controller or
+controller group. <code>NULL</code> (the default) runs the pipeline sequentially.
+tidytargets does not depend on any compute backend; pass whatever your
+deployment uses.</p></dd>
 
 
 <dt id="arg-tier">tier<a class="anchor" aria-label="anchor" href="#arg-tier"></a></dt>
@@ -141,7 +144,7 @@ ready to be extended with pipeline step functions.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Stefano Mangiola, Jiayi Si.</p>
+  <p></p><p>Developed by Stefano Mangiola, Jiayi Si, Mengyuan Shen.</p>
 </div>
 
 <div class="pkgdown">
