@@ -1,5 +1,5 @@
 Package: tidytargets
-Title: Tidy Grammar for Targets Pipelines
+Title: Tidy Pipe-Friendly Grammar for Targets Pipelines
 Version: 0.1.0
 Authors@R: c(
     person("Stefano", "Mangiola", email = "mangiolastefano@gmail.com",
@@ -9,9 +9,9 @@ Authors@R: c(
     person("Mengyuan", "Shen", email = "shen.m@wehi.edu.au",
            role = "aut")
     )
-Description: A pipe-friendly grammar for composing targets pipelines.
-    Build iterated, merged, and report steps with a tidy interface, then
-    deploy the same pipeline locally, on HPC, or in the cloud.
+Description: A tidy, pipe-friendly grammar for composing targets pipelines.
+    Internally it is based on targets factories, translating piped steps into
+    a dependency graph that can be deployed locally, on HPC, or in the cloud.
 License: GPL-3
 Roxygen: list(markdown = TRUE)
 Depends:

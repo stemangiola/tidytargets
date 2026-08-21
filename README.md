@@ -1,8 +1,8 @@
 # tidytargets
 
-Compose `{targets}` pipelines with pipes (`|>`) and run them locally, on HPC, or in the cloud.
+A tidy, pipe-friendly grammar for `{targets}`, internally based on [targets factories](https://books.ropensci.org/targets/static.html#target-factories).
 
-`tidytargets` is a tidy grammar for the [targets](https://docs.ropensci.org/targets/) workflow manager. You describe steps with `hpc_iterate()`, `hpc_single()`, `hpc_merge()`, and `hpc_report()`; the package writes a dependency graph that `{targets}` executes. Compute backends (for example `{crew}` or `{crew.cluster}`) are optional and passed in at `initialise_hpc()`.
+Compose pipelines with pipes (`|>`) and run them locally, on HPC, or in the cloud. You describe steps with `hpc_iterate()`, `hpc_single()`, `hpc_merge()`, and `hpc_report()`; those calls are factories that write a `{targets}` dependency graph. Compute backends (for example `{crew}` or `{crew.cluster}`) are optional and passed in at `hpc_initialise()`.
 
 ## Installation
 
@@ -12,7 +12,7 @@ remotes::install_github("MangiolaLaboratory/tidytargets")
 
 ## A minimal pipeline
 
-`initialise_hpc()` takes a named vector of inputs (typically file paths). Use `is_target()` to point a step at an upstream target. With no `computing_resources`, the pipeline runs sequentially.
+`hpc_initialise()` takes a named vector of inputs (typically file paths). Use `is_target()` to point a step at an upstream target. With no `computing_resources`, the pipeline runs sequentially.
 
 ``` r
 library(tidytargets)
@@ -23,7 +23,7 @@ files <- c(
 )
 
 files |>
-  initialise_hpc(store = "_targets") |>
+  hpc_initialise(store = "_targets") |>
   hpc_iterate(
     target_output = "data",
     user_function = readRDS |> quote(),
@@ -34,10 +34,10 @@ files |>
     user_function = summary |> quote(),
     object = "data" |> is_target()
   ) |>
-  evaluate_hpc()
+  hpc_evaluate()
 ```
 
-`initialise_hpc()` registers two mapped targets for you:
+`hpc_initialise()` registers two mapped targets for you:
 
 - `input_list` — the named input vector
 - `sample_names` — the names of that vector
@@ -46,12 +46,12 @@ files |>
 
 | Function | Role |
 | --- | --- |
-| `initialise_hpc()` | Start a pipeline: store, optional controller, tiers |
+| `hpc_initialise()` | Start a pipeline: store, optional controller, tiers |
 | `hpc_iterate()` | Map a function over inputs (and optional tiers) |
 | `hpc_single()` | Add one non-iterated target |
 | `hpc_merge()` | Combine iterated results into one object |
 | `hpc_report()` | Render a Quarto / R Markdown report |
-| `evaluate_hpc()` | Write the target list and run `tar_make()` |
+| `hpc_evaluate()` | Write the target list and run `tar_make()` |
 | `is_target()` | Mark an argument as an upstream target name |
 
 ## Deployment
@@ -64,7 +64,7 @@ Pass any controller that `targets::tar_option_set(controller = )` accepts. tidyt
 computing_resources <- crew::crew_controller_local(workers = 10)
 ```
 
-Pass this to `initialise_hpc(computing_resources = ...)`.
+Pass this to `hpc_initialise(computing_resources = ...)`.
 
 ### SLURM
 
@@ -89,7 +89,7 @@ computing_resources <- crew::crew_controller_group(
   crew::crew_controller_local(name = "2", workers = 10)
 )
 
-initialise_hpc(
+hpc_initialise(
   files,
   tier = c(1, 1, 2),
   computing_resources = computing_resources
