@@ -12,7 +12,7 @@ Authors@R: c(
 Description: A tidy, pipe-friendly grammar for composing targets pipelines.
     Internally it is based on targets factories, translating piped steps into
     a dependency graph that can be deployed locally, on HPC, or in the cloud.
-License: GPL-3
+License: GPL-2
 Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.1.0)
