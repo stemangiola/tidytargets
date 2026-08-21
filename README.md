@@ -29,6 +29,8 @@ files <- c(
   sample_a = "a.rds",
   sample_b = "b.rds"
 )
+saveRDS(1:3, files[["sample_a"]])
+saveRDS(4:6, files[["sample_b"]])
 
 files |>
   tt_initialise(store = "_targets") |>
@@ -43,9 +45,31 @@ files |>
     object = "data" |> is_target()
   ) |>
   tt_evaluate()
+#> + input_list_file dispatched
+#> ✔ input_list_file completed [0ms, 97 B]
+#> + sample_names_file dispatched
+#> ✔ sample_names_file completed [0ms, 64 B]
+#> + input_list dispatched
+#> ✔ input_list completed [1ms, 97 B]
+#> + sample_names dispatched
+#> ✔ sample_names completed [0ms, 64 B]
+#> + data declared [2 branches]
+#> ✔ data completed [0ms, 201 B]
+#> + summaries declared [2 branches]
+#> ✔ summaries completed [1ms, 324 B]
+#> ✔ ended pipeline [106ms, 8 completed, 0 skipped]
+
+targets::tar_read(summaries, store = "_targets")
+#> $summaries_77df95261040f9e1
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+#>     1.0     1.5     2.0     2.0     2.5     3.0
+#>
+#> $summaries_71c6d136bc334ef4
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+#>     4.0     4.5     5.0     5.0     5.5     6.0
 ```
 
-`tt_initialise()` registers two mapped targets for you:
+`tt_evaluate()` also returns the `targets::tar_meta()` table. `tt_initialise()` registers two mapped targets for you:
 
 - `input_list` — the named input vector
 - `sample_names` — the names of that vector
@@ -54,8 +78,8 @@ files |>
 
 | Function | Role |
 | --- | --- |
-| `tt_initialise()` | Start a pipeline: store, optional controller, tiers |
-| `tt_iterate()` | Map a function over inputs (and optional tiers) |
+| `tt_initialise()` | Start a pipeline: store, optional controller |
+| `tt_iterate()` | Map a function over inputs |
 | `tt_single()` | Add one non-iterated target |
 | `tt_merge()` | Combine iterated results into one object |
 | `tt_report()` | Render a Quarto / R Markdown report |
@@ -84,22 +108,5 @@ computing_resources <- crew.cluster::crew_controller_slurm(
   options_cluster = crew.cluster::crew_options_slurm(
     partition = "standard"
   )
-)
-```
-
-### Tiers
-
-Assign inputs to resource tiers so large jobs use a different named controller. The controller names must match the `tier` labels.
-
-``` r
-computing_resources <- crew::crew_controller_group(
-  crew::crew_controller_local(name = "1", workers = 4),
-  crew::crew_controller_local(name = "2", workers = 10)
-)
-
-tt_initialise(
-  files,
-  tier = c(1, 1, 2),
-  computing_resources = computing_resources
 )
 ```
