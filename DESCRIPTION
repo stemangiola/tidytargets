@@ -13,6 +13,8 @@ Description: A tidy, pipe-friendly grammar for composing targets pipelines.
     Internally it is based on targets factories, translating piped steps into
     a dependency graph that can be deployed locally, on HPC, or in the cloud.
 License: GPL-2
+URL: https://stemangiola.github.io/tidytargets/, https://github.com/stemangiola/tidytargets
+BugReports: https://github.com/stemangiola/tidytargets/issues
 Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.1.0)

@@ -9,7 +9,7 @@ The grammar is **lazy** and **incremental**. Piping steps only appends factories
 ## Installation
 
 ``` r
-remotes::install_github("MangiolaLaboratory/tidytargets")
+remotes::install_github("stemangiola/tidytargets")
 ```
 
 A full walkthrough of every grammar function, with the `{targets}` script each step writes, is in the vignette:
