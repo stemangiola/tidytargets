@@ -1,0 +1,503 @@
+#' Internal Factory for Iterating Targets
+#'
+#' @description
+#' Low-level factory that builds `tar_target_raw()` calls for each tier in the
+#' tidytargets pipeline. Not intended to be called by end users directly.
+#'
+#' @param tiers Named integer list of tier indices (output of `get_positions()`).
+#'   `NULL` or length-1 produces a single, non-tiered target.
+#' @param target_output Character name of the output target.
+#' @param user_function A quoted function call to execute for this target.
+#' @param arguments_to_tier Character vector of argument names that should be
+#'   tiered (suffixed with the tier index).
+#' @param arguments_already_tiered Character vector of argument names that have
+#'   already been tiered in a prior call.
+#' @param other_arguments_to_map Character vector of argument names that should
+#'   be mapped over without tiering.
+#' @param packages Character vector of R packages to load in the worker.
+#' @param deployment Deployment strategy string (e.g. `"worker"` or `"main"`).
+#' @param format Storage format string for the target value.
+#' @param ... Additional named arguments passed as target inputs.
+#' @return A `tar_target` object or a list of `tar_target` objects (one per tier).
+#' @export
+hpc_internal = function(
+    tiers = NULL, 
+    target_output, 
+    user_function,
+    arguments_to_tier = c(), 
+    arguments_already_tiered = c(), 
+    other_arguments_to_map = c(), 
+    packages = targets::tar_option_get("packages") , 
+    deployment = targets::tar_option_get("deployment"),
+    format = targets::tar_option_get("format"),
+    ...
+){
+  
+  args <- list(...)  # Capture the ... arguments as a list
+  
+  
+  # If format is file just pass the argument
+  if(format != "file")
+    
+    # Construct the full call expression with the pipeline substituted into the function
+    user_function <- as.call(c(user_function, args))
+  
+  if(tiers |> is.null() || tiers |> length() < 2){
+    
+      tar_target_raw(
+        name = target_output |> as.character(), 
+        command = user_function,
+        
+        # This is in case I am not tiering (e.g. DE analyses) but I need to map
+        pattern = build_pattern(other_arguments_to_map = other_arguments_to_map),
+        
+        iteration = "list", 
+        packages = packages,
+        deployment = deployment,
+        format = format
+
+
+      )
+      
+  }
+
+  
+  else {
+    
+    if(user_function |> deparse() |> str_detect("%>%") |> any()) 
+      stop("tidytargets says: no \"%>%\" allowed in the command, please use \"|>\" ")
+    
+    # Filter out arguments to be tiered from the input command
+    if(arguments_to_tier |> length() > 0)
+      arguments_already_tiered <- arguments_already_tiered |> str_subset(paste(arguments_to_tier, collapse = "|"), negate = TRUE)
+    
+    map2(tiers, names(tiers), ~ {
+    
+      tar_target_raw(
+        name = 
+          glue("{target_output}_{.y}") |> 
+          
+          # This is needed because using glue
+          as.character() , 
+        command = user_function |>  add_tier_inputs(arguments_already_tiered, .y),
+        pattern = 
+          build_pattern(
+            other_arguments_to_map = glue("{other_arguments_to_map}_{.y}"), 
+            arguments_to_tier = arguments_to_tier, 
+            index = .x
+          ) ,
+        iteration = "list",
+        packages = packages, 
+        deployment = deployment,
+        resources = tar_resources(crew = tar_resources_crew(.y)) ,
+        format = format
+      )
+    })
+    
+  }
+   
+}
+
+#' Internal Factory for Report Targets
+#'
+#' @description
+#' Low-level factory that builds `tarchetypes::tar_quarto_raw()` calls for
+#' pipeline report targets. Not intended to be called by end users directly.
+#'
+#' @param tiers Named integer list of tier indices. `NULL` or length-1 produces
+#'   a single, non-tiered target.
+#' @param target_output Character name of the output target.
+#' @param rmd_path Character path to the Quarto (`.qmd`) or R Markdown (`.Rmd`)
+#'   report file.
+#' @param render_arguments A quoted `list()` of parameters passed to the report
+#'   at render time.
+#' @param output_file Optional character name for the rendered output file.
+#' @param arguments_to_tier Character vector of argument names to tier.
+#' @param arguments_already_tiered Character vector of already-tiered arguments.
+#' @param other_arguments_to_map Character vector of arguments to map over.
+#' @param packages Character vector of R packages to load in the worker.
+#' @param deployment Deployment strategy string.
+#' @param ... Additional named arguments.
+#' @return A `tar_target` object or a list of `tar_target` objects.
+#' @export
+hpc_internal_report = function(
+    tiers = NULL, 
+    target_output, 
+    rmd_path,
+    render_arguments = quote(list()),
+    output_file = NULL,
+    arguments_to_tier = c(), 
+    arguments_already_tiered = c(), 
+    other_arguments_to_map = c(), 
+    packages = targets::tar_option_get("packages") , 
+    deployment = targets::tar_option_get("deployment"),
+    ...
+){
+  
+
+  if(tiers |> is.null() || tiers |> length() < 2){
+    
+    tar_quarto_raw(
+      name = target_output |> as.character(), 
+      path = rmd_path,
+      output_file = output_file,
+      execute_params = render_arguments,
+      # This is in case I am not tiering (e.g. DE analyses) but I need to map
+      # pattern = build_pattern(other_arguments_to_map = other_arguments_to_map),
+      
+      # iteration = "list", 
+      packages = packages,
+      deployment = deployment
+      
+      
+    )
+    
+  }
+  
+  
+  else {
+    
+    # Filter out arguments to be tiered from the input command
+    if(arguments_to_tier |> length() > 0)
+      arguments_already_tiered <- arguments_already_tiered |> str_subset(paste(arguments_to_tier, collapse = "|"), negate = TRUE)
+    
+    map2(tiers, names(tiers), ~ {
+      
+      tar_quarto_raw(
+        name = 
+          glue("{target_output}_{.y}") |> 
+          
+          # This is needed because using glue
+          as.character() , 
+        pattern = 
+          build_pattern(
+            other_arguments_to_map = glue("{other_arguments_to_map}_{.y}"), 
+            arguments_to_tier = arguments_to_tier, 
+            index = .x
+          ) ,
+        # iteration = "list",
+        packages = packages, 
+        deployment = deployment,
+        resources = tar_resources(crew = tar_resources_crew(.y)) 
+      )
+    })
+    
+  }
+  
+}
+
+#' Add HPC step to pipeline
+#'
+#' This function adds a new step to the HPC pipeline by appending the appropriate
+#' targets to the target script. It allows the user to specify the input and output
+#' targets, as well as a custom user function to be applied.
+#'
+#' @param input_hpc A `tidytargets` object.
+#' @param target_output Character name of the output target. `NULL` uses an
+#'   auto-generated name.
+#' @param user_function A quoted function call to execute per iteration.
+#' @param user_function_source_path Optional character path to an R script that
+#'   should be sourced in the worker before calling `user_function`. `NULL`
+#'   sources nothing.
+#' @param ... Named arguments passed as target inputs; use `is_target()` to
+#'   reference upstream targets by name.
+#'
+#' @importFrom glue glue
+#' @importFrom magrittr %>%
+#' @importFrom purrr set_names
+#' @export
+hpc_iterate = 
+  function(
+    input_hpc, 
+    target_output = NULL, 
+    user_function = NULL, 
+    user_function_source_path = NULL,
+    ...
+  ) {
+    
+    # Check for argument consistency
+    check_for_name_value_conflicts(...)
+    
+    # Target script
+    target_script = glue("{input_hpc$initialisation$store}.R")
+    
+    # Delete line with target in case the user execute the command, without calling initialise_hpc
+    target_output |>  delete_lines_with_word(target_script)
+    
+    # Append source if any
+    write_source(user_function_source_path, target_script)
+      
+    # please, because sometime we set up list target that do not depend on any other ones
+    # if tiers is set to NULL, then the target will not acquire the _<tier> suffix
+    # I HAVE TO MAKE THIS MORE ELEGANT, AND NOT RELY ON tiers ARGUMENT
+    if(input_hpc$initialisation$tier |> get_positions() |> length() < 2){
+      iterate_value = "map"
+      tiers_value = NULL
+    }
+      
+    else if(
+      list(...) |> arguments_to_action(input_hpc, "tiered") |> length() == 0 &
+      list(...) |> arguments_to_action(input_hpc, "tier") |> length() == 0
+    ){
+      iterate_value = "tier"
+      tiers_value = NULL
+    } else {
+      iterate_value = "tiered"
+      tiers_value = input_hpc$initialisation$tier |> get_positions()
+    }
+
+    tar_append(
+      fx = hpc_internal |> quote(),
+      tiers = tiers_value ,
+      target_output = target_output,
+      script = target_script,
+      user_function = user_function,
+      
+      # I HAVE TO IMPROVE the fact that I have to convert to character 
+      # because arguments_to_action is also used in expand_tiered_arguments, which needs a named vector
+      arguments_to_tier = list(...) |> arguments_to_action(input_hpc, "tier") |> as.character()  , # This "tier" value is decided for each new target below. Usually just at the beginning of the piepline
+      arguments_already_tiered = list(...) |> arguments_to_action(input_hpc, "tiered") |> as.character(), # This "tiered" value is decided for each new target below. Ususally every other list targets.
+      other_arguments_to_map = list(...) |> arguments_to_action(input_hpc, c("tiered", "map")) |> as.character(), # This "tiered" value is decided for each new target below. Ususally every other list targets.
+      ...
+    )
+  
+      
+    # Add pipeline step
+    input_hpc |>
+      c(
+        as.list(environment())[-1] |> 
+          c(list(iterate = iterate_value)) |> 
+          list() |> 
+          set_names(target_output) 
+      ) |>
+      add_class("tidytargets")
+    
+    
+  }
+
+#' Add a Single (Non-Iterated) Step to the tidytargets Pipeline
+#'
+#' @description
+#' Appends a single, non-parallelised targets step to the tidytargets pipeline script.
+#' Use `hpc_iterate()` instead when the step should be mapped over all samples.
+#'
+#' @param input_hpc A `tidytargets` object.
+#' @param target_output Character name of the output target.
+#' @param user_function A quoted function call or function object to execute.
+#' @param user_function_source_path Optional character path to an R script to
+#'   source in the worker before calling `user_function`. `NULL` sources nothing.
+#' @param iterate Iteration mode string. `"none"` disables iteration; `"map"`
+#'   maps over input values.
+#' @param ... Named arguments passed as target inputs.
+#'
+#' @importFrom glue glue
+#' @importFrom magrittr %>%
+#' @importFrom purrr set_names
+#' @export
+hpc_single = 
+  function(
+    input_hpc, 
+    target_output = NULL, 
+    user_function = NULL, 
+    user_function_source_path = NULL,
+    iterate = "none", 
+    ...) {
+    
+    # Target script
+    target_script = glue("{input_hpc$initialisation$store}.R")
+    
+    # Delete line with target in case the user execute the command, without calling initialise_hpc
+    target_output |>  delete_lines_with_word(target_script)
+    
+    # Append source if any
+    write_source(user_function_source_path, target_script)
+    
+    
+    tar_append(
+      fx = hpc_internal |> quote(),
+      target_output = target_output,
+      script = target_script,
+      user_function = user_function,
+      ...
+    )
+    
+    # Add pipeline step
+    input_hpc |>
+      c(
+        as.list(environment())[-1] |> 
+          c(list(iterate = iterate)) |> 
+          list() |> 
+          set_names(target_output)
+      ) |>
+      add_class("tidytargets")
+    
+    
+  }
+
+#' Add a Merge Step to the tidytargets Pipeline
+#'
+#' @description
+#' Appends a targets step that collects and merges results from all iterated
+#' upstream targets into a single aggregate object.
+#'
+#' @param input_hpc A `tidytargets` object.
+#' @param target_output Character name of the output target.
+#' @param user_function A quoted function call to execute for the merge.
+#' @param user_function_source_path Optional character path to an R script to
+#'   source in the worker. `NULL` sources nothing.
+#' @param ... Named arguments passed as target inputs.
+#'
+#' @importFrom glue glue
+#' @importFrom magrittr %>%
+#' @importFrom purrr set_names
+#' @export
+hpc_merge = 
+  function(
+    input_hpc, 
+    target_output = NULL, 
+    user_function = NULL, 
+    user_function_source_path = NULL,
+    ...
+  ) {
+    
+    # Check for argument consistency
+    check_for_name_value_conflicts(...)
+    
+    # Target script
+    target_script = glue("{input_hpc$initialisation$store}.R")
+    
+    # Delete line with target in case the user execute the command, without calling initialise_hpc
+    target_output |>  delete_lines_with_word(target_script)
+    
+    # Append source if any
+    write_source(user_function_source_path, target_script)
+    
+    
+    # If no tiers
+    if(input_hpc$initialisation$tier |> get_positions() |> length() < 2)
+      tar_append(
+          fx = hpc_internal |> quote(),
+          target_output = target_output,
+          script = target_script,
+          user_function = user_function,
+          ...
+      )
+      
+    else{
+      
+      args = 
+        list(...)  |> 
+        expand_tiered_arguments(
+          tiers = input_hpc$initialisation$tier |> get_positions() |> names(), 
+          argument_to_replace = list(...) |> arguments_to_action(input_hpc, "tiered") |> names(),
+          tiered_args = list(...) |> arguments_to_action(input_hpc, "tiered") |> names()
+        )
+      
+      # this is needed because I cannot use ellipse (...) anymore, I have to use do.call.
+      do.call(tar_append, c(
+        list(
+          fx = hpc_internal |> quote() |> quote(),
+          #tiers = input_hpc$initialisation$tier |> get_positions(),
+          target_output = t |> substitute(env = list(t = target_output)) ,
+          script = target_script,
+          user_function = u |> quote() |> substitute(env = list(u = user_function))
+        ),
+        args
+      ))
+    }
+
+    
+    
+    
+    # Add pipeline step
+    input_hpc |>
+      c(
+        as.list(environment())[-1] |> 
+          c(list(iterate = "single")) |> 
+          list() |> 
+          set_names(target_output) 
+      ) |>
+      add_class("tidytargets")
+    
+    
+  }
+
+#' Add a Report Step to the tidytargets Pipeline
+#'
+#' @description
+#' Appends a Quarto/R Markdown rendering step to the tidytargets pipeline, which
+#' generates an HTML report using `tarchetypes::tar_quarto_raw()`.
+#'
+#' @param input_hpc A `tidytargets` object.
+#' @param target_output Character name of the output target for the rendered report.
+#' @param rmd_path Character path to the `.qmd` or `.Rmd` report file.
+#' @param ... Named arguments passed as report parameters.
+#'
+#' @importFrom glue glue
+#' @importFrom magrittr %>%
+#' @importFrom purrr set_names
+#' @importFrom here here
+#' @export
+hpc_report = function(input_hpc, target_output = NULL, rmd_path = NULL, ...) {
+    
+    # # Check for argument consistency
+    # check_for_name_value_conflicts(...)
+    # 
+    # Target script
+    target_script = glue("{input_hpc$initialisation$store}.R")
+    
+    # Delete line with target in case the user execute the command, without calling initialise_hpc
+    target_output |>  delete_lines_with_word(target_script)
+    
+    external_dir = glue("{input_hpc$initialisation$store}/external") |> as.character() |> here()
+    dir.create(external_dir, showWarnings = FALSE, recursive = TRUE)
+    
+    # If no tiers
+    if(input_hpc$initialisation$tier |> get_positions() |> length() < 2)
+      tar_append(
+        fx = hpc_internal_report |> quote(),
+        target_output = target_output,
+        script = target_script,
+        rmd_path = rmd_path,
+        output_file = glue("{external_dir}/{target_output}") |> as.character(),
+        render_arguments = substitute(quote(expr), list(expr = list(params = list(...)))) # Add quotation
+      )
+    
+    else{
+      
+      args = 
+        list(...)  |> 
+        expand_tiered_arguments(
+          tiers = input_hpc$initialisation$tier |> get_positions() |> names(), 
+          argument_to_replace = list(...) |> arguments_to_action(input_hpc, "tiered") |> names(),
+          tiered_args = list(...) |> arguments_to_action(input_hpc, "tiered") |> names()
+        )
+      
+      # this is needed because I cannot use ellipse (...) anymore, I have to use do.call.
+      do.call(tar_append, c(
+        list(
+          fx = hpc_internal |> quote() |> quote(),
+          #tiers = input_hpc$initialisation$tier |> get_positions(),
+          target_output = t |> substitute(env = list(t = target_output)) ,
+          script = target_script,
+          user_function = u |> quote() |> substitute(env = list(u = user_function))
+        ),
+        args
+      ))
+    }
+    
+    
+    
+    
+    # Add pipeline step
+    input_hpc |>
+      c(
+        as.list(environment())[-1] |> 
+          c(list(iterate = "single")) |> 
+          list() |> 
+          set_names(target_output) 
+      ) |>
+      add_class("tidytargets")
+    
+    
+  }

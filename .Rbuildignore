@@ -1,0 +1,12 @@
+^\.Rprofile$
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.Rhistory$
+\.DS_Store$
+^\.github$
+^_targets
+^.*\.rds$
+^.*\.pdf$
+^.*\.tar\.gz$
+^.*\.Rcheck$
+README.md

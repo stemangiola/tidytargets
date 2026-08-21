@@ -1,0 +1,23 @@
+# RStudio files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+# macOS files
+.DS_Store
+._.DS_Store
+# Generic files
+*.rds
+*.csv
+*.png
+*.pdf
+# Pipeline artefacts
+_target*
+meta
+input_file.rds
+sample_names.rds
+temp_computing_resources.rds
+*.tar.gz
+*.Rcheck
+# Exclude README from being ignored
+!README.md

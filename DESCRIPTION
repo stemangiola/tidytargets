@@ -1,0 +1,37 @@
+Package: tidytargets
+Title: Tidy Grammar for Targets Pipelines
+Version: 0.1.0
+Authors@R: c(
+    person("Stefano", "Mangiola", email = "mangiolastefano@gmail.com",
+           role = c("aut", "cre")),
+    person("Jiayi", "Si", email = "si.j@wehi.edu.au",
+           role = "aut")
+    )
+Description: A pipe-friendly grammar for composing targets pipelines.
+    Build iterated, merged, and report steps with a tidy interface, then
+    deploy the same pipeline locally, on HPC, or in the cloud via crew.
+License: GPL-3
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.1.0)
+Imports:
+    targets,
+    tarchetypes,
+    crew,
+    crew.cluster,
+    dplyr,
+    glue,
+    stringr,
+    purrr,
+    readr,
+    magrittr,
+    rlang,
+    callr,
+    methods,
+    here
+Suggests:
+    testthat (>= 3.0.0)
+Encoding: UTF-8
+RoxygenNote: 8.0.0
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0
