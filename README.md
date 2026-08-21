@@ -4,6 +4,8 @@ A tidy, pipe-friendly grammar for `{targets}`, internally based on [targets fact
 
 Compose pipelines with pipes (`|>`) and run them locally, on HPC, or in the cloud. You describe steps with `hpc_iterate()`, `hpc_single()`, `hpc_merge()`, and `hpc_report()`; those calls are factories that write a `{targets}` dependency graph. Compute backends (for example `{crew}` or `{crew.cluster}`) are optional and passed in at `hpc_initialise()`.
 
+The grammar is **lazy** and **incremental**. Piping steps only appends factories to the targets script; nothing is computed until `hpc_evaluate()` (or printing the object). You can add inputs or steps later and `{targets}` re-runs only the outdated branches of the graph.
+
 ## Installation
 
 ``` r
