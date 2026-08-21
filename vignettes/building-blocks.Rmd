@@ -26,9 +26,9 @@ show_script <- function(store) {
 }
 ```
 
-tidytargets is a tidy, pipe-friendly grammar for `{targets}`. `hpc_initialise()` constructs a `tidytargets` object; the other building blocks are S3 methods on that class. Each method is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it appends `tar_target` definitions to a pipeline script. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
+tidytargets is a tidy, pipe-friendly grammar for `{targets}`. `tt_initialise()` constructs a `tidytargets` object; the other building blocks are S3 methods on that class. Each method is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it appends `tar_target` definitions to a pipeline script. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
 
-The composition is **lazy**. `hpc_initialise()`, `hpc_iterate()`, `hpc_single()`, `hpc_merge()`, and `hpc_report()` only write factories into `{store}.R`. User functions are not called until `hpc_evaluate()` (or printing the `tidytargets` object), which closes the script and runs `targets::tar_make()`.
+The composition is **lazy**. `tt_initialise()`, `tt_iterate()`, `tt_single()`, `tt_merge()`, and `tt_report()` only write factories into `{store}.R`. User functions are not called until `tt_evaluate()` (or printing the `tidytargets` object), which closes the script and runs `targets::tar_make()`.
 
 Pipelines are **incremental**. Add a step, change a parameter, or grow the input vector and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
 
@@ -38,19 +38,19 @@ This vignette walks through every building block and prints the targets script a
 
 | Function | Role |
 | --- | --- |
-| `hpc_initialise()` | Start a pipeline: write the script header, register inputs |
-| `hpc_iterate()` | Map a function over inputs |
-| `hpc_single()` | Add one non-iterated target |
-| `hpc_merge()` | Combine iterated results into one object |
-| `hpc_report()` | Render a Quarto / R Markdown report |
-| `hpc_evaluate()` | Close the script and run `tar_make()` |
-| `hpc_factory()` | Internal factory used by iterate / single / merge |
+| `tt_initialise()` | Start a pipeline: write the script header, register inputs |
+| `tt_iterate()` | Map a function over inputs |
+| `tt_single()` | Add one non-iterated target |
+| `tt_merge()` | Combine iterated results into one object |
+| `tt_report()` | Render a Quarto / R Markdown report |
+| `tt_evaluate()` | Close the script and run `tar_make()` |
+| `tt_factory()` | Internal factory used by iterate / single / merge |
 
-`hpc_factory()` is not meant to be called directly. `hpc_iterate()`, `hpc_single()`, and `hpc_merge()` all append `target_list |> target_append(hpc_factory(...))` to the script.
+`tt_factory()` is not meant to be called directly. `tt_iterate()`, `tt_single()`, and `tt_merge()` all append `target_list |> target_append(tt_factory(...))` to the script.
 
 ## Toy inputs
 
-`hpc_initialise()` takes a named vector of inputs, typically file paths. Here two RDS files stand in for samples.
+`tt_initialise()` takes a named vector of inputs, typically file paths. Here two RDS files stand in for samples.
 
 ```{r inputs}
 files <- c(
@@ -62,7 +62,7 @@ saveRDS(4:6, files[["sample_b"]])
 store <- "pipeline"
 ```
 
-## `hpc_initialise()`
+## `tt_initialise()`
 
 This writes `{store}.R`, saves the input vector, and registers two mapped targets:
 
@@ -73,20 +73,20 @@ With no `computing_resources`, the pipeline is sequential.
 
 ```{r initialise}
 pipe <- files |>
-  hpc_initialise(store = store)
+  tt_initialise(store = store)
 ```
 
 ```{r initialise-script, comment = ""}
 show_script(store)
 ```
 
-## `hpc_iterate()`
+## `tt_iterate()`
 
 Map a function over every input. Wrap an upstream target name with `is_target()` so the argument is a dependency, not a literal string.
 
 ```{r iterate-read}
 pipe <- pipe |>
-  hpc_iterate(
+  tt_iterate(
     target_output = "data",
     user_function = readRDS |> quote(),
     file = "input_list" |> is_target()
@@ -101,7 +101,7 @@ A second iterate maps over the result of the first:
 
 ```{r iterate-length}
 pipe <- pipe |>
-  hpc_iterate(
+  tt_iterate(
     target_output = "n",
     user_function = length |> quote(),
     x = "data" |> is_target()
@@ -112,13 +112,13 @@ pipe <- pipe |>
 show_script(store)
 ```
 
-## `hpc_single()`
+## `tt_single()`
 
 One target, not mapped over samples. Use this for file-tracking targets, scalars, or anything that should run once.
 
 ```{r single}
 pipe <- pipe |>
-  hpc_single(
+  tt_single(
     target_output = "n_samples",
     user_function = length |> quote(),
     x = "sample_names" |> is_target()
@@ -129,15 +129,15 @@ pipe <- pipe |>
 show_script(store)
 ```
 
-`hpc_initialise()` itself uses `hpc_single()` for the `*_file` targets (`format = "file"`).
+`tt_initialise()` itself uses `tt_single()` for the `*_file` targets (`format = "file"`).
 
-## `hpc_merge()`
+## `tt_merge()`
 
 Collect every branch of an iterated target into one object.
 
 ```{r merge}
 pipe <- pipe |>
-  hpc_merge(
+  tt_merge(
     target_output = "n_total",
     user_function = (function(lengths) sum(unlist(lengths))) |> quote(),
     lengths = "n" |> is_target()
@@ -148,7 +148,7 @@ pipe <- pipe |>
 show_script(store)
 ```
 
-## `hpc_report()`
+## `tt_report()`
 
 Appends a `tarchetypes::tar_quarto_raw()` factory. Rendering happens later, when you evaluate the pipeline; the grammar only writes the target.
 
@@ -171,7 +171,7 @@ writeLines(
 
 ```{r report}
 pipe <- pipe |>
-  hpc_report(
+  tt_report(
     target_output = "report",
     rmd_path = "example-report.qmd",
     n_total = "n_total" |> is_target(),
@@ -183,12 +183,12 @@ pipe <- pipe |>
 show_script(store)
 ```
 
-## `hpc_evaluate()`
+## `tt_evaluate()`
 
 This is the only eager step. It closes the script with a final `target_list` expression and calls `targets::tar_make()`. Printing a `tidytargets` object does the same thing. Until then the pipeline is just a script on disk.
 
 ```{r evaluate, eval = FALSE}
-pipe |> hpc_evaluate()
+pipe |> tt_evaluate()
 ```
 
 The last two lines of the script after evaluate are:
@@ -201,11 +201,11 @@ Do not print the pipeline object unless you intend to run it.
 
 ## Custom functions from a file
 
-`hpc_iterate()`, `hpc_single()`, and `hpc_merge()` accept `user_function_source_path`. The path is written as `source(...)` in the targets script so workers can load helpers that are not in a package.
+`tt_iterate()`, `tt_single()`, and `tt_merge()` accept `user_function_source_path`. The path is written as `source(...)` in the targets script so workers can load helpers that are not in a package.
 
 ```{r source-path, eval = FALSE}
 pipe |>
-  hpc_iterate(
+  tt_iterate(
     target_output = "transformed",
     user_function = my_transform |> quote(),
     user_function_source_path = "helpers.R",

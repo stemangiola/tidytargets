@@ -2,9 +2,9 @@
 #'
 #' @description
 #' Appends a single, non-parallelised targets step to the tidytargets pipeline script.
-#' Use `hpc_iterate()` instead when the step should be mapped over all samples.
+#' Use `tt_iterate()` instead when the step should be mapped over all samples.
 #'
-#' @param input_hpc A `tidytargets` object.
+#' @param tt_input A `tidytargets` object.
 #' @param target_output Character name of the output target.
 #' @param user_function A quoted function call or function object to execute.
 #' @param user_function_source_path Optional character path to an R script to
@@ -14,21 +14,21 @@
 #' @param ... Named arguments passed as target inputs.
 #'
 #' @export
-hpc_single <- function(
-    input_hpc,
+tt_single <- function(
+    tt_input,
     target_output = NULL,
     user_function = NULL,
     user_function_source_path = NULL,
     iterate = "none",
     ...
 ) {
-  UseMethod("hpc_single")
+  UseMethod("tt_single")
 }
 
-#' @rdname hpc_single
+#' @rdname tt_single
 #' @export
-hpc_single.default <- function(
-    input_hpc,
+tt_single.default <- function(
+    tt_input,
     target_output = NULL,
     user_function = NULL,
     user_function_source_path = NULL,
@@ -38,13 +38,13 @@ hpc_single.default <- function(
   stop_if_not_tidytargets()
 }
 
-#' @rdname hpc_single
+#' @rdname tt_single
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
-hpc_single.tidytargets <- function(
-    input_hpc,
+tt_single.tidytargets <- function(
+    tt_input,
     target_output = NULL,
     user_function = NULL,
     user_function_source_path = NULL,
@@ -53,9 +53,9 @@ hpc_single.tidytargets <- function(
 ) {
     
     # Target script
-    target_script = glue("{input_hpc$initialisation$store}.R")
+    target_script = glue("{tt_input$initialisation$store}.R")
     
-    # Delete line with target in case the user execute the command, without calling hpc_initialise
+    # Delete line with target in case the user execute the command, without calling tt_initialise
     target_output |>  delete_lines_with_word(target_script)
     
     # Append source if any
@@ -63,7 +63,7 @@ hpc_single.tidytargets <- function(
     
     
     tar_append(
-      fx = hpc_factory |> quote(),
+      fx = tt_factory |> quote(),
       target_output = target_output,
       script = target_script,
       user_function = user_function,
@@ -71,7 +71,7 @@ hpc_single.tidytargets <- function(
     )
     
     # Add pipeline step
-    input_hpc |>
+    tt_input |>
       c(
         as.list(environment())[-1] |> 
           c(list(iterate = iterate)) |> 

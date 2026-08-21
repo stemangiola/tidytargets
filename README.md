@@ -2,9 +2,9 @@
 
 A tidy, pipe-friendly grammar for `{targets}`, internally based on [targets factories](https://books.ropensci.org/targets/static.html#target-factories).
 
-Compose pipelines with pipes (`|>`) and run them locally, on HPC, or in the cloud. `hpc_initialise()` constructs a `tidytargets` object; `hpc_iterate()`, `hpc_single()`, `hpc_merge()`, `hpc_report()`, and `hpc_evaluate()` are methods on that class. Those calls are factories that write a `{targets}` dependency graph. Compute backends (for example `{crew}` or `{crew.cluster}`) are optional and passed in at `hpc_initialise()`.
+Compose pipelines with pipes (`|>`) and run them locally, on HPC, or in the cloud. `tt_initialise()` constructs a `tidytargets` object; `tt_iterate()`, `tt_single()`, `tt_merge()`, `tt_report()`, and `tt_evaluate()` are methods on that class. Those calls are factories that write a `{targets}` dependency graph. Compute backends (for example `{crew}` or `{crew.cluster}`) are optional and passed in at `tt_initialise()`.
 
-The grammar is **lazy** and **incremental**. Piping steps only appends factories to the targets script; nothing is computed until `hpc_evaluate()` (or printing the object). You can add inputs or steps later and `{targets}` re-runs only the outdated branches of the graph.
+The grammar is **lazy** and **incremental**. Piping steps only appends factories to the targets script; nothing is computed until `tt_evaluate()` (or printing the object). You can add inputs or steps later and `{targets}` re-runs only the outdated branches of the graph.
 
 ## Installation
 
@@ -20,7 +20,7 @@ vignette("building-blocks", package = "tidytargets")
 
 ## A minimal pipeline
 
-`hpc_initialise()` takes a named vector of inputs (typically file paths). Use `is_target()` to point a step at an upstream target. With no `computing_resources`, the pipeline runs sequentially.
+`tt_initialise()` takes a named vector of inputs (typically file paths). Use `is_target()` to point a step at an upstream target. With no `computing_resources`, the pipeline runs sequentially.
 
 ``` r
 library(tidytargets)
@@ -31,21 +31,21 @@ files <- c(
 )
 
 files |>
-  hpc_initialise(store = "_targets") |>
-  hpc_iterate(
+  tt_initialise(store = "_targets") |>
+  tt_iterate(
     target_output = "data",
     user_function = readRDS |> quote(),
     file = "input_list" |> is_target()
   ) |>
-  hpc_iterate(
+  tt_iterate(
     target_output = "summaries",
     user_function = summary |> quote(),
     object = "data" |> is_target()
   ) |>
-  hpc_evaluate()
+  tt_evaluate()
 ```
 
-`hpc_initialise()` registers two mapped targets for you:
+`tt_initialise()` registers two mapped targets for you:
 
 - `input_list` — the named input vector
 - `sample_names` — the names of that vector
@@ -54,12 +54,12 @@ files |>
 
 | Function | Role |
 | --- | --- |
-| `hpc_initialise()` | Start a pipeline: store, optional controller, tiers |
-| `hpc_iterate()` | Map a function over inputs (and optional tiers) |
-| `hpc_single()` | Add one non-iterated target |
-| `hpc_merge()` | Combine iterated results into one object |
-| `hpc_report()` | Render a Quarto / R Markdown report |
-| `hpc_evaluate()` | Write the target list and run `tar_make()` |
+| `tt_initialise()` | Start a pipeline: store, optional controller, tiers |
+| `tt_iterate()` | Map a function over inputs (and optional tiers) |
+| `tt_single()` | Add one non-iterated target |
+| `tt_merge()` | Combine iterated results into one object |
+| `tt_report()` | Render a Quarto / R Markdown report |
+| `tt_evaluate()` | Write the target list and run `tar_make()` |
 | `is_target()` | Mark an argument as an upstream target name |
 
 ## Deployment
@@ -72,7 +72,7 @@ Pass any controller that `targets::tar_option_set(controller = )` accepts. tidyt
 computing_resources <- crew::crew_controller_local(workers = 10)
 ```
 
-Pass this to `hpc_initialise(computing_resources = ...)`.
+Pass this to `tt_initialise(computing_resources = ...)`.
 
 ### SLURM
 
@@ -97,7 +97,7 @@ computing_resources <- crew::crew_controller_group(
   crew::crew_controller_local(name = "2", workers = 10)
 )
 
-hpc_initialise(
+tt_initialise(
   files,
   tier = c(1, 1, 2),
   computing_resources = computing_resources

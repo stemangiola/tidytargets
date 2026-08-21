@@ -3,10 +3,10 @@
 #' @description
 #' Sets up and writes a `targets` pipeline script. Saves input paths and
 #' configuration to disk, then returns a `tidytargets` object that downstream
-#' grammar functions (e.g. `hpc_iterate()`, `hpc_single()`, `hpc_evaluate()`)
-#' can extend before the pipeline is executed with `hpc_evaluate()`.
+#' grammar functions (e.g. `tt_iterate()`, `tt_single()`, `tt_evaluate()`)
+#' can extend before the pipeline is executed with `tt_evaluate()`.
 #'
-#' @param input_hpc Named vector of inputs, typically file paths, one element
+#' @param tt_input Named vector of inputs, typically file paths, one element
 #'   per unit of iteration (e.g. sample). If names are not set, integer indices
 #'   are used.
 #' @param store Directory path where pipeline files and targets store are written.
@@ -15,7 +15,7 @@
 #'   controller group. `NULL` (the default) runs the pipeline sequentially.
 #'   tidytargets does not depend on any compute backend; pass whatever your
 #'   deployment uses.
-#' @param tier Integer vector (same length as `input_hpc`) assigning each input
+#' @param tier Integer vector (same length as `tt_input`) assigning each input
 #'   to a processing tier for tiered execution. Default: all inputs in tier 1.
 #' @param debug_step Character name of a single target to debug; passed to
 #'   `targets::tar_option_set(debug = ...)`. `NULL` disables debugging.
@@ -40,10 +40,10 @@
 #' @import tarchetypes
 #' @import targets
 #' @export
-hpc_initialise <- function(input_hpc,
+tt_initialise <- function(tt_input,
                            store =  targets::tar_config_get("store"),
                            computing_resources = NULL,
-                           tier = rep(1, length(input_hpc)),
+                           tier = rep(1, length(tt_input)),
                            debug_step = NULL,
                            verbosity = targets::tar_config_get("reporter_make"),
                            error = NULL,
@@ -57,8 +57,8 @@ hpc_initialise <- function(input_hpc,
   args_list <- as.list(environment())
   
   # if simple names are not set, use integers
-  if(input_hpc |> names() |> is.null())
-    input_hpc = input_hpc |> set_names(seq_len(length(input_hpc)))
+  if(tt_input |> names() |> is.null())
+    tt_input = tt_input |> set_names(seq_len(length(tt_input)))
   
 
   # Optionally, you can evaluate the arguments if they are expressions
@@ -68,8 +68,8 @@ hpc_initialise <- function(input_hpc,
   dir.create(store, showWarnings = FALSE, recursive = TRUE)
   
   # Save parameters to files
-  input_hpc |> as.list() |>  saveRDS("input_file.rds")
-  input_hpc |> names() |> saveRDS("sample_names.rds")
+  tt_input |> as.list() |>  saveRDS("input_file.rds")
+  tt_input |> names() |> saveRDS("sample_names.rds")
   
   computing_resources |> saveRDS("temp_computing_resources.rds")
   backend_packages <- package_of_object(computing_resources)
@@ -104,18 +104,18 @@ hpc_initialise <- function(input_hpc,
     tar_script_append2(script = glue("{store}.R"), append = FALSE)
 
   
-  input_hpc = 
+  tt_input = 
     list(initialisation = args_list ) |>
 
     add_class("tidytargets")
   
   
-  input_hpc |> 
+  tt_input |> 
     
     # Sample names
-    hpc_single("sample_names_file", "sample_names.rds", format = "file") |> 
+    tt_single("sample_names_file", "sample_names.rds", format = "file") |> 
     
-    hpc_single(
+    tt_single(
       target_output = "sample_names", 
       user_function = readRDS |> quote(),
       file = "sample_names_file" |> is_target(), 
@@ -124,9 +124,9 @@ hpc_initialise <- function(input_hpc,
     ) |> 
     
     # Files
-    hpc_single("input_list_file", "input_file.rds", format = "file") |> 
+    tt_single("input_list_file", "input_file.rds", format = "file") |> 
     
-    hpc_single(
+    tt_single(
       target_output = "input_list", 
       user_function = readRDS |> quote(),
       file = "input_list_file" |> is_target(), 

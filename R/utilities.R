@@ -6,7 +6,7 @@ add_class <- function(obj, class_name) {
 
 stop_if_not_tidytargets <- function() {
   stop(
-    "tidytargets says: this step expects a tidytargets object from hpc_initialise().",
+    "tidytargets says: this step expects a tidytargets object from tt_initialise().",
     call. = FALSE
   )
 }
@@ -223,18 +223,18 @@ delete_lines_with_word <- function(word, file_path) {
 #'
 #' This function identifies elements from a list that have the class 'name',
 #' converts them to character strings, and returns only those elements that are
-#' present in the names of a specified input list (`input_hpc`) and have the
+#' present in the names of a specified input list (`tt_input`) and have the
 #' `iterate` field set to `"tier"`.
 #'
 #' @param lst A list containing various elements, some of which may have the class 'name'.
-#' @param input_hpc A list whose names are used to filter the elements from `lst`.
-#'                  The elements in `input_hpc` should include an `iterate` field with the value `"tier"`.
+#' @param tt_input A list whose names are used to filter the elements from `lst`.
+#'                  The elements in `tt_input` should include an `iterate` field with the value `"tier"`.
 #' @param value Character vector of iterate modes to match.
 #' @return A character vector of elements from `lst` that have the class 'name',
-#'         are present in the names of `input_hpc`, and have `iterate` set to `"tier"`.
+#'         are present in the names of `tt_input`, and have `iterate` set to `"tier"`.
 #' @importFrom purrr set_names
 #' @noRd
-arguments_to_action <- function(lst, input_hpc, value) {
+arguments_to_action <- function(lst, tt_input, value) {
   matching_elements <- character()
   
   for (arg_name in names(lst)) {
@@ -255,8 +255,8 @@ arguments_to_action <- function(lst, input_hpc, value) {
       
       if (
         (arg_value |> is("character") | arg_value |> is("name")) &&
-        as.character(arg_value) %in% names(input_hpc) && 
-        input_hpc[[arg_value]]$iterate %in% value
+        as.character(arg_value) %in% names(tt_input) && 
+        tt_input[[arg_value]]$iterate %in% value
       ) 
         matching_elements <- c(matching_elements, as.character(arg_value) |> set_names(arg_name))
       
@@ -272,8 +272,8 @@ arguments_to_action <- function(lst, input_hpc, value) {
           arg_value |> is("name") 
         )) next
         
-        # Check if the value exists in input_hpc and iterate is equal to the specified value
-        if (val %in% names(input_hpc) && input_hpc[[val]]$iterate == value) 
+        # Check if the value exists in tt_input and iterate is equal to the specified value
+        if (val %in% names(tt_input) && tt_input[[val]]$iterate == value) 
           matching_elements <- c(matching_elements, as.character(arg_value) |> set_names(arg_name))
         
       }

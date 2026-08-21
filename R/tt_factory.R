@@ -20,7 +20,7 @@
 #' @param ... Additional named arguments passed as target inputs.
 #' @return A `tar_target` object or a list of `tar_target` objects (one per tier).
 #' @export
-hpc_factory = function(
+tt_factory = function(
     tiers = NULL, 
     target_output, 
     user_function,

@@ -5,26 +5,26 @@
 #' Closes the pipeline target list and calls `targets::tar_make()` to execute
 #' all queued steps. Returns the `tar_meta()` table.
 #'
-#' @param input_hpc A `tidytargets` object constructed by `hpc_initialise()` and
+#' @param tt_input A `tidytargets` object constructed by `tt_initialise()` and
 #'   extended with one or more pipeline step functions.
 #' @return A `tibble` with targets metadata.
-#' @name hpc_evaluate
+#' @name tt_evaluate
 #' @export
-hpc_evaluate <- function(input_hpc) {
-  UseMethod("hpc_evaluate")
+tt_evaluate <- function(tt_input) {
+  UseMethod("tt_evaluate")
 }
 
-#' @rdname hpc_evaluate
+#' @rdname tt_evaluate
 #' @export
-hpc_evaluate.default <- function(input_hpc) {
+tt_evaluate.default <- function(tt_input) {
   stop_if_not_tidytargets()
 }
 
-#' @rdname hpc_evaluate
+#' @rdname tt_evaluate
 #' @importFrom glue glue
 #' @importFrom targets tar_make tar_meta
 #' @export
-hpc_evaluate.tidytargets = function(input_hpc) {
+tt_evaluate.tidytargets = function(tt_input) {
   
   #-----------------------#
   # Close pipeline
@@ -33,19 +33,19 @@ hpc_evaluate.tidytargets = function(input_hpc) {
   # Call final list
   tar_script_append({
     target_list 
-  }, script = glue("{input_hpc$initialisation$store}.R"))
+  }, script = glue("{tt_input$initialisation$store}.R"))
   
-  if(input_hpc$initialisation$debug_step |> is.null())
+  if(tt_input$initialisation$debug_step |> is.null())
     my_callr_function =  callr::r
   else
     my_callr_function =  NULL
   
   tar_make(
     callr_function = my_callr_function,
-    script = glue("{input_hpc$initialisation$store}.R"),
-    store = input_hpc$initialisation$store, 
-    reporter = input_hpc$initialisation$verbosity 
+    script = glue("{tt_input$initialisation$store}.R"),
+    store = tt_input$initialisation$store, 
+    reporter = tt_input$initialisation$verbosity 
   )
   
-  tar_meta(store = glue("{input_hpc$initialisation$store}"))
+  tar_meta(store = glue("{tt_input$initialisation$store}"))
 }

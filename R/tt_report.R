@@ -4,46 +4,46 @@
 #' Appends a Quarto/R Markdown rendering step to the tidytargets pipeline, which
 #' generates an HTML report using `tarchetypes::tar_quarto_raw()`.
 #'
-#' @param input_hpc A `tidytargets` object.
+#' @param tt_input A `tidytargets` object.
 #' @param target_output Character name of the output target for the rendered report.
 #' @param rmd_path Character path to the `.qmd` or `.Rmd` report file.
 #' @param ... Named arguments passed as report parameters.
 #'
 #' @export
-hpc_report <- function(input_hpc, target_output = NULL, rmd_path = NULL, ...) {
-  UseMethod("hpc_report")
+tt_report <- function(tt_input, target_output = NULL, rmd_path = NULL, ...) {
+  UseMethod("tt_report")
 }
 
-#' @rdname hpc_report
+#' @rdname tt_report
 #' @export
-hpc_report.default <- function(input_hpc, target_output = NULL, rmd_path = NULL, ...) {
+tt_report.default <- function(tt_input, target_output = NULL, rmd_path = NULL, ...) {
   stop_if_not_tidytargets()
 }
 
-#' @rdname hpc_report
+#' @rdname tt_report
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
-hpc_report.tidytargets <- function(input_hpc, target_output = NULL, rmd_path = NULL, ...) {
+tt_report.tidytargets <- function(tt_input, target_output = NULL, rmd_path = NULL, ...) {
     
     # # Check for argument consistency
     # check_for_name_value_conflicts(...)
     # 
     # Target script
-    target_script = glue("{input_hpc$initialisation$store}.R")
+    target_script = glue("{tt_input$initialisation$store}.R")
     
-    # Delete line with target in case the user execute the command, without calling hpc_initialise
+    # Delete line with target in case the user execute the command, without calling tt_initialise
     target_output |>  delete_lines_with_word(target_script)
     
-    external_dir <- file.path(input_hpc$initialisation$store, "external")
+    external_dir <- file.path(tt_input$initialisation$store, "external")
     dir.create(external_dir, showWarnings = FALSE, recursive = TRUE)
     external_dir <- normalizePath(external_dir)
     
     # If no tiers
-    if(input_hpc$initialisation$tier |> get_positions() |> length() < 2)
+    if(tt_input$initialisation$tier |> get_positions() |> length() < 2)
       tar_append(
-        fx = hpc_internal_report |> quote(),
+        fx = tt_internal_report |> quote(),
         target_output = target_output,
         script = target_script,
         rmd_path = rmd_path,
@@ -56,16 +56,16 @@ hpc_report.tidytargets <- function(input_hpc, target_output = NULL, rmd_path = N
       args = 
         list(...)  |> 
         expand_tiered_arguments(
-          tiers = input_hpc$initialisation$tier |> get_positions() |> names(), 
-          argument_to_replace = list(...) |> arguments_to_action(input_hpc, "tiered") |> names(),
-          tiered_args = list(...) |> arguments_to_action(input_hpc, "tiered") |> names()
+          tiers = tt_input$initialisation$tier |> get_positions() |> names(), 
+          argument_to_replace = list(...) |> arguments_to_action(tt_input, "tiered") |> names(),
+          tiered_args = list(...) |> arguments_to_action(tt_input, "tiered") |> names()
         )
       
       # this is needed because I cannot use ellipse (...) anymore, I have to use do.call.
       do.call(tar_append, c(
         list(
-          fx = hpc_factory |> quote() |> quote(),
-          #tiers = input_hpc$initialisation$tier |> get_positions(),
+          fx = tt_factory |> quote() |> quote(),
+          #tiers = tt_input$initialisation$tier |> get_positions(),
           target_output = t |> substitute(env = list(t = target_output)) ,
           script = target_script,
           user_function = u |> quote() |> substitute(env = list(u = user_function))
@@ -78,7 +78,7 @@ hpc_report.tidytargets <- function(input_hpc, target_output = NULL, rmd_path = N
     
     
     # Add pipeline step
-    input_hpc |>
+    tt_input |>
       c(
         as.list(environment())[-1] |> 
           c(list(iterate = "single")) |> 
@@ -112,7 +112,7 @@ hpc_report.tidytargets <- function(input_hpc, target_output = NULL, rmd_path = N
 #' @param ... Additional named arguments.
 #' @return A `tar_target` object or a list of `tar_target` objects.
 #' @export
-hpc_internal_report = function(
+tt_internal_report = function(
     tiers = NULL, 
     target_output, 
     rmd_path,

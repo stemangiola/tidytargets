@@ -1,7 +1,7 @@
 library(testthat)
 library(tidytargets)
 
-test_that("hpc_initialise returns a tidytargets object with input targets", {
+test_that("tt_initialise returns a tidytargets object with input targets", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -16,7 +16,7 @@ test_that("hpc_initialise returns a tidytargets object with input targets", {
 
   store <- file.path(tmp, "store")
   hpc <- files |>
-    hpc_initialise(store = store)
+    tt_initialise(store = store)
 
   expect_s3_class(hpc, "tidytargets")
   expect_equal(hpc$initialisation$store, store)
@@ -33,7 +33,7 @@ test_that("hpc_initialise returns a tidytargets object with input targets", {
   expect_true(any(grepl("controller = readRDS", script)))
 })
 
-test_that("hpc_iterate and hpc_single chain onto a tidytargets object", {
+test_that("tt_iterate and tt_single chain onto a tidytargets object", {
 
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
@@ -45,13 +45,13 @@ test_that("hpc_iterate and hpc_single chain onto a tidytargets object", {
 
   store <- file.path(tmp, "store")
   hpc <- files |>
-    hpc_initialise(store = store) |>
-    hpc_iterate(
+    tt_initialise(store = store) |>
+    tt_iterate(
       target_output = "data",
       user_function = readRDS |> quote(),
       file = "input_list" |> is_target()
     ) |>
-    hpc_single(
+    tt_single(
       target_output = "n_inputs",
       user_function = length |> quote(),
       x = "sample_names" |> is_target()
@@ -69,9 +69,9 @@ test_that("hpc_iterate and hpc_single chain onto a tidytargets object", {
 })
 
 test_that("grammar steps error on non-tidytargets input", {
-  expect_error(hpc_iterate("not a pipeline"), "tidytargets object")
-  expect_error(hpc_single("not a pipeline"), "tidytargets object")
-  expect_error(hpc_merge("not a pipeline"), "tidytargets object")
-  expect_error(hpc_report("not a pipeline"), "tidytargets object")
-  expect_error(hpc_evaluate("not a pipeline"), "tidytargets object")
+  expect_error(tt_iterate("not a pipeline"), "tidytargets object")
+  expect_error(tt_single("not a pipeline"), "tidytargets object")
+  expect_error(tt_merge("not a pipeline"), "tidytargets object")
+  expect_error(tt_report("not a pipeline"), "tidytargets object")
+  expect_error(tt_evaluate("not a pipeline"), "tidytargets object")
 })
