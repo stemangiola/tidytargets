@@ -45,6 +45,8 @@ files |>
     object = "data" |> is_target()
   ) |>
   tt_evaluate()
+```
+```
 #> + input_list_file dispatched
 #> ✔ input_list_file completed [0ms, 97 B]
 #> + sample_names_file dispatched
