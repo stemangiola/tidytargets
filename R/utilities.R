@@ -469,3 +469,14 @@ is_target = function(x) {
   
   as.name(x) 
 }
+
+
+# Wrap target arguments in purrr::list_flatten() and quote them so tar_append
+# writes them unevaluated into the pipeline script. Used only when there are
+# no tiers.
+collapse_arguments <- function(args) {
+  lapply(args, function(a) {
+    if (!(is.name(a) || is.call(a))) return(a)
+    substitute(quote(purrr::list_flatten(expr)), list(expr = a))
+  })
+}

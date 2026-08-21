@@ -9,7 +9,17 @@
 #' @param user_function A quoted function call to execute for the merge.
 #' @param user_function_source_path Optional character path to an R script to
 #'   source in the worker. `NULL` sources nothing.
+#' @param collapse Logical. If `TRUE`, each target argument is flattened one
+#'   level with [purrr::list_flatten()] before `user_function` runs, so a list
+#'   of lists becomes a list. Cannot be used with a tiered pipeline.
+#'   Default: `FALSE`.
 #' @param ... Named arguments passed as target inputs.
+#'
+#' @details
+#' Two `tt_merge()` calls in a row do not flatten nested lists. The first merge
+#' already produces a single object; the second merge receives that object as a
+#' whole. Use `collapse = TRUE` (or flatten inside `user_function`) to turn a
+#' list of lists into a list. `collapse = TRUE` is incompatible with tiers.
 #'
 #' @export
 tt_merge <- function(
@@ -17,6 +27,7 @@ tt_merge <- function(
     target_output = NULL,
     user_function = NULL,
     user_function_source_path = NULL,
+    collapse = FALSE,
     ...
 ) {
   UseMethod("tt_merge")
@@ -29,6 +40,7 @@ tt_merge.default <- function(
     target_output = NULL,
     user_function = NULL,
     user_function_source_path = NULL,
+    collapse = FALSE,
     ...
 ) {
   stop_if_not_tidytargets()
@@ -44,11 +56,15 @@ tt_merge.tidytargets <- function(
     target_output = NULL,
     user_function = NULL,
     user_function_source_path = NULL,
+    collapse = FALSE,
     ...
 ) {
     
     # Check for argument consistency
     check_for_name_value_conflicts(...)
+
+    if (isTRUE(collapse) && tt_input$initialisation$tier |> get_positions() |> length() >= 2)
+      stop("tidytargets says: collapse = TRUE cannot be used with a tiered pipeline.", call. = FALSE)
     
     # Target script
     target_script = glue("{tt_input$initialisation$store}.R")
@@ -61,14 +77,31 @@ tt_merge.tidytargets <- function(
     
     
     # If no tiers
-    if(tt_input$initialisation$tier |> get_positions() |> length() < 2)
-      tar_append(
+    if(tt_input$initialisation$tier |> get_positions() |> length() < 2) {
+      if (isTRUE(collapse)) {
+        do.call(
+          tar_append,
+          c(
+            list(
+              fx = tt_factory |> quote(),
+              target_output = target_output,
+              script = target_script,
+              user_function = user_function
+            ),
+            collapse_arguments(list(...))
+          ),
+          quote = TRUE
+        )
+      } else {
+        tar_append(
           fx = tt_factory |> quote(),
           target_output = target_output,
           script = target_script,
           user_function = user_function,
           ...
-      )
+        )
+      }
+    }
       
     else{
       
@@ -108,3 +141,4 @@ tt_merge.tidytargets <- function(
     
     
   }
+

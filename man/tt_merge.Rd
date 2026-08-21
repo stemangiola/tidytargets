@@ -11,6 +11,7 @@ tt_merge(
   target_output = NULL,
   user_function = NULL,
   user_function_source_path = NULL,
+  collapse = FALSE,
   ...
 )
 
@@ -19,6 +20,7 @@ tt_merge(
   target_output = NULL,
   user_function = NULL,
   user_function_source_path = NULL,
+  collapse = FALSE,
   ...
 )
 
@@ -27,6 +29,7 @@ tt_merge(
   target_output = NULL,
   user_function = NULL,
   user_function_source_path = NULL,
+  collapse = FALSE,
   ...
 )
 }
@@ -40,9 +43,20 @@ tt_merge(
 \item{user_function_source_path}{Optional character path to an R script to
 source in the worker. \code{NULL} sources nothing.}
 
+\item{collapse}{Logical. If \code{TRUE}, each target argument is flattened one
+level with \code{\link[purrr:list_flatten]{purrr::list_flatten()}} before \code{user_function} runs, so a list
+of lists becomes a list. Cannot be used with a tiered pipeline.
+Default: \code{FALSE}.}
+
 \item{...}{Named arguments passed as target inputs.}
 }
 \description{
 Appends a targets step that collects and merges results from all iterated
 upstream targets into a single aggregate object.
+}
+\details{
+Two \code{tt_merge()} calls in a row do not flatten nested lists. The first merge
+already produces a single object; the second merge receives that object as a
+whole. Use \code{collapse = TRUE} (or flatten inside \code{user_function}) to turn a
+list of lists into a list. \code{collapse = TRUE} is incompatible with tiers.
 }
