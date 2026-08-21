@@ -12,7 +12,6 @@
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom purrr set_names
-#' @importFrom here here
 #' @export
 hpc_report = function(input_hpc, target_output = NULL, rmd_path = NULL, ...) {
     
@@ -25,8 +24,9 @@ hpc_report = function(input_hpc, target_output = NULL, rmd_path = NULL, ...) {
     # Delete line with target in case the user execute the command, without calling hpc_initialise
     target_output |>  delete_lines_with_word(target_script)
     
-    external_dir = glue("{input_hpc$initialisation$store}/external") |> as.character() |> here()
+    external_dir <- file.path(input_hpc$initialisation$store, "external")
     dir.create(external_dir, showWarnings = FALSE, recursive = TRUE)
+    external_dir <- normalizePath(external_dir)
     
     # If no tiers
     if(input_hpc$initialisation$tier |> get_positions() |> length() < 2)

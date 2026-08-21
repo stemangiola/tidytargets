@@ -12,7 +12,6 @@
 #' @importFrom rlang parse_expr
 #' @importFrom targets tar_target_raw tar_resources tar_resources_crew tar_option_get tar_make tar_meta tar_config_get tar_option_set tar_cue
 #' @importFrom tarchetypes tar_quarto_raw
-#' @importFrom here here
 #' @importFrom callr r
 "_PACKAGE"
 

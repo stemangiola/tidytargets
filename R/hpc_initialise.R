@@ -39,7 +39,6 @@
 #' @importFrom purrr set_names
 #' @import tarchetypes
 #' @import targets
-#' @import here
 #' @export
 hpc_initialise <- function(input_hpc,
                            store =  targets::tar_config_get("store"),
