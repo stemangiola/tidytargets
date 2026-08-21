@@ -329,7 +329,7 @@ target_list |> target_append( tt_factory(target_output = "data", user_function =
 target_list |> target_append( tt_factory(target_output = "n", user_function = quote(length),      arguments_to_tier = character(0), arguments_already_tiered = character(0),      other_arguments_to_map = "data", x = quote(data)) )
 target_list |> target_append( tt_factory(target_output = "n_samples", user_function = quote(length),      x = quote(sample_names)) )
 target_list |> target_append( tt_factory(target_output = "n_total", user_function = (function(lengths) sum(unlist(lengths))),      lengths = quote(n)) )
-target_list |> target_append( tt_internal_report(target_output = "report", rmd_path = "example-report.qmd",      output_file = "/tmp/Rtmp5f0lAX/tidytargets-vignette-d265d69af9b/pipeline/external/report",      render_arguments = quote(list(params = list(n_total = n_total,          n_samples = n_samples)))) )
+target_list |> target_append( tt_internal_report(target_output = "report", rmd_path = "example-report.qmd",      output_file = "/tmp/RtmpiUMjXq/tidytargets-vignette-d26724e46ef/pipeline/external/report",      render_arguments = quote(list(params = list(n_total = n_total,          n_samples = n_samples)))) )
 ```
 
 ## `tt_evaluate()`
@@ -373,9 +373,9 @@ files |>
 #>     intersect, setdiff, setequal, union
 #> 
 #> + input_list_file dispatched
-#> ✔ input_list_file completed [0ms, 97 B]
+#> ✔ input_list_file completed [1ms, 97 B]
 #> + sample_names_file dispatched
-#> ✔ sample_names_file completed [1ms, 64 B]
+#> ✔ sample_names_file completed [0ms, 64 B]
 #> + input_list dispatched
 #> ✔ input_list completed [0ms, 97 B]
 #> + sample_names dispatched
@@ -383,20 +383,20 @@ files |>
 #> + data declared [2 branches]
 #> ✔ data completed [0ms, 201 B]
 #> + summaries declared [2 branches]
-#> ✔ summaries completed [2ms, 324 B]
-#> ✔ ended pipeline [163ms, 8 completed, 0 skipped]
+#> ✔ summaries completed [1ms, 324 B]
+#> ✔ ended pipeline [152ms, 8 completed, 0 skipped]
 #> # A tibble: 10 × 18
 #>    name       type  data  command depend    seed path  time                size 
 #>    <chr>      <chr> <chr> <chr>   <chr>    <int> <lis> <dttm>              <chr>
-#>  1 input_lis… stem  7404… 9b739a… 2c530… -1.91e9 <chr> 2026-08-21 01:28:25 s97b 
-#>  2 sample_na… stem  6cc0… a896eb… 2c530…  7.22e8 <chr> 2026-08-21 01:28:25 s64b 
-#>  3 input_list stem  7404… 86432e… 1dcb5… -1.62e9 <chr> 2026-08-21 01:28:26 s97b 
-#>  4 sample_na… stem  6cc0… f05214… 6a724…  1.74e9 <chr> 2026-08-21 01:28:26 s64b 
-#>  5 data_fc1a… bran… cff5… 63aea2… 2c530…  1.30e9 <chr> 2026-08-21 01:28:26 s99b 
-#>  6 data_e713… bran… 25be… 63aea2… 2c530… -2.88e8 <chr> 2026-08-21 01:28:26 s102b
+#>  1 input_lis… stem  7404… 9b739a… 2c530… -1.91e9 <chr> 2026-08-21 02:12:16 s97b 
+#>  2 sample_na… stem  6cc0… a896eb… 2c530…  7.22e8 <chr> 2026-08-21 02:12:16 s64b 
+#>  3 input_list stem  7404… 86432e… 1dcb5… -1.62e9 <chr> 2026-08-21 02:12:17 s97b 
+#>  4 sample_na… stem  6cc0… f05214… 6a724…  1.74e9 <chr> 2026-08-21 02:12:17 s64b 
+#>  5 data_fc1a… bran… cff5… 63aea2… 2c530…  1.30e9 <chr> 2026-08-21 02:12:17 s99b 
+#>  6 data_e713… bran… 25be… 63aea2… 2c530… -2.88e8 <chr> 2026-08-21 02:12:17 s102b
 #>  7 data       patt… e61d… 63aea2… NA      3.36e7 <chr> NA                  NA   
-#>  8 summaries… bran… 3ea7… f0df48… 410e9…  9.26e8 <chr> 2026-08-21 01:28:26 s163b
-#>  9 summaries… bran… fac1… f0df48… 35177… -1.07e9 <chr> 2026-08-21 01:28:26 s161b
+#>  8 summaries… bran… 3ea7… f0df48… 410e9…  9.26e8 <chr> 2026-08-21 02:12:17 s163b
+#>  9 summaries… bran… fac1… f0df48… 35177… -1.07e9 <chr> 2026-08-21 02:12:17 s161b
 #> 10 summaries  patt… 94ba… f0df48… NA      4.71e8 <chr> NA                  NA   
 #> # ℹ 9 more variables: bytes <dbl>, format <chr>, repository <chr>,
 #> #   iteration <chr>, parent <chr>, children <list>, seconds <dbl>,

@@ -78,29 +78,30 @@ files |>
     object = "data" |> is_target()
   ) |>
   tt_evaluate()
-#> + input_list_file dispatched
-#> ✔ input_list_file completed [0ms, 97 B]
-#> + sample_names_file dispatched
-#> ✔ sample_names_file completed [0ms, 64 B]
-#> + input_list dispatched
-#> ✔ input_list completed [1ms, 97 B]
-#> + sample_names dispatched
-#> ✔ sample_names completed [0ms, 64 B]
-#> + data declared [2 branches]
-#> ✔ data completed [0ms, 201 B]
-#> + summaries declared [2 branches]
-#> ✔ summaries completed [1ms, 324 B]
-#> ✔ ended pipeline [106ms, 8 completed, 0 skipped]
-
-targets::tar_read(summaries, store = "_targets")
-#> $summaries_77df95261040f9e1
-#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-#>     1.0     1.5     2.0     2.0     2.5     3.0
-#>
-#> $summaries_71c6d136bc334ef4
-#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-#>     4.0     4.5     5.0     5.0     5.5     6.0
 ```
+
+    #> + input_list_file dispatched
+    #> ✔ input_list_file completed [0ms, 97 B]
+    #> + sample_names_file dispatched
+    #> ✔ sample_names_file completed [0ms, 64 B]
+    #> + input_list dispatched
+    #> ✔ input_list completed [1ms, 97 B]
+    #> + sample_names dispatched
+    #> ✔ sample_names completed [0ms, 64 B]
+    #> + data declared [2 branches]
+    #> ✔ data completed [0ms, 201 B]
+    #> + summaries declared [2 branches]
+    #> ✔ summaries completed [1ms, 324 B]
+    #> ✔ ended pipeline [106ms, 8 completed, 0 skipped]
+
+    targets::tar_read(summaries, store = "_targets")
+    #> $summaries_77df95261040f9e1
+    #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+    #>     1.0     1.5     2.0     2.0     2.5     3.0
+    #>
+    #> $summaries_71c6d136bc334ef4
+    #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+    #>     4.0     4.5     5.0     5.0     5.5     6.0
 
 [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)
 also returns the
