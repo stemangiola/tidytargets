@@ -7,18 +7,18 @@
 <url><loc>/news/index.html</loc></url>
 <url><loc>/reference/delete_lines_with_word.html</loc></url>
 <url><loc>/reference/get_positions.html</loc></url>
-<url><loc>/reference/hpc_evaluate.html</loc></url>
-<url><loc>/reference/hpc_factory.html</loc></url>
-<url><loc>/reference/hpc_initialise.html</loc></url>
-<url><loc>/reference/hpc_internal_report.html</loc></url>
-<url><loc>/reference/hpc_iterate.html</loc></url>
-<url><loc>/reference/hpc_merge.html</loc></url>
-<url><loc>/reference/hpc_report.html</loc></url>
-<url><loc>/reference/hpc_single.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/is_target.html</loc></url>
 <url><loc>/reference/print.tidytargets.html</loc></url>
 <url><loc>/reference/target_append.html</loc></url>
 <url><loc>/reference/tidytargets-package.html</loc></url>
+<url><loc>/reference/tt_evaluate.html</loc></url>
+<url><loc>/reference/tt_factory.html</loc></url>
+<url><loc>/reference/tt_initialise.html</loc></url>
+<url><loc>/reference/tt_internal_report.html</loc></url>
+<url><loc>/reference/tt_iterate.html</loc></url>
+<url><loc>/reference/tt_merge.html</loc></url>
+<url><loc>/reference/tt_report.html</loc></url>
+<url><loc>/reference/tt_single.html</loc></url>
 </urlset>
 
