@@ -2,9 +2,27 @@
 % Please edit documentation in R/hpc_iterate.R
 \name{hpc_iterate}
 \alias{hpc_iterate}
+\alias{hpc_iterate.default}
+\alias{hpc_iterate.tidytargets}
 \title{Add HPC step to pipeline}
 \usage{
 hpc_iterate(
+  input_hpc,
+  target_output = NULL,
+  user_function = NULL,
+  user_function_source_path = NULL,
+  ...
+)
+
+\method{hpc_iterate}{default}(
+  input_hpc,
+  target_output = NULL,
+  user_function = NULL,
+  user_function_source_path = NULL,
+  ...
+)
+
+\method{hpc_iterate}{tidytargets}(
   input_hpc,
   target_output = NULL,
   user_function = NULL,

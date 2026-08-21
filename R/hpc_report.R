@@ -9,11 +9,23 @@
 #' @param rmd_path Character path to the `.qmd` or `.Rmd` report file.
 #' @param ... Named arguments passed as report parameters.
 #'
+#' @export
+hpc_report <- function(input_hpc, target_output = NULL, rmd_path = NULL, ...) {
+  UseMethod("hpc_report")
+}
+
+#' @rdname hpc_report
+#' @export
+hpc_report.default <- function(input_hpc, target_output = NULL, rmd_path = NULL, ...) {
+  stop_if_not_tidytargets()
+}
+
+#' @rdname hpc_report
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
-hpc_report = function(input_hpc, target_output = NULL, rmd_path = NULL, ...) {
+hpc_report.tidytargets <- function(input_hpc, target_output = NULL, rmd_path = NULL, ...) {
     
     # # Check for argument consistency
     # check_for_name_value_conflicts(...)

@@ -22,3 +22,4 @@ temp_computing_resources.rds
 # Exclude README from being ignored
 !README.md
 tidytargets.Rproj
+.cursor/rules/devtools-test-after-changes.mdc

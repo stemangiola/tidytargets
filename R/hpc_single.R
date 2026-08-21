@@ -13,18 +13,44 @@
 #'   maps over input values.
 #' @param ... Named arguments passed as target inputs.
 #'
+#' @export
+hpc_single <- function(
+    input_hpc,
+    target_output = NULL,
+    user_function = NULL,
+    user_function_source_path = NULL,
+    iterate = "none",
+    ...
+) {
+  UseMethod("hpc_single")
+}
+
+#' @rdname hpc_single
+#' @export
+hpc_single.default <- function(
+    input_hpc,
+    target_output = NULL,
+    user_function = NULL,
+    user_function_source_path = NULL,
+    iterate = "none",
+    ...
+) {
+  stop_if_not_tidytargets()
+}
+
+#' @rdname hpc_single
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
-hpc_single = 
-  function(
-    input_hpc, 
-    target_output = NULL, 
-    user_function = NULL, 
+hpc_single.tidytargets <- function(
+    input_hpc,
+    target_output = NULL,
+    user_function = NULL,
     user_function_source_path = NULL,
-    iterate = "none", 
-    ...) {
+    iterate = "none",
+    ...
+) {
     
     # Target script
     target_script = glue("{input_hpc$initialisation$store}.R")

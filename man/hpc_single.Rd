@@ -2,9 +2,29 @@
 % Please edit documentation in R/hpc_single.R
 \name{hpc_single}
 \alias{hpc_single}
+\alias{hpc_single.default}
+\alias{hpc_single.tidytargets}
 \title{Add a Single (Non-Iterated) Step to the tidytargets Pipeline}
 \usage{
 hpc_single(
+  input_hpc,
+  target_output = NULL,
+  user_function = NULL,
+  user_function_source_path = NULL,
+  iterate = "none",
+  ...
+)
+
+\method{hpc_single}{default}(
+  input_hpc,
+  target_output = NULL,
+  user_function = NULL,
+  user_function_source_path = NULL,
+  iterate = "none",
+  ...
+)
+
+\method{hpc_single}{tidytargets}(
   input_hpc,
   target_output = NULL,
   user_function = NULL,

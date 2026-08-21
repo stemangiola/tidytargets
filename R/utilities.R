@@ -4,6 +4,13 @@ add_class <- function(obj, class_name) {
   return(obj)
 }
 
+stop_if_not_tidytargets <- function() {
+  stop(
+    "tidytargets says: this step expects a tidytargets object from hpc_initialise().",
+    call. = FALSE
+  )
+}
+
 # Negation
 not = function(is){	!is }
 

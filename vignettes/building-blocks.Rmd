@@ -26,7 +26,7 @@ show_script <- function(store) {
 }
 ```
 
-tidytargets is a tidy, pipe-friendly grammar for `{targets}`. Each grammar function is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it appends `tar_target` definitions to a pipeline script. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
+tidytargets is a tidy, pipe-friendly grammar for `{targets}`. `hpc_initialise()` constructs a `tidytargets` object; the other building blocks are S3 methods on that class. Each method is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it appends `tar_target` definitions to a pipeline script. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
 
 The composition is **lazy**. `hpc_initialise()`, `hpc_iterate()`, `hpc_single()`, `hpc_merge()`, and `hpc_report()` only write factories into `{store}.R`. User functions are not called until `hpc_evaluate()` (or printing the `tidytargets` object), which closes the script and runs `targets::tar_make()`.
 

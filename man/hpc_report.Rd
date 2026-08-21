@@ -2,9 +2,15 @@
 % Please edit documentation in R/hpc_report.R
 \name{hpc_report}
 \alias{hpc_report}
+\alias{hpc_report.default}
+\alias{hpc_report.tidytargets}
 \title{Add a Report Step to the tidytargets Pipeline}
 \usage{
 hpc_report(input_hpc, target_output = NULL, rmd_path = NULL, ...)
+
+\method{hpc_report}{default}(input_hpc, target_output = NULL, rmd_path = NULL, ...)
+
+\method{hpc_report}{tidytargets}(input_hpc, target_output = NULL, rmd_path = NULL, ...)
 }
 \arguments{
 \item{input_hpc}{A \code{tidytargets} object.}

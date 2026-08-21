@@ -14,18 +14,41 @@
 #' @param ... Named arguments passed as target inputs; use `is_target()` to
 #'   reference upstream targets by name.
 #'
+#' @export
+hpc_iterate <- function(
+    input_hpc,
+    target_output = NULL,
+    user_function = NULL,
+    user_function_source_path = NULL,
+    ...
+) {
+  UseMethod("hpc_iterate")
+}
+
+#' @rdname hpc_iterate
+#' @export
+hpc_iterate.default <- function(
+    input_hpc,
+    target_output = NULL,
+    user_function = NULL,
+    user_function_source_path = NULL,
+    ...
+) {
+  stop_if_not_tidytargets()
+}
+
+#' @rdname hpc_iterate
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
-hpc_iterate = 
-  function(
-    input_hpc, 
-    target_output = NULL, 
-    user_function = NULL, 
+hpc_iterate.tidytargets <- function(
+    input_hpc,
+    target_output = NULL,
+    user_function = NULL,
     user_function_source_path = NULL,
     ...
-  ) {
+) {
     
     # Check for argument consistency
     check_for_name_value_conflicts(...)
@@ -86,6 +109,3 @@ hpc_iterate =
     
     
   }
-
-
-

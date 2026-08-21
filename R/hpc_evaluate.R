@@ -15,6 +15,12 @@ hpc_evaluate <- function(input_hpc) {
 }
 
 #' @rdname hpc_evaluate
+#' @export
+hpc_evaluate.default <- function(input_hpc) {
+  stop_if_not_tidytargets()
+}
+
+#' @rdname hpc_evaluate
 #' @importFrom glue glue
 #' @importFrom targets tar_make tar_meta
 #' @export

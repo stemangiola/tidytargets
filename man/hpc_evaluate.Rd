@@ -2,10 +2,13 @@
 % Please edit documentation in R/hpc_evaluate.R
 \name{hpc_evaluate}
 \alias{hpc_evaluate}
+\alias{hpc_evaluate.default}
 \alias{hpc_evaluate.tidytargets}
 \title{Execute the tidytargets Pipeline}
 \usage{
 hpc_evaluate(input_hpc)
+
+\method{hpc_evaluate}{default}(input_hpc)
 
 \method{hpc_evaluate}{tidytargets}(input_hpc)
 }

@@ -11,18 +11,41 @@
 #'   source in the worker. `NULL` sources nothing.
 #' @param ... Named arguments passed as target inputs.
 #'
+#' @export
+hpc_merge <- function(
+    input_hpc,
+    target_output = NULL,
+    user_function = NULL,
+    user_function_source_path = NULL,
+    ...
+) {
+  UseMethod("hpc_merge")
+}
+
+#' @rdname hpc_merge
+#' @export
+hpc_merge.default <- function(
+    input_hpc,
+    target_output = NULL,
+    user_function = NULL,
+    user_function_source_path = NULL,
+    ...
+) {
+  stop_if_not_tidytargets()
+}
+
+#' @rdname hpc_merge
 #' @importFrom glue glue
 #' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
-hpc_merge = 
-  function(
-    input_hpc, 
-    target_output = NULL, 
-    user_function = NULL, 
+hpc_merge.tidytargets <- function(
+    input_hpc,
+    target_output = NULL,
+    user_function = NULL,
     user_function_source_path = NULL,
     ...
-  ) {
+) {
     
     # Check for argument consistency
     check_for_name_value_conflicts(...)
@@ -85,4 +108,3 @@ hpc_merge =
     
     
   }
-

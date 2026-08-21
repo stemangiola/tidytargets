@@ -67,3 +67,11 @@ test_that("hpc_iterate and hpc_single chain onto a tidytargets object", {
   expect_true(any(grepl("target_output = \"data\"", script)))
   expect_true(any(grepl("target_output = \"n_inputs\"", script)))
 })
+
+test_that("grammar steps error on non-tidytargets input", {
+  expect_error(hpc_iterate("not a pipeline"), "tidytargets object")
+  expect_error(hpc_single("not a pipeline"), "tidytargets object")
+  expect_error(hpc_merge("not a pipeline"), "tidytargets object")
+  expect_error(hpc_report("not a pipeline"), "tidytargets object")
+  expect_error(hpc_evaluate("not a pipeline"), "tidytargets object")
+})

@@ -2,9 +2,27 @@
 % Please edit documentation in R/hpc_merge.R
 \name{hpc_merge}
 \alias{hpc_merge}
+\alias{hpc_merge.default}
+\alias{hpc_merge.tidytargets}
 \title{Add a Merge Step to the tidytargets Pipeline}
 \usage{
 hpc_merge(
+  input_hpc,
+  target_output = NULL,
+  user_function = NULL,
+  user_function_source_path = NULL,
+  ...
+)
+
+\method{hpc_merge}{default}(
+  input_hpc,
+  target_output = NULL,
+  user_function = NULL,
+  user_function_source_path = NULL,
+  ...
+)
+
+\method{hpc_merge}{tidytargets}(
   input_hpc,
   target_output = NULL,
   user_function = NULL,
