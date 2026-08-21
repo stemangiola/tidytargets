@@ -1,0 +1,269 @@
+---
+title: "Building blocks of tidytargets"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Building blocks of tidytargets}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  class.output = "r"
+)
+library(tidytargets)
+
+work <- tempfile("tidytargets-vignette-")
+dir.create(work)
+knitr::opts_knit$set(root.dir = work)
+
+show_script <- function(store) {
+  path <- paste0(store, ".R")
+  cat("## ", path, "\n\n", sep = "")
+  writeLines(readLines(path))
+}
+```
+
+tidytargets is a tidy, pipe-friendly grammar for `{targets}`. Each grammar function is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it appends `tar_target` definitions to a pipeline script. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
+
+This vignette walks through every building block and prints the targets script after each step.
+
+## Building blocks
+
+| Function | Role |
+| --- | --- |
+| `hpc_initialise()` | Start a pipeline: write the script header, register inputs |
+| `is_target()` | Mark an argument as an upstream target name |
+| `hpc_iterate()` | Map a function over inputs (and optional tiers) |
+| `hpc_single()` | Add one non-iterated target |
+| `hpc_merge()` | Combine iterated results into one object |
+| `hpc_report()` | Render a Quarto / R Markdown report |
+| `hpc_evaluate()` | Close the script and run `tar_make()` |
+| `hpc_factory()` | Internal factory used by iterate / single / merge |
+
+`hpc_factory()` is not meant to be called directly. `hpc_iterate()`, `hpc_single()`, and `hpc_merge()` all append `target_list |> target_append(hpc_factory(...))` to the script.
+
+## Toy inputs
+
+`hpc_initialise()` takes a named vector of inputs, typically file paths. Here two RDS files stand in for samples.
+
+```{r inputs}
+files <- c(
+  sample_a = "a.rds",
+  sample_b = "b.rds"
+)
+saveRDS(1:3, files[["sample_a"]])
+saveRDS(4:6, files[["sample_b"]])
+store <- "pipeline"
+```
+
+## `hpc_initialise()`
+
+This writes `{store}.R`, saves the input vector, and registers two mapped targets:
+
+- `input_list` — the named input vector
+- `sample_names` — the names of that vector
+
+With no `computing_resources`, the pipeline is sequential.
+
+```{r initialise}
+pipe <- files |>
+  hpc_initialise(store = store)
+```
+
+```{r initialise-script, comment = ""}
+show_script(store)
+```
+
+## `is_target()`
+
+Arguments to later steps are taken as literal values unless you wrap the name of an upstream target:
+
+```{r is-target}
+is_target("input_list")
+```
+
+That symbol is what `{targets}` wires as a dependency.
+
+## `hpc_iterate()`
+
+Map a function over every input. `file = "input_list" |> is_target()` means “use the `input_list` target, one element per branch”.
+
+```{r iterate-read}
+pipe <- pipe |>
+  hpc_iterate(
+    target_output = "data",
+    user_function = readRDS |> quote(),
+    file = "input_list" |> is_target()
+  )
+```
+
+```{r iterate-read-script, comment = ""}
+show_script(store)
+```
+
+A second iterate maps over the result of the first:
+
+```{r iterate-length}
+pipe <- pipe |>
+  hpc_iterate(
+    target_output = "n",
+    user_function = length |> quote(),
+    x = "data" |> is_target()
+  )
+```
+
+```{r iterate-length-script, comment = ""}
+show_script(store)
+```
+
+## `hpc_single()`
+
+One target, not mapped over samples. Use this for file-tracking targets, scalars, or anything that should run once.
+
+```{r single}
+pipe <- pipe |>
+  hpc_single(
+    target_output = "n_samples",
+    user_function = length |> quote(),
+    x = "sample_names" |> is_target()
+  )
+```
+
+```{r single-script, comment = ""}
+show_script(store)
+```
+
+`hpc_initialise()` itself uses `hpc_single()` for the `*_file` targets (`format = "file"`).
+
+## `hpc_merge()`
+
+Collect every branch of an iterated target into one object.
+
+```{r merge}
+pipe <- pipe |>
+  hpc_merge(
+    target_output = "n_total",
+    user_function = (function(lengths) sum(unlist(lengths))) |> quote(),
+    lengths = "n" |> is_target()
+  )
+```
+
+```{r merge-script, comment = ""}
+show_script(store)
+```
+
+## `hpc_report()`
+
+Appends a `tarchetypes::tar_quarto_raw()` factory. Rendering happens later, when you evaluate the pipeline; the grammar only writes the target.
+
+```{r report-file}
+writeLines(
+  c(
+    "---",
+    "title: Example report",
+    "format: html",
+    "params:",
+    "  n_total: 0",
+    "  n_samples: 0",
+    "---",
+    "",
+    "Samples: `r params$n_samples`. Values: `r params$n_total`."
+  ),
+  "example-report.qmd"
+)
+```
+
+```{r report}
+pipe <- pipe |>
+  hpc_report(
+    target_output = "report",
+    rmd_path = "example-report.qmd",
+    n_total = "n_total" |> is_target(),
+    n_samples = "n_samples" |> is_target()
+  )
+```
+
+```{r report-script, comment = ""}
+show_script(store)
+```
+
+## `hpc_evaluate()`
+
+Closes the script with a final `target_list` expression and calls `targets::tar_make()`. Printing a `tidytargets` object does the same thing.
+
+```{r evaluate, eval = FALSE}
+pipe |> hpc_evaluate()
+```
+
+The last two lines of the script after evaluate are:
+
+``` r
+target_list
+```
+
+Do not print the pipeline object unless you intend to run it.
+
+## Tiers
+
+`tier` splits inputs across named controllers. The factory then emits one target per tier (`data_1`, `data_2`, …) instead of a single mapped target.
+
+```{r tiers}
+files3 <- c(
+  sample_a = "a.rds",
+  sample_b = "b.rds",
+  sample_c = "c.rds"
+)
+saveRDS(7:9, files3[["sample_c"]])
+
+tiered_store <- "tiered_pipeline"
+
+tiered <- files3 |>
+  hpc_initialise(
+    store = tiered_store,
+    tier = c(1, 1, 2)
+  ) |>
+  hpc_iterate(
+    target_output = "data",
+    user_function = readRDS |> quote(),
+    file = "input_list" |> is_target()
+  )
+```
+
+```{r tiers-script, comment = ""}
+show_script(tiered_store)
+```
+
+Controller names must match the `tier` labels when you pass a `{crew}` controller group:
+
+```{r crew, eval = FALSE}
+computing_resources <- crew::crew_controller_group(
+  crew::crew_controller_local(name = "1", workers = 4),
+  crew::crew_controller_local(name = "2", workers = 10)
+)
+
+files3 |>
+  hpc_initialise(
+    store = "tiered_pipeline",
+    tier = c(1, 1, 2),
+    computing_resources = computing_resources
+  )
+```
+
+tidytargets does not import a compute backend. `computing_resources` is passed through to `targets::tar_option_set(controller = )`.
+
+## Custom functions from a file
+
+`hpc_iterate()`, `hpc_single()`, and `hpc_merge()` accept `user_function_source_path`. The path is written as `source(...)` in the targets script so workers can load helpers that are not in a package.
+
+```{r source-path, eval = FALSE}
+pipe |>
+  hpc_iterate(
+    target_output = "transformed",
+    user_function = my_transform |> quote(),
+    user_function_source_path = "helpers.R",
+    x = "data" |> is_target()
+  )
+```
