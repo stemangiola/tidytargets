@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tidy Grammar for Targets Pipelines • tidytargets</title>
+<title>Tidy Pipe-Friendly Grammar for Targets Pipelines • tidytargets</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Tidy Grammar for Targets Pipelines">
-<meta property="og:description" content="A pipe-friendly grammar for composing targets pipelines. Build iterated, merged, and report steps with a tidy interface, then deploy the same pipeline locally, on HPC, or in the cloud.">
+<script src="pkgdown.js"></script><meta property="og:title" content="Tidy Pipe-Friendly Grammar for Targets Pipelines">
+<meta property="og:description" content="A tidy, pipe-friendly grammar for composing targets pipelines. Internally it is based on targets factories, translating piped steps into a dependency graph that can be deployed locally, on HPC, or in the cloud.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -61,8 +61,8 @@
 <div class="section level1">
 <div class="page-header"><h1 id="tidytargets">tidytargets<a class="anchor" aria-label="anchor" href="#tidytargets"></a>
 </h1></div>
-<p>Compose <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> pipelines with pipes (<code>|&gt;</code>) and run them locally, on HPC, or in the cloud.</p>
-<p><code>tidytargets</code> is a tidy grammar for the <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> workflow manager. You describe steps with <code><a href="reference/hpc_iterate.html">hpc_iterate()</a></code>, <code><a href="reference/hpc_single.html">hpc_single()</a></code>, <code><a href="reference/hpc_merge.html">hpc_merge()</a></code>, and <code><a href="reference/hpc_report.html">hpc_report()</a></code>; the package writes a dependency graph that <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> executes. Compute backends (for example <a href="https://wlandau.github.io/crew/" class="external-link">crew</a> or <a href="https://wlandau.github.io/crew.cluster/" class="external-link">crew.cluster</a>) are optional and passed in at <code><a href="reference/initialise_hpc.html">initialise_hpc()</a></code>.</p>
+<p>A tidy, pipe-friendly grammar for <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a>, internally based on <a href="https://books.ropensci.org/targets/static.html#target-factories" class="external-link">targets factories</a>.</p>
+<p>Compose pipelines with pipes (<code>|&gt;</code>) and run them locally, on HPC, or in the cloud. You describe steps with <code><a href="reference/hpc_iterate.html">hpc_iterate()</a></code>, <code><a href="reference/hpc_single.html">hpc_single()</a></code>, <code><a href="reference/hpc_merge.html">hpc_merge()</a></code>, and <code><a href="reference/hpc_report.html">hpc_report()</a></code>; those calls are factories that write a <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> dependency graph. Compute backends (for example <a href="https://wlandau.github.io/crew/" class="external-link">crew</a> or <a href="https://wlandau.github.io/crew.cluster/" class="external-link">crew.cluster</a>) are optional and passed in at <code><a href="reference/hpc_initialise.html">hpc_initialise()</a></code>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -72,7 +72,7 @@
 <div class="section level2">
 <h2 id="a-minimal-pipeline">A minimal pipeline<a class="anchor" aria-label="anchor" href="#a-minimal-pipeline"></a>
 </h2>
-<p><code><a href="reference/initialise_hpc.html">initialise_hpc()</a></code> takes a named vector of inputs (typically file paths). Use <code><a href="reference/is_target.html">is_target()</a></code> to point a step at an upstream target. With no <code>computing_resources</code>, the pipeline runs sequentially.</p>
+<p><code><a href="reference/hpc_initialise.html">hpc_initialise()</a></code> takes a named vector of inputs (typically file paths). Use <code><a href="reference/is_target.html">is_target()</a></code> to point a step at an upstream target. With no <code>computing_resources</code>, the pipeline runs sequentially.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">tidytargets</span><span class="op">)</span></span>
 <span></span>
@@ -82,7 +82,7 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">files</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/initialise_hpc.html">initialise_hpc</a></span><span class="op">(</span>store <span class="op">=</span> <span class="st">"_targets"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/hpc_initialise.html">hpc_initialise</a></span><span class="op">(</span>store <span class="op">=</span> <span class="st">"_targets"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/hpc_iterate.html">hpc_iterate</a></span><span class="op">(</span></span>
 <span>    target_output <span class="op">=</span> <span class="st">"data"</span>,</span>
 <span>    user_function <span class="op">=</span> <span class="va">readRDS</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -93,8 +93,8 @@
 <span>    user_function <span class="op">=</span> <span class="va">summary</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    object <span class="op">=</span> <span class="st">"data"</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/is_target.html">is_target</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/evaluate_hpc.html">evaluate_hpc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><code><a href="reference/initialise_hpc.html">initialise_hpc()</a></code> registers two mapped targets for you:</p>
+<span>  <span class="fu"><a href="reference/hpc_evaluate.html">hpc_evaluate</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="reference/hpc_initialise.html">hpc_initialise()</a></code> registers two mapped targets for you:</p>
 <ul>
 <li>
 <code>input_list</code> — the named input vector</li>
@@ -116,7 +116,7 @@
 </tr></thead>
 <tbody>
 <tr>
-<td><code><a href="reference/initialise_hpc.html">initialise_hpc()</a></code></td>
+<td><code><a href="reference/hpc_initialise.html">hpc_initialise()</a></code></td>
 <td>Start a pipeline: store, optional controller, tiers</td>
 </tr>
 <tr>
@@ -136,7 +136,7 @@
 <td>Render a Quarto / R Markdown report</td>
 </tr>
 <tr>
-<td><code><a href="reference/evaluate_hpc.html">evaluate_hpc()</a></code></td>
+<td><code><a href="reference/hpc_evaluate.html">hpc_evaluate()</a></code></td>
 <td>Write the target list and run <code>tar_make()</code>
 </td>
 </tr>
@@ -156,7 +156,7 @@
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">computing_resources</span> <span class="op">&lt;-</span> <span class="fu">crew</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew/reference/crew_controller_local.html" class="external-link">crew_controller_local</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
-<p>Pass this to <code>initialise_hpc(computing_resources = ...)</code>.</p>
+<p>Pass this to <code>hpc_initialise(computing_resources = ...)</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="slurm">SLURM<a class="anchor" aria-label="anchor" href="#slurm"></a>
@@ -181,7 +181,7 @@
 <span>  <span class="fu">crew</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew/reference/crew_controller_local.html" class="external-link">crew_controller_local</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"2"</span>, workers <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="reference/initialise_hpc.html">initialise_hpc</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="reference/hpc_initialise.html">hpc_initialise</a></span><span class="op">(</span></span>
 <span>  <span class="va">files</span>,</span>
 <span>  tier <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>  computing_resources <span class="op">=</span> <span class="va">computing_resources</span></span>
