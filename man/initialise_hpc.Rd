@@ -7,7 +7,7 @@
 initialise_hpc(
   input_hpc,
   store = targets::tar_config_get("store"),
-  computing_resources = crew_controller_local(workers = 1),
+  computing_resources = NULL,
   tier = rep(1, length(input_hpc)),
   debug_step = NULL,
   verbosity = targets::tar_config_get("reporter_make"),
@@ -25,8 +25,11 @@ are used.}
 
 \item{store}{Directory path where pipeline files and targets store are written.}
 
-\item{computing_resources}{A \code{crew} controller object (or list of controllers)
-specifying the computing back-end. Defaults to a local single-worker controller.}
+\item{computing_resources}{A controller object accepted by
+\code{targets::tar_option_set(controller = )}, such as a \code{crew} controller or
+controller group. \code{NULL} (the default) runs the pipeline sequentially.
+tidytargets does not depend on any compute backend; pass whatever your
+deployment uses.}
 
 \item{tier}{Integer vector (same length as \code{input_hpc}) assigning each input
 to a processing tier for tiered execution. Default: all inputs in tier 1.}

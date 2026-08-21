@@ -22,3 +22,8 @@ test_that("get_positions groups indices by unique value", {
   expect_equal(result$a, c(1, 2, 5))
   expect_equal(result$b, 3)
 })
+
+test_that("package_of_object is empty for NULL and plain lists of NULLs", {
+  expect_equal(tidytargets:::package_of_object(NULL), character())
+  expect_equal(tidytargets:::package_of_object(list(NULL, NULL)), character())
+})

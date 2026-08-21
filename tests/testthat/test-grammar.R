@@ -2,8 +2,6 @@ library(testthat)
 library(tidytargets)
 
 test_that("initialise_hpc returns a tidytargets object with input targets", {
-  skip_if_not_installed("crew")
-
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -27,10 +25,15 @@ test_that("initialise_hpc returns a tidytargets object with input targets", {
   expect_true("sample_names" %in% names(hpc))
   expect_equal(hpc$input_list$iterate, "map")
   expect_equal(hpc$sample_names$iterate, "map")
+  expect_null(hpc$initialisation$computing_resources)
+
+  script <- readLines(paste0(store, ".R"))
+  expect_false(any(grepl('library\\("crew', script)))
+  expect_false(any(grepl("crew_controller_group", script)))
+  expect_true(any(grepl("controller = readRDS", script)))
 })
 
 test_that("hpc_iterate and hpc_single chain onto a tidytargets object", {
-  skip_if_not_installed("crew")
 
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)

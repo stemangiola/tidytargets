@@ -2,7 +2,7 @@
 
 Compose `{targets}` pipelines with pipes (`|>`) and run them locally, on HPC, or in the cloud.
 
-`tidytargets` is a tidy grammar for the [targets](https://docs.ropensci.org/targets/) workflow manager. You describe steps with `hpc_iterate()`, `hpc_single()`, `hpc_merge()`, and `hpc_report()`; the package writes a dependency graph that `{targets}` + `{crew}` can execute in parallel.
+`tidytargets` is a tidy grammar for the [targets](https://docs.ropensci.org/targets/) workflow manager. You describe steps with `hpc_iterate()`, `hpc_single()`, `hpc_merge()`, and `hpc_report()`; the package writes a dependency graph that `{targets}` executes. Compute backends (for example `{crew}` or `{crew.cluster}`) are optional and passed in at `initialise_hpc()`.
 
 ## Installation
 
@@ -12,11 +12,10 @@ remotes::install_github("MangiolaLaboratory/tidytargets")
 
 ## A minimal pipeline
 
-`initialise_hpc()` takes a named vector of inputs (typically file paths). Use `is_target()` to point a step at an upstream target.
+`initialise_hpc()` takes a named vector of inputs (typically file paths). Use `is_target()` to point a step at an upstream target. With no `computing_resources`, the pipeline runs sequentially.
 
 ``` r
 library(tidytargets)
-library(crew)
 
 files <- c(
   sample_a = "a.rds",
@@ -24,10 +23,7 @@ files <- c(
 )
 
 files |>
-  initialise_hpc(
-    store = "_targets",
-    computing_resources = crew_controller_local(workers = 2)
-  ) |>
+  initialise_hpc(store = "_targets") |>
   hpc_iterate(
     target_output = "data",
     user_function = readRDS |> quote(),
@@ -50,7 +46,7 @@ files |>
 
 | Function | Role |
 | --- | --- |
-| `initialise_hpc()` | Start a pipeline: store, workers, tiers |
+| `initialise_hpc()` | Start a pipeline: store, optional controller, tiers |
 | `hpc_iterate()` | Map a function over inputs (and optional tiers) |
 | `hpc_single()` | Add one non-iterated target |
 | `hpc_merge()` | Combine iterated results into one object |
@@ -60,10 +56,12 @@ files |>
 
 ## Deployment
 
+Pass any controller that `targets::tar_option_set(controller = )` accepts. tidytargets does not import a backend.
+
 ### Local parallel computing
 
 ``` r
-computing_resources <- crew_controller_local(workers = 10)
+computing_resources <- crew::crew_controller_local(workers = 10)
 ```
 
 Pass this to `initialise_hpc(computing_resources = ...)`.
@@ -83,12 +81,17 @@ computing_resources <- crew.cluster::crew_controller_slurm(
 
 ### Tiers
 
-Assign inputs to resource tiers so large jobs use a different `{crew}` controller:
+Assign inputs to resource tiers so large jobs use a different named controller. The controller names must match the `tier` labels.
 
 ``` r
+computing_resources <- crew::crew_controller_group(
+  crew::crew_controller_local(name = "1", workers = 4),
+  crew::crew_controller_local(name = "2", workers = 10)
+)
+
 initialise_hpc(
   files,
   tier = c(1, 1, 2),
-  computing_resources = list(small_controller, large_controller)
+  computing_resources = computing_resources
 )
 ```

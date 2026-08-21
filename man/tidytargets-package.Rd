@@ -6,7 +6,7 @@
 \alias{tidytargets-package}
 \title{tidytargets: Tidy Grammar for Targets Pipelines}
 \description{
-A pipe-friendly grammar for composing targets pipelines. Build iterated, merged, and report steps with a tidy interface, then deploy the same pipeline locally, on HPC, or in the cloud via crew.
+A pipe-friendly grammar for composing targets pipelines. Build iterated, merged, and report steps with a tidy interface, then deploy the same pipeline locally, on HPC, or in the cloud.
 }
 \author{
 \strong{Maintainer}: Stefano Mangiola \email{mangiolastefano@gmail.com}
@@ -15,6 +15,7 @@ Authors:
 \itemize{
   \item Stefano Mangiola \email{mangiolastefano@gmail.com}
   \item Jiayi Si \email{si.j@wehi.edu.au}
+  \item Mengyuan Shen \email{shen.m@wehi.edu.au}
 }
 
 }

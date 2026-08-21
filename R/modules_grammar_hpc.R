@@ -10,8 +10,11 @@
 #'   per unit of iteration (e.g. sample). If names are not set, integer indices
 #'   are used.
 #' @param store Directory path where pipeline files and targets store are written.
-#' @param computing_resources A `crew` controller object (or list of controllers)
-#'   specifying the computing back-end. Defaults to a local single-worker controller.
+#' @param computing_resources A controller object accepted by
+#'   `targets::tar_option_set(controller = )`, such as a `crew` controller or
+#'   controller group. `NULL` (the default) runs the pipeline sequentially.
+#'   tidytargets does not depend on any compute backend; pass whatever your
+#'   deployment uses.
 #' @param tier Integer vector (same length as `input_hpc`) assigning each input
 #'   to a processing tier for tiered execution. Default: all inputs in tier 1.
 #' @param debug_step Character name of a single target to debug; passed to
@@ -34,16 +37,13 @@
 #' @importFrom glue glue
 #' @importFrom targets tar_script
 #' @importFrom purrr set_names
-#' @importFrom crew crew_controller_local
-#' @import crew.cluster
 #' @import tarchetypes
 #' @import targets
 #' @import here
-#' @import crew
 #' @export
 initialise_hpc <- function(input_hpc,
                            store =  targets::tar_config_get("store"),
-                           computing_resources = crew_controller_local(workers = 1),
+                           computing_resources = NULL,
                            tier = rep(1, length(input_hpc)),
                            debug_step = NULL,
                            verbosity = targets::tar_config_get("reporter_make"),
@@ -73,6 +73,7 @@ initialise_hpc <- function(input_hpc,
   input_hpc |> names() |> saveRDS("sample_names.rds")
   
   computing_resources |> saveRDS("temp_computing_resources.rds")
+  backend_packages <- package_of_object(computing_resources)
   
   # Write pipeline to a file
   {
@@ -81,8 +82,7 @@ initialise_hpc <- function(input_hpc,
     do.call("library", list("magrittr"))
     do.call("library", list("targets"))
     do.call("library", list("tarchetypes"))
-    do.call("library", list("crew"))
-    do.call("library", list("crew.cluster"))
+    lapply(bp, function(pkg) do.call("library", list(pkg)))
     
     tar_option_set(
       memory = "transient",
@@ -92,7 +92,7 @@ initialise_hpc <- function(input_hpc,
       error = e,
       debug = d, # Set the target you want to debug.
       cue = tar_cue(mode = u), # Force skip non-debugging outdated targets.
-      controller = crew_controller_group ( readRDS("temp_computing_resources.rds") ), 
+      controller = readRDS("temp_computing_resources.rds"), 
       packages = p,
       trust_object_timestamps = TRUE, 
       workspace_on_error = w
@@ -101,7 +101,7 @@ initialise_hpc <- function(input_hpc,
     target_list = list(  )
     
     } |> 
-    substitute(env = list(d = debug_step, e = error, u = update, g = garbage_collection, w = workspace_on_error, p = packages)) |> 
+    substitute(env = list(d = debug_step, e = error, u = update, g = garbage_collection, w = workspace_on_error, p = packages, bp = backend_packages)) |> 
     tar_script_append2(script = glue("{store}.R"), append = FALSE)
 
   
