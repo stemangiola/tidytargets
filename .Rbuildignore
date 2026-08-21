@@ -10,3 +10,6 @@
 ^.*\.tar\.gz$
 ^.*\.Rcheck$
 README.md
+^doc$
+^Meta$
+^LICENSE\.md$

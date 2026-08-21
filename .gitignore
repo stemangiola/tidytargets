@@ -23,3 +23,5 @@ temp_computing_resources.rds
 !README.md
 tidytargets.Rproj
 .cursor/rules/devtools-test-after-changes.mdc
+/doc/
+/Meta/
