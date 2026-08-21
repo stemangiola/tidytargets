@@ -93,7 +93,7 @@ tt_initialise <- function(tt_input,
       cue = tar_cue(mode = u), # Force skip non-debugging outdated targets.
       controller = readRDS("temp_computing_resources.rds"), 
       packages = p,
-      trust_object_timestamps = TRUE, 
+      trust_timestamps = TRUE, 
       workspace_on_error = w
     )
      
