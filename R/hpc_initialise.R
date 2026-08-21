@@ -3,8 +3,8 @@
 #' @description
 #' Sets up and writes a `targets` pipeline script. Saves input paths and
 #' configuration to disk, then returns a `tidytargets` object that downstream
-#' grammar functions (e.g. `hpc_iterate()`, `hpc_single()`, `evaluate_hpc()`)
-#' can extend before the pipeline is executed with `evaluate_hpc()`.
+#' grammar functions (e.g. `hpc_iterate()`, `hpc_single()`, `hpc_evaluate()`)
+#' can extend before the pipeline is executed with `hpc_evaluate()`.
 #'
 #' @param input_hpc Named vector of inputs, typically file paths, one element
 #'   per unit of iteration (e.g. sample). If names are not set, integer indices
@@ -41,7 +41,7 @@
 #' @import targets
 #' @import here
 #' @export
-initialise_hpc <- function(input_hpc,
+hpc_initialise <- function(input_hpc,
                            store =  targets::tar_config_get("store"),
                            computing_resources = NULL,
                            tier = rep(1, length(input_hpc)),

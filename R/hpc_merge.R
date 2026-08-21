@@ -30,7 +30,7 @@ hpc_merge =
     # Target script
     target_script = glue("{input_hpc$initialisation$store}.R")
     
-    # Delete line with target in case the user execute the command, without calling initialise_hpc
+    # Delete line with target in case the user execute the command, without calling hpc_initialise
     target_output |>  delete_lines_with_word(target_script)
     
     # Append source if any
@@ -40,7 +40,7 @@ hpc_merge =
     # If no tiers
     if(input_hpc$initialisation$tier |> get_positions() |> length() < 2)
       tar_append(
-          fx = hpc_internal |> quote(),
+          fx = hpc_factory |> quote(),
           target_output = target_output,
           script = target_script,
           user_function = user_function,
@@ -60,7 +60,7 @@ hpc_merge =
       # this is needed because I cannot use ellipse (...) anymore, I have to use do.call.
       do.call(tar_append, c(
         list(
-          fx = hpc_internal |> quote() |> quote(),
+          fx = hpc_factory |> quote() |> quote(),
           #tiers = input_hpc$initialisation$tier |> get_positions(),
           target_output = t |> substitute(env = list(t = target_output)) ,
           script = target_script,

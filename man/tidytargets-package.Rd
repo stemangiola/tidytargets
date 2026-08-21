@@ -4,9 +4,9 @@
 \name{tidytargets-package}
 \alias{tidytargets}
 \alias{tidytargets-package}
-\title{tidytargets: Tidy Grammar for Targets Pipelines}
+\title{tidytargets: Tidy Pipe-Friendly Grammar for Targets Pipelines}
 \description{
-A pipe-friendly grammar for composing targets pipelines. Build iterated, merged, and report steps with a tidy interface, then deploy the same pipeline locally, on HPC, or in the cloud.
+A tidy, pipe-friendly grammar for composing targets pipelines. Internally it is based on targets factories, translating piped steps into a dependency graph that can be deployed locally, on HPC, or in the cloud.
 }
 \author{
 \strong{Maintainer}: Stefano Mangiola \email{mangiolastefano@gmail.com}

@@ -1,7 +1,7 @@
 library(testthat)
 library(tidytargets)
 
-test_that("initialise_hpc returns a tidytargets object with input targets", {
+test_that("hpc_initialise returns a tidytargets object with input targets", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -16,7 +16,7 @@ test_that("initialise_hpc returns a tidytargets object with input targets", {
 
   store <- file.path(tmp, "store")
   hpc <- files |>
-    initialise_hpc(store = store)
+    hpc_initialise(store = store)
 
   expect_s3_class(hpc, "tidytargets")
   expect_equal(hpc$initialisation$store, store)
@@ -45,7 +45,7 @@ test_that("hpc_iterate and hpc_single chain onto a tidytargets object", {
 
   store <- file.path(tmp, "store")
   hpc <- files |>
-    initialise_hpc(store = store) |>
+    hpc_initialise(store = store) |>
     hpc_iterate(
       target_output = "data",
       user_function = readRDS |> quote(),

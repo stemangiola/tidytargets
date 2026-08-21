@@ -33,7 +33,7 @@ hpc_iterate =
     # Target script
     target_script = glue("{input_hpc$initialisation$store}.R")
     
-    # Delete line with target in case the user execute the command, without calling initialise_hpc
+    # Delete line with target in case the user execute the command, without calling hpc_initialise
     target_output |>  delete_lines_with_word(target_script)
     
     # Append source if any
@@ -59,7 +59,7 @@ hpc_iterate =
     }
 
     tar_append(
-      fx = hpc_internal |> quote(),
+      fx = hpc_factory |> quote(),
       tiers = tiers_value ,
       target_output = target_output,
       script = target_script,

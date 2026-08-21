@@ -17,6 +17,6 @@
 print.tidytargets <- function(x, ...){
   
   x |>
-    evaluate_hpc() |> 
+    hpc_evaluate() |> 
     print()
 }

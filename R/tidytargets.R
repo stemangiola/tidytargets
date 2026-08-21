@@ -1,4 +1,4 @@
-#' tidytargets: Tidy Grammar for Targets Pipelines
+#' tidytargets: Tidy Pipe-Friendly Grammar for Targets Pipelines
 #'
 #' @importFrom methods is
 #' @importFrom stats setNames

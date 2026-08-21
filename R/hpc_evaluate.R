@@ -5,19 +5,20 @@
 #' Closes the pipeline target list and calls `targets::tar_make()` to execute
 #' all queued steps. Returns the `tar_meta()` table.
 #'
-#' @param input_hpc A `tidytargets` object constructed by `initialise_hpc()` and
+#' @param input_hpc A `tidytargets` object constructed by `hpc_initialise()` and
 #'   extended with one or more pipeline step functions.
 #' @return A `tibble` with targets metadata.
-#' @name evaluate_hpc
+#' @name hpc_evaluate
 #' @export
-evaluate_hpc <- function(input_hpc) {
-  UseMethod("evaluate_hpc")
+hpc_evaluate <- function(input_hpc) {
+  UseMethod("hpc_evaluate")
 }
 
+#' @rdname hpc_evaluate
 #' @importFrom glue glue
 #' @importFrom targets tar_make tar_meta
 #' @export
-evaluate_hpc.tidytargets = function(input_hpc) {
+hpc_evaluate.tidytargets = function(input_hpc) {
   
   #-----------------------#
   # Close pipeline
