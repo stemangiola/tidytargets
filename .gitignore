@@ -21,3 +21,4 @@ temp_computing_resources.rds
 *.Rcheck
 # Exclude README from being ignored
 !README.md
+tidytargets.Rproj

@@ -10,6 +10,12 @@ Compose pipelines with pipes (`|>`) and run them locally, on HPC, or in the clou
 remotes::install_github("MangiolaLaboratory/tidytargets")
 ```
 
+A full walkthrough of every grammar function, with the `{targets}` script each step writes, is in the vignette:
+
+``` r
+vignette("building-blocks", package = "tidytargets")
+```
+
 ## A minimal pipeline
 
 `hpc_initialise()` takes a named vector of inputs (typically file paths). Use `is_target()` to point a step at an upstream target. With no `computing_resources`, the pipeline runs sequentially.
