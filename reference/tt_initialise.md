@@ -1,0 +1,96 @@
+# Initialise a tidytargets Pipeline
+
+Sets up and writes a `targets` pipeline script. Saves input paths and
+configuration to disk, then returns a `tidytargets` object that
+downstream grammar functions (e.g.
+[`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md),
+[`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md),
+[`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md))
+can extend before the pipeline is executed with
+[`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md).
+
+## Usage
+
+``` r
+tt_initialise(
+  tt_input,
+  store = targets::tar_config_get("store"),
+  computing_resources = NULL,
+  tier = rep(1, length(tt_input)),
+  debug_step = NULL,
+  verbosity = targets::tar_config_get("reporter_make"),
+  error = NULL,
+  update = "thorough",
+  garbage_collection = 0,
+  workspace_on_error = FALSE,
+  packages = "tidytargets"
+)
+```
+
+## Arguments
+
+- tt_input:
+
+  Named vector of inputs, typically file paths, one element per unit of
+  iteration (e.g. sample). If names are not set, integer indices are
+  used.
+
+- store:
+
+  Directory path where pipeline files and targets store are written.
+
+- computing_resources:
+
+  A controller object accepted by
+  `targets::tar_option_set(controller = )`, such as a `crew` controller
+  or controller group. `NULL` (the default) runs the pipeline
+  sequentially. tidytargets does not depend on any compute backend; pass
+  whatever your deployment uses.
+
+- tier:
+
+  Integer vector (same length as `tt_input`) assigning each input to a
+  processing tier for tiered execution. Default: all inputs in tier 1.
+
+- debug_step:
+
+  Character name of a single target to debug; passed to
+  `targets::tar_option_set(debug = ...)`. `NULL` disables debugging.
+
+- verbosity:
+
+  Reporter string passed to
+  [`targets::tar_make()`](https://docs.ropensci.org/targets/reference/tar_make.html).
+  Defaults to the current targets configuration value.
+
+- error:
+
+  Error-handling strategy passed to
+  [`targets::tar_option_set()`](https://docs.ropensci.org/targets/reference/tar_option_set.html).
+  `NULL` uses the targets default.
+
+- update:
+
+  Cue mode string for
+  [`targets::tar_cue()`](https://docs.ropensci.org/targets/reference/tar_cue.html),
+  controlling when targets are re-run. Default: `"thorough"`.
+
+- garbage_collection:
+
+  Numeric interval (in targets) at which R garbage collection is
+  triggered during the pipeline run. Default: `0` (disabled).
+
+- workspace_on_error:
+
+  Logical; if `TRUE`, saves a workspace snapshot when a target errors.
+  Default: `FALSE`.
+
+- packages:
+
+  Character vector of R packages loaded on workers. Defaults to
+  `"tidytargets"`.
+
+## Value
+
+A `tidytargets` S3 object containing the initialisation arguments, ready
+to be extended with pipeline step functions.
