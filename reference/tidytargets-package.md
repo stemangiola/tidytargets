@@ -5,6 +5,16 @@ Internally it is based on targets factories, translating piped steps
 into a dependency graph that can be deployed locally, on HPC, or in the
 cloud.
 
+## See also
+
+Useful links:
+
+- <https://stemangiola.github.io/tidytargets/>
+
+- <https://github.com/stemangiola/tidytargets>
+
+- Report bugs at <https://github.com/stemangiola/tidytargets/issues>
+
 ## Author
 
 **Maintainer**: Stefano Mangiola <mangiolastefano@gmail.com>

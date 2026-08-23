@@ -128,6 +128,10 @@
 <h2 id="grammar">Grammar<a class="anchor" aria-label="anchor" href="#grammar"></a>
 </h2>
 <table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
 <thead><tr>
 <th>Function</th>
 <th>Role</th>
@@ -159,11 +163,28 @@
 </td>
 </tr>
 <tr>
+<td><code><a href="reference/tt_metadata.html">tt_metadata()</a></code></td>
+<td>Get or set free-form metadata on the pipeline object</td>
+</tr>
+<tr>
 <td><code><a href="reference/is_target.html">is_target()</a></code></td>
 <td>Mark an argument as an upstream target name</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section level2">
+<h2 id="carrying-extra-information">Carrying extra information<a class="anchor" aria-label="anchor" href="#carrying-extra-information"></a>
+</h2>
+<p>A <code>tidytargets</code> object is a named list: <code>$initialisation</code> holds the arguments given to <code><a href="reference/tt_initialise.html">tt_initialise()</a></code>, and every other element is a target you added. Alongside those sits a free-form metadata store, reachable only through <code><a href="reference/tt_metadata.html">tt_metadata()</a></code>, for information that is not part of the graph — an API endpoint, a dataset identifier, a provenance note.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pipeline</span> <span class="op">&lt;-</span> <span class="va">files</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/tt_initialise.html">tt_initialise</a></span><span class="op">(</span>store <span class="op">=</span> <span class="st">"_targets"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/tt_metadata.html">tt_metadata</a></span><span class="op">(</span>api_url <span class="op">=</span> <span class="st">"https://api.example.org"</span>, api_version <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/tt_metadata.html">tt_metadata</a></span><span class="op">(</span><span class="va">pipeline</span><span class="op">)</span><span class="op">$</span><span class="va">api_url</span></span>
+<span><span class="co">#&gt; [1] "https://api.example.org"</span></span></code></pre></div>
+<p>Metadata is merged on each call, and passing <code>NULL</code> removes an entry. It travels with the object through every grammar step but is not written to the targets script, so workers cannot see it; values a target needs must be passed as arguments to <code><a href="reference/tt_iterate.html">tt_iterate()</a></code> or <code><a href="reference/tt_single.html">tt_single()</a></code>. The store is inert with respect to the rest of the grammar and constrains nothing — it imposes no restriction on your <code>target_output</code> names.</p>
 </div>
 <div class="section level2">
 <h2 id="deployment">Deployment<a class="anchor" aria-label="anchor" href="#deployment"></a>
@@ -172,14 +193,14 @@
 <div class="section level3">
 <h3 id="local-parallel-computing">Local parallel computing<a class="anchor" aria-label="anchor" href="#local-parallel-computing"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">computing_resources</span> <span class="op">&lt;-</span> <span class="fu">crew</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew/reference/crew_controller_local.html" class="external-link">crew_controller_local</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p>Pass this to <code>tt_initialise(computing_resources = ...)</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="slurm">SLURM<a class="anchor" aria-label="anchor" href="#slurm"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">computing_resources</span> <span class="op">&lt;-</span> <span class="fu">crew.cluster</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew.cluster/reference/crew_controller_slurm.html" class="external-link">crew_controller_slurm</a></span><span class="op">(</span></span>
 <span>  workers <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  tasks_max <span class="op">=</span> <span class="fl">1</span>,</span>

@@ -27,6 +27,8 @@
   : Add HPC step to pipeline
 - [`tt_merge()`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md)
   : Add a Merge Step to the tidytargets Pipeline
+- [`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)
+  : Get or Set Free-Form Metadata on a tidytargets Object
 - [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md)
   : Add a Report Step to the tidytargets Pipeline
 - [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)

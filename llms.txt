@@ -32,19 +32,13 @@ branches of the graph.
 
 ## Installation
 
-``` r
-
-remotes::install_github("stemangiola/tidytargets")
-```
+`remotes``::`[`install_github`](https://remotes.r-lib.org/reference/install_github.html)`(``"stemangiola/tidytargets"``)`
 
 A full walkthrough of every grammar function, with the
 [targets](https://docs.ropensci.org/targets/) script each step writes,
 is in the vignette:
 
-``` r
-
-vignette("building-blocks", package = "tidytargets")
-```
+[`vignette`](https://rdrr.io/r/utils/vignette.html)`(``"building-blocks"``, package ``=`` ``"tidytargets"``)`
 
 ## A minimal pipeline
 
@@ -54,31 +48,7 @@ takes a named vector of inputs (typically file paths). Use
 to point a step at an upstream target. With no `computing_resources`,
 the pipeline runs sequentially.
 
-``` r
-
-library(tidytargets)
-
-files <- c(
-  sample_a = "a.rds",
-  sample_b = "b.rds"
-)
-saveRDS(1:3, files[["sample_a"]])
-saveRDS(4:6, files[["sample_b"]])
-
-files |>
-  tt_initialise(store = "_targets") |>
-  tt_iterate(
-    target_output = "data",
-    user_function = readRDS |> quote(),
-    file = "input_list" |> is_target()
-  ) |>
-  tt_iterate(
-    target_output = "summaries",
-    user_function = summary |> quote(),
-    object = "data" |> is_target()
-  ) |>
-  tt_evaluate()
-```
+[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` ``files`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(`` `` sample_a ``=`` ``"a.rds"``,`` `` sample_b ``=`` ``"b.rds"`` ``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``1``:``3``, ``files``[[``"sample_a"``]``]``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``4``:``6``, ``files``[[``"sample_b"``]``]``)`` `` ``files`` ``|>`` `` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``store ``=`` ``"_targets"``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"data"``,`` `` user_function ``=`` ``readRDS`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` file ``=`` ``"input_list"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"summaries"``,`` `` user_function ``=`` ``summary`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` object ``=`` ``"data"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`` ``|>`` `` `[`tt_evaluate`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)`(``)`
 
     #> + input_list_file dispatched
     #> ✔ input_list_file completed [0ms, 97 B]
@@ -123,7 +93,32 @@ registers two mapped targets for you:
 | [`tt_merge()`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md) | Combine iterated results into one object |
 | [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md) | Render a Quarto / R Markdown report |
 | [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md) | Write the target list and run `tar_make()` |
+| [`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md) | Get or set free-form metadata on the pipeline object |
 | [`is_target()`](https://stemangiola.github.io/tidytargets/reference/is_target.md) | Mark an argument as an upstream target name |
+
+## Carrying extra information
+
+A `tidytargets` object is a named list: `$initialisation` holds the
+arguments given to
+[`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md),
+and every other element is a target you added. Alongside those sits a
+free-form metadata store, reachable only through
+[`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md),
+for information that is not part of the graph — an API endpoint, a
+dataset identifier, a provenance note.
+
+`pipeline`` ``<-`` ``files`` ``|>`` `` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``store ``=`` ``"_targets"``)`` ``|>`` `` `[`tt_metadata`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)`(``api_url ``=`` ``"https://api.example.org"``, api_version ``=`` ``2``)`` `` `[`tt_metadata`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)`(``pipeline``)``$``api_url`` ``#> [1] "https://api.example.org"`
+
+Metadata is merged on each call, and passing `NULL` removes an entry. It
+travels with the object through every grammar step but is not written to
+the targets script, so workers cannot see it; values a target needs must
+be passed as arguments to
+[`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)
+or
+[`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md).
+The store is inert with respect to the rest of the grammar and
+constrains nothing — it imposes no restriction on your `target_output`
+names.
 
 ## Deployment
 
@@ -132,26 +127,13 @@ accepts. tidytargets does not import a backend.
 
 ### Local parallel computing
 
-``` r
-
-computing_resources <- crew::crew_controller_local(workers = 10)
-```
+`computing_resources`` ``<-`` ``crew``::`[`crew_controller_local`](https://wlandau.github.io/crew/reference/crew_controller_local.html)`(``workers ``=`` ``10``)`
 
 Pass this to `tt_initialise(computing_resources = ...)`.
 
 ### SLURM
 
-``` r
-
-computing_resources <- crew.cluster::crew_controller_slurm(
-  workers = 50,
-  tasks_max = 1,
-  seconds_idle = 30,
-  options_cluster = crew.cluster::crew_options_slurm(
-    partition = "standard"
-  )
-)
-```
+`computing_resources`` ``<-`` ``crew.cluster``::`[`crew_controller_slurm`](https://wlandau.github.io/crew.cluster/reference/crew_controller_slurm.html)`(`` `` workers ``=`` ``50``,`` `` tasks_max ``=`` ``1``,`` `` seconds_idle ``=`` ``30``,`` `` options_cluster ``=`` ``crew.cluster``::`[`crew_options_slurm`](https://wlandau.github.io/crew.cluster/reference/crew_options_slurm.html)`(`` `` partition ``=`` ``"standard"`` `` ``)`` ``)`
 
 # Package index
 
@@ -182,6 +164,8 @@ computing_resources <- crew.cluster::crew_controller_slurm(
   : Add HPC step to pipeline
 - [`tt_merge()`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md)
   : Add a Merge Step to the tidytargets Pipeline
+- [`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)
+  : Get or Set Free-Form Metadata on a tidytargets Object
 - [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md)
   : Add a Report Step to the tidytargets Pipeline
 - [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)

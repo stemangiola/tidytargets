@@ -60,16 +60,7 @@ script.
 takes a named vector of inputs, typically file paths. Here two RDS files
 stand in for samples.
 
-``` r
-
-files <- c(
-  sample_a = "a.rds",
-  sample_b = "b.rds"
-)
-saveRDS(1:3, files[["sample_a"]])
-saveRDS(4:6, files[["sample_b"]])
-store <- "pipeline"
-```
+`files`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(`` `` sample_a ``=`` ``"a.rds"``,`` `` sample_b ``=`` ``"b.rds"`` ``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``1``:``3``, ``files``[[``"sample_a"``]``]``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``4``:``6``, ``files``[[``"sample_b"``]``]``)`` ``store`` ``<-`` ``"pipeline"`
 
 ## `tt_initialise()`
 
@@ -81,33 +72,9 @@ mapped targets:
 
 With no `computing_resources`, the pipeline is sequential.
 
-``` r
+`pipe`` ``<-`` ``files`` ``|>`` `` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``store ``=`` ``store``)`
 
-pipe <- files |>
-  tt_initialise(store = store)
-```
-
-``` r
-
-show_script(store)
-## pipeline.R
-
-    library(tidytargets)
-    do.call("library", list("dplyr"))
-    do.call("library", list("magrittr"))
-    do.call("library", list("targets"))
-    do.call("library", list("tarchetypes"))
-    lapply(character(0), function(pkg) do.call("library", list(pkg)))
-    tar_option_set(memory = "transient", garbage_collection = 0, 
-        storage = "worker", retrieval = "worker", error = NULL, 
-        debug = NULL, cue = tar_cue(mode = "thorough"), controller = readRDS("temp_computing_resources.rds"), 
-        packages = "tidytargets", trust_timestamps = TRUE, workspace_on_error = FALSE)
-    target_list = list()
-target_list |> target_append( tt_factory(target_output = "sample_names_file", user_function = "sample_names.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "sample_names", user_function = quote(readRDS),      file = quote(sample_names_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "input_list_file", user_function = "input_file.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "input_list", user_function = quote(readRDS),      file = quote(input_list_file), deployment = "main") )
-```
+`show_script``(``store``)`` ``## pipeline.R`` `` `` `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"magrittr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"targets"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"tarchetypes"``)``)`` `` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`` `` ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `` `` storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``NULL``, `` `` debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` `[`readRDS`](https://rdrr.io/r/base/readRDS.html)`(``"temp_computing_resources.rds"``)``, `` `` packages ``=`` ``"tidytargets"``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`` `` ``target_list`` ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names_file"``, user_function ``=`` ``"sample_names.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``sample_names_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list_file"``, user_function ``=`` ``"input_file.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list_file``)``, deployment ``=`` ``"main"``)`` ``)`
 
 ## `tt_iterate()`
 
@@ -115,114 +82,24 @@ Map a function over every input. Wrap an upstream target name with
 [`is_target()`](https://stemangiola.github.io/tidytargets/reference/is_target.md)
 so the argument is a dependency, not a literal string.
 
-``` r
+`pipe`` ``<-`` ``pipe`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"data"``,`` `` user_function ``=`` ``readRDS`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` file ``=`` ``"input_list"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`
 
-pipe <- pipe |>
-  tt_iterate(
-    target_output = "data",
-    user_function = readRDS |> quote(),
-    file = "input_list" |> is_target()
-  )
-```
-
-``` r
-
-show_script(store)
-## pipeline.R
-
-    library(tidytargets)
-    do.call("library", list("dplyr"))
-    do.call("library", list("magrittr"))
-    do.call("library", list("targets"))
-    do.call("library", list("tarchetypes"))
-    lapply(character(0), function(pkg) do.call("library", list(pkg)))
-    tar_option_set(memory = "transient", garbage_collection = 0, 
-        storage = "worker", retrieval = "worker", error = NULL, 
-        debug = NULL, cue = tar_cue(mode = "thorough"), controller = readRDS("temp_computing_resources.rds"), 
-        packages = "tidytargets", trust_timestamps = TRUE, workspace_on_error = FALSE)
-    target_list = list()
-target_list |> target_append( tt_factory(target_output = "sample_names_file", user_function = "sample_names.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "sample_names", user_function = quote(readRDS),      file = quote(sample_names_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "input_list_file", user_function = "input_file.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "input_list", user_function = quote(readRDS),      file = quote(input_list_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "data", user_function = quote(readRDS),      arguments_to_tier = character(0), arguments_already_tiered = character(0),      other_arguments_to_map = "input_list", file = quote(input_list)) )
-```
+`show_script``(``store``)`` ``## pipeline.R`` `` `` `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"magrittr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"targets"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"tarchetypes"``)``)`` `` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`` `` ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `` `` storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``NULL``, `` `` debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` `[`readRDS`](https://rdrr.io/r/base/readRDS.html)`(``"temp_computing_resources.rds"``)``, `` `` packages ``=`` ``"tidytargets"``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`` `` ``target_list`` ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names_file"``, user_function ``=`` ``"sample_names.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``sample_names_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list_file"``, user_function ``=`` ``"input_file.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"data"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, arguments_to_tier ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, arguments_already_tiered ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, other_arguments_to_map ``=`` ``"input_list"``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list``)``)`` ``)`
 
 A second iterate maps over the result of the first:
 
-``` r
+`pipe`` ``<-`` ``pipe`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"n"``,`` `` user_function ``=`` ``length`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` x ``=`` ``"data"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`
 
-pipe <- pipe |>
-  tt_iterate(
-    target_output = "n",
-    user_function = length |> quote(),
-    x = "data" |> is_target()
-  )
-```
-
-``` r
-
-show_script(store)
-## pipeline.R
-
-    library(tidytargets)
-    do.call("library", list("dplyr"))
-    do.call("library", list("magrittr"))
-    do.call("library", list("targets"))
-    do.call("library", list("tarchetypes"))
-    lapply(character(0), function(pkg) do.call("library", list(pkg)))
-    tar_option_set(memory = "transient", garbage_collection = 0, 
-        storage = "worker", retrieval = "worker", error = NULL, 
-        debug = NULL, cue = tar_cue(mode = "thorough"), controller = readRDS("temp_computing_resources.rds"), 
-        packages = "tidytargets", trust_timestamps = TRUE, workspace_on_error = FALSE)
-    target_list = list()
-target_list |> target_append( tt_factory(target_output = "sample_names_file", user_function = "sample_names.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "sample_names", user_function = quote(readRDS),      file = quote(sample_names_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "input_list_file", user_function = "input_file.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "input_list", user_function = quote(readRDS),      file = quote(input_list_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "data", user_function = quote(readRDS),      arguments_to_tier = character(0), arguments_already_tiered = character(0),      other_arguments_to_map = "input_list", file = quote(input_list)) )
-target_list |> target_append( tt_factory(target_output = "n", user_function = quote(length),      arguments_to_tier = character(0), arguments_already_tiered = character(0),      other_arguments_to_map = "data", x = quote(data)) )
-```
+`show_script``(``store``)`` ``## pipeline.R`` `` `` `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"magrittr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"targets"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"tarchetypes"``)``)`` `` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`` `` ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `` `` storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``NULL``, `` `` debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` `[`readRDS`](https://rdrr.io/r/base/readRDS.html)`(``"temp_computing_resources.rds"``)``, `` `` packages ``=`` ``"tidytargets"``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`` `` ``target_list`` ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names_file"``, user_function ``=`` ``"sample_names.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``sample_names_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list_file"``, user_function ``=`` ``"input_file.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"data"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, arguments_to_tier ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, arguments_already_tiered ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, other_arguments_to_map ``=`` ``"input_list"``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list``)``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"n"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``length``)``, arguments_to_tier ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, arguments_already_tiered ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, other_arguments_to_map ``=`` ``"data"``, x ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``data``)``)`` ``)`
 
 ## `tt_single()`
 
 One target, not mapped over samples. Use this for file-tracking targets,
 scalars, or anything that should run once.
 
-``` r
+`pipe`` ``<-`` ``pipe`` ``|>`` `` `[`tt_single`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)`(`` `` target_output ``=`` ``"n_samples"``,`` `` user_function ``=`` ``length`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` x ``=`` ``"sample_names"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`
 
-pipe <- pipe |>
-  tt_single(
-    target_output = "n_samples",
-    user_function = length |> quote(),
-    x = "sample_names" |> is_target()
-  )
-```
-
-``` r
-
-show_script(store)
-## pipeline.R
-
-    library(tidytargets)
-    do.call("library", list("dplyr"))
-    do.call("library", list("magrittr"))
-    do.call("library", list("targets"))
-    do.call("library", list("tarchetypes"))
-    lapply(character(0), function(pkg) do.call("library", list(pkg)))
-    tar_option_set(memory = "transient", garbage_collection = 0, 
-        storage = "worker", retrieval = "worker", error = NULL, 
-        debug = NULL, cue = tar_cue(mode = "thorough"), controller = readRDS("temp_computing_resources.rds"), 
-        packages = "tidytargets", trust_timestamps = TRUE, workspace_on_error = FALSE)
-    target_list = list()
-target_list |> target_append( tt_factory(target_output = "sample_names_file", user_function = "sample_names.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "sample_names", user_function = quote(readRDS),      file = quote(sample_names_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "input_list_file", user_function = "input_file.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "input_list", user_function = quote(readRDS),      file = quote(input_list_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "data", user_function = quote(readRDS),      arguments_to_tier = character(0), arguments_already_tiered = character(0),      other_arguments_to_map = "input_list", file = quote(input_list)) )
-target_list |> target_append( tt_factory(target_output = "n", user_function = quote(length),      arguments_to_tier = character(0), arguments_already_tiered = character(0),      other_arguments_to_map = "data", x = quote(data)) )
-target_list |> target_append( tt_factory(target_output = "n_samples", user_function = quote(length),      x = quote(sample_names)) )
-```
+`show_script``(``store``)`` ``## pipeline.R`` `` `` `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"magrittr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"targets"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"tarchetypes"``)``)`` `` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`` `` ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `` `` storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``NULL``, `` `` debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` `[`readRDS`](https://rdrr.io/r/base/readRDS.html)`(``"temp_computing_resources.rds"``)``, `` `` packages ``=`` ``"tidytargets"``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`` `` ``target_list`` ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names_file"``, user_function ``=`` ``"sample_names.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``sample_names_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list_file"``, user_function ``=`` ``"input_file.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"data"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, arguments_to_tier ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, arguments_already_tiered ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, other_arguments_to_map ``=`` ``"input_list"``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list``)``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"n"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``length``)``, arguments_to_tier ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, arguments_already_tiered ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, other_arguments_to_map ``=`` ``"data"``, x ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``data``)``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"n_samples"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``length``)``, x ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``sample_names``)``)`` ``)`
 
 [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)
 itself uses
@@ -233,41 +110,9 @@ for the `*_file` targets (`format = "file"`).
 
 Collect every branch of an iterated target into one object.
 
-``` r
+`pipe`` ``<-`` ``pipe`` ``|>`` `` `[`tt_merge`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md)`(`` `` target_output ``=`` ``"n_total"``,`` `` user_function ``=`` ``(``function``(``lengths``)`` `[`sum`](https://rdrr.io/r/base/sum.html)`(`[`unlist`](https://rdrr.io/r/base/unlist.html)`(``lengths``)``)``)`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` lengths ``=`` ``"n"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`
 
-pipe <- pipe |>
-  tt_merge(
-    target_output = "n_total",
-    user_function = (function(lengths) sum(unlist(lengths))) |> quote(),
-    lengths = "n" |> is_target()
-  )
-```
-
-``` r
-
-show_script(store)
-## pipeline.R
-
-    library(tidytargets)
-    do.call("library", list("dplyr"))
-    do.call("library", list("magrittr"))
-    do.call("library", list("targets"))
-    do.call("library", list("tarchetypes"))
-    lapply(character(0), function(pkg) do.call("library", list(pkg)))
-    tar_option_set(memory = "transient", garbage_collection = 0, 
-        storage = "worker", retrieval = "worker", error = NULL, 
-        debug = NULL, cue = tar_cue(mode = "thorough"), controller = readRDS("temp_computing_resources.rds"), 
-        packages = "tidytargets", trust_timestamps = TRUE, workspace_on_error = FALSE)
-    target_list = list()
-target_list |> target_append( tt_factory(target_output = "sample_names_file", user_function = "sample_names.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "sample_names", user_function = quote(readRDS),      file = quote(sample_names_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "input_list_file", user_function = "input_file.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "input_list", user_function = quote(readRDS),      file = quote(input_list_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "data", user_function = quote(readRDS),      arguments_to_tier = character(0), arguments_already_tiered = character(0),      other_arguments_to_map = "input_list", file = quote(input_list)) )
-target_list |> target_append( tt_factory(target_output = "n", user_function = quote(length),      arguments_to_tier = character(0), arguments_already_tiered = character(0),      other_arguments_to_map = "data", x = quote(data)) )
-target_list |> target_append( tt_factory(target_output = "n_samples", user_function = quote(length),      x = quote(sample_names)) )
-target_list |> target_append( tt_factory(target_output = "n_total", user_function = (function(lengths) sum(unlist(lengths))),      lengths = quote(n)) )
-```
+`show_script``(``store``)`` ``## pipeline.R`` `` `` `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"magrittr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"targets"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"tarchetypes"``)``)`` `` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`` `` ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `` `` storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``NULL``, `` `` debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` `[`readRDS`](https://rdrr.io/r/base/readRDS.html)`(``"temp_computing_resources.rds"``)``, `` `` packages ``=`` ``"tidytargets"``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`` `` ``target_list`` ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names_file"``, user_function ``=`` ``"sample_names.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``sample_names_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list_file"``, user_function ``=`` ``"input_file.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"data"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, arguments_to_tier ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, arguments_already_tiered ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, other_arguments_to_map ``=`` ``"input_list"``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list``)``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"n"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``length``)``, arguments_to_tier ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, arguments_already_tiered ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, other_arguments_to_map ``=`` ``"data"``, x ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``data``)``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"n_samples"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``length``)``, x ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``sample_names``)``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"n_total"``, user_function ``=`` ``(``function``(``lengths``)`` `[`sum`](https://rdrr.io/r/base/sum.html)`(`[`unlist`](https://rdrr.io/r/base/unlist.html)`(``lengths``)``)``)``, lengths ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``n``)``)`` ``)`
 
 ## `tt_report()`
 
@@ -276,61 +121,11 @@ Appends a
 factory. Rendering happens later, when you evaluate the pipeline; the
 grammar only writes the target.
 
-``` r
+[`writeLines`](https://rdrr.io/r/base/writeLines.html)`(`` `` `[`c`](https://rdrr.io/r/base/c.html)`(`` `` ``"---"``,`` `` ``"title: Example report"``,`` `` ``"format: html"``,`` `` ``"params:"``,`` `` ``" n_total: 0"``,`` `` ``" n_samples: 0"``,`` `` ``"---"``,`` `` ``""``,`` `` ``` "Samples: `r params$n_samples`. Values: `r params$n_total`." ``` `` ``)``,`` `` ``"example-report.qmd"`` ``)`
 
-writeLines(
-  c(
-    "---",
-    "title: Example report",
-    "format: html",
-    "params:",
-    "  n_total: 0",
-    "  n_samples: 0",
-    "---",
-    "",
-    "Samples: `r params$n_samples`. Values: `r params$n_total`."
-  ),
-  "example-report.qmd"
-)
-```
+`pipe`` ``<-`` ``pipe`` ``|>`` `` `[`tt_report`](https://stemangiola.github.io/tidytargets/reference/tt_report.md)`(`` `` target_output ``=`` ``"report"``,`` `` rmd_path ``=`` ``"example-report.qmd"``,`` `` n_total ``=`` ``"n_total"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)``,`` `` n_samples ``=`` ``"n_samples"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`
 
-``` r
-
-pipe <- pipe |>
-  tt_report(
-    target_output = "report",
-    rmd_path = "example-report.qmd",
-    n_total = "n_total" |> is_target(),
-    n_samples = "n_samples" |> is_target()
-  )
-```
-
-``` r
-
-show_script(store)
-## pipeline.R
-
-    library(tidytargets)
-    do.call("library", list("dplyr"))
-    do.call("library", list("magrittr"))
-    do.call("library", list("targets"))
-    do.call("library", list("tarchetypes"))
-    lapply(character(0), function(pkg) do.call("library", list(pkg)))
-    tar_option_set(memory = "transient", garbage_collection = 0, 
-        storage = "worker", retrieval = "worker", error = NULL, 
-        debug = NULL, cue = tar_cue(mode = "thorough"), controller = readRDS("temp_computing_resources.rds"), 
-        packages = "tidytargets", trust_timestamps = TRUE, workspace_on_error = FALSE)
-    target_list = list()
-target_list |> target_append( tt_factory(target_output = "sample_names_file", user_function = "sample_names.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "sample_names", user_function = quote(readRDS),      file = quote(sample_names_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "input_list_file", user_function = "input_file.rds",      format = "file") )
-target_list |> target_append( tt_factory(target_output = "input_list", user_function = quote(readRDS),      file = quote(input_list_file), deployment = "main") )
-target_list |> target_append( tt_factory(target_output = "data", user_function = quote(readRDS),      arguments_to_tier = character(0), arguments_already_tiered = character(0),      other_arguments_to_map = "input_list", file = quote(input_list)) )
-target_list |> target_append( tt_factory(target_output = "n", user_function = quote(length),      arguments_to_tier = character(0), arguments_already_tiered = character(0),      other_arguments_to_map = "data", x = quote(data)) )
-target_list |> target_append( tt_factory(target_output = "n_samples", user_function = quote(length),      x = quote(sample_names)) )
-target_list |> target_append( tt_factory(target_output = "n_total", user_function = (function(lengths) sum(unlist(lengths))),      lengths = quote(n)) )
-target_list |> target_append( tt_internal_report(target_output = "report", rmd_path = "example-report.qmd",      output_file = "/tmp/RtmpiUMjXq/tidytargets-vignette-d26724e46ef/pipeline/external/report",      render_arguments = quote(list(params = list(n_total = n_total,          n_samples = n_samples)))) )
-```
+`show_script``(``store``)`` ``## pipeline.R`` `` `` `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"magrittr"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"targets"``)``)`` `` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"tarchetypes"``)``)`` `` `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`` `` ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `` `` storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``NULL``, `` `` debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` `[`readRDS`](https://rdrr.io/r/base/readRDS.html)`(``"temp_computing_resources.rds"``)``, `` `` packages ``=`` ``"tidytargets"``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`` `` ``target_list`` ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names_file"``, user_function ``=`` ``"sample_names.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"sample_names"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``sample_names_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list_file"``, user_function ``=`` ``"input_file.rds"``, format ``=`` ``"file"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"input_list"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list_file``)``, deployment ``=`` ``"main"``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"data"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``readRDS``)``, arguments_to_tier ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, arguments_already_tiered ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, other_arguments_to_map ``=`` ``"input_list"``, file ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``input_list``)``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"n"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``length``)``, arguments_to_tier ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, arguments_already_tiered ``=`` `[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, other_arguments_to_map ``=`` ``"data"``, x ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``data``)``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"n_samples"``, user_function ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``length``)``, x ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``sample_names``)``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``target_output ``=`` ``"n_total"``, user_function ``=`` ``(``function``(``lengths``)`` `[`sum`](https://rdrr.io/r/base/sum.html)`(`[`unlist`](https://rdrr.io/r/base/unlist.html)`(``lengths``)``)``)``, lengths ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``n``)``)`` ``)`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`` `[`tt_internal_report`](https://stemangiola.github.io/tidytargets/reference/tt_internal_report.md)`(``target_output ``=`` ``"report"``, rmd_path ``=`` ``"example-report.qmd"``, output_file ``=`` ``"/tmp/RtmpqBn8CX/tidytargets-vignette-e7862f18fe/pipeline/external/report"``, render_arguments ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(`[`list`](https://rdrr.io/r/base/list.html)`(``params ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``n_total ``=`` ``n_total``, n_samples ``=`` ``n_samples``)``)``)``)`` ``)`
 
 ## `tt_evaluate()`
 
@@ -346,71 +141,7 @@ prints the [targets](https://docs.ropensci.org/targets/) progress and
 returns `tar_meta()`. Read a target from the store to see the computed
 values.
 
-``` r
-
-files |>
-  tt_initialise(store = "_targets") |>
-  tt_iterate(
-    target_output = "data",
-    user_function = readRDS |> quote(),
-    file = "input_list" |> is_target()
-  ) |>
-  tt_iterate(
-    target_output = "summaries",
-    user_function = summary |> quote(),
-    object = "data" |> is_target()
-  ) |>
-  tt_evaluate()
-#> 
-#> Attaching package: ‘dplyr’
-#> 
-#> The following objects are masked from ‘package:stats’:
-#> 
-#>     filter, lag
-#> 
-#> The following objects are masked from ‘package:base’:
-#> 
-#>     intersect, setdiff, setequal, union
-#> 
-#> + input_list_file dispatched
-#> ✔ input_list_file completed [1ms, 97 B]
-#> + sample_names_file dispatched
-#> ✔ sample_names_file completed [0ms, 64 B]
-#> + input_list dispatched
-#> ✔ input_list completed [0ms, 97 B]
-#> + sample_names dispatched
-#> ✔ sample_names completed [0ms, 64 B]
-#> + data declared [2 branches]
-#> ✔ data completed [0ms, 201 B]
-#> + summaries declared [2 branches]
-#> ✔ summaries completed [1ms, 324 B]
-#> ✔ ended pipeline [152ms, 8 completed, 0 skipped]
-#> # A tibble: 10 × 18
-#>    name       type  data  command depend    seed path  time                size 
-#>    <chr>      <chr> <chr> <chr>   <chr>    <int> <lis> <dttm>              <chr>
-#>  1 input_lis… stem  7404… 9b739a… 2c530… -1.91e9 <chr> 2026-08-21 02:12:16 s97b 
-#>  2 sample_na… stem  6cc0… a896eb… 2c530…  7.22e8 <chr> 2026-08-21 02:12:16 s64b 
-#>  3 input_list stem  7404… 86432e… 1dcb5… -1.62e9 <chr> 2026-08-21 02:12:17 s97b 
-#>  4 sample_na… stem  6cc0… f05214… 6a724…  1.74e9 <chr> 2026-08-21 02:12:17 s64b 
-#>  5 data_fc1a… bran… cff5… 63aea2… 2c530…  1.30e9 <chr> 2026-08-21 02:12:17 s99b 
-#>  6 data_e713… bran… 25be… 63aea2… 2c530… -2.88e8 <chr> 2026-08-21 02:12:17 s102b
-#>  7 data       patt… e61d… 63aea2… NA      3.36e7 <chr> NA                  NA   
-#>  8 summaries… bran… 3ea7… f0df48… 410e9…  9.26e8 <chr> 2026-08-21 02:12:17 s163b
-#>  9 summaries… bran… fac1… f0df48… 35177… -1.07e9 <chr> 2026-08-21 02:12:17 s161b
-#> 10 summaries  patt… 94ba… f0df48… NA      4.71e8 <chr> NA                  NA   
-#> # ℹ 9 more variables: bytes <dbl>, format <chr>, repository <chr>,
-#> #   iteration <chr>, parent <chr>, children <list>, seconds <dbl>,
-#> #   warnings <chr>, error <chr>
-
-targets::tar_read(summaries, store = "_targets")
-#> $summaries_77df95261040f9e1
-#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>     1.0     1.5     2.0     2.0     2.5     3.0 
-#> 
-#> $summaries_71c6d136bc334ef4
-#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-#>     4.0     4.5     5.0     5.0     5.5     6.0
-```
+`files`` ``|>`` `` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``store ``=`` ``"_targets"``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"data"``,`` `` user_function ``=`` ``readRDS`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` file ``=`` ``"input_list"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"summaries"``,`` `` user_function ``=`` ``summary`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` object ``=`` ``"data"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`` ``|>`` `` `[`tt_evaluate`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)`(``)`` ``#> `` ``#> Attaching package: ‘dplyr’`` ``#> `` ``#> The following objects are masked from ‘package:stats’:`` ``#> `` ``#> filter, lag`` ``#> `` ``#> The following objects are masked from ‘package:base’:`` ``#> `` ``#> intersect, setdiff, setequal, union`` ``#> `` ``#> ``+`` ``input_list_file`` dispatched`` ``#> ``✔`` ``input_list_file`` completed [1ms, 97 B]`` ``#> ``+`` ``sample_names_file`` dispatched`` ``#> ``✔`` ``sample_names_file`` completed [0ms, 64 B]`` ``#> ``+`` ``input_list`` dispatched`` ``#> ``✔`` ``input_list`` completed [0ms, 97 B]`` ``#> ``+`` ``sample_names`` dispatched`` ``#> ``✔`` ``sample_names`` completed [0ms, 64 B]`` ``#> ``+`` ``data`` declared [2 branches]`` ``#> ``✔`` ``data`` completed [0ms, 201 B]`` ``#> ``+`` ``summaries`` declared [2 branches]`` ``#> ``✔`` ``summaries`` completed [1ms, 324 B]`` ``#> ``✔`` ended pipeline [193ms, 8 completed, 0 skipped]`` ``#> ``# A tibble: 10 × 18`` ``#> name type data command depend seed path time size `` ``#> ``<chr>`` ``<chr>`` ``<chr>`` ``<chr>`` ``<chr>`` ``<int>`` ``<lis>`` ``<dttm>`` ``<chr>`` ``#> `` 1`` input_lis… stem 7404… 9b739a… 2c530… -``1.91``e``9 ``<chr>`` 2026-08-23 ``03:28:00`` s97b `` ``#> `` 2`` sample_na… stem 6cc0… a896eb… 2c530… 7.22``e``8 ``<chr>`` 2026-08-23 ``03:28:00`` s64b `` ``#> `` 3`` input_list stem 7404… 86432e… 1dcb5… -``1.62``e``9 ``<chr>`` 2026-08-23 ``03:28:01`` s97b `` ``#> `` 4`` sample_na… stem 6cc0… f05214… 6a724… 1.74``e``9 ``<chr>`` 2026-08-23 ``03:28:01`` s64b `` ``#> `` 5`` data_fc1a… bran… cff5… 63aea2… 2c530… 1.30``e``9 ``<chr>`` 2026-08-23 ``03:28:01`` s99b `` ``#> `` 6`` data_e713… bran… 25be… 63aea2… 2c530… -``2.88``e``8 ``<chr>`` 2026-08-23 ``03:28:01`` s102b`` ``#> `` 7`` data patt… e61d… 63aea2… ``NA`` 3.36``e``7 ``<chr>`` ``NA`` ``NA`` `` ``#> `` 8`` summaries… bran… 3ea7… f0df48… 410e9… 9.26``e``8 ``<chr>`` 2026-08-23 ``03:28:01`` s163b`` ``#> `` 9`` summaries… bran… fac1… f0df48… 35177… -``1.07``e``9 ``<chr>`` 2026-08-23 ``03:28:01`` s161b`` ``#> ``10`` summaries patt… 94ba… f0df48… ``NA`` 4.71``e``8 ``<chr>`` ``NA`` ``NA`` `` ``#> ``# ℹ 9 more variables: bytes <dbl>, format <chr>, repository <chr>,`` ``#> ``# iteration <chr>, parent <chr>, children <list>, seconds <dbl>,`` ``#> ``# warnings <chr>, error <chr>`` `` ``targets``::`[`tar_read`](https://docs.ropensci.org/targets/reference/tar_read.html)`(``summaries``, store ``=`` ``"_targets"``)`` ``#> $summaries_77df95261040f9e1`` ``#> Min. 1st Qu. Median Mean 3rd Qu. Max. `` ``#> 1.0 1.5 2.0 2.0 2.5 3.0 `` ``#> `` ``#> $summaries_71c6d136bc334ef4`` ``#> Min. 1st Qu. Median Mean 3rd Qu. Max. `` ``#> 4.0 4.5 5.0 5.0 5.5 6.0`
 
 Do not evaluate a `tidytargets` object (e.g., by printing it in the
 console) unless you intend to run it.
@@ -425,13 +156,4 @@ accept `user_function_source_path`. The path is written as `source(...)`
 in the targets script so workers can load helpers that are not in a
 package.
 
-``` r
-
-pipe |>
-  tt_iterate(
-    target_output = "transformed",
-    user_function = my_transform |> quote(),
-    user_function_source_path = "helpers.R",
-    x = "data" |> is_target()
-  )
-```
+`pipe`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"transformed"``,`` `` user_function ``=`` ``my_transform`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` user_function_source_path ``=`` ``"helpers.R"``,`` `` x ``=`` ``"data"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`

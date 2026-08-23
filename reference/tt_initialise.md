@@ -92,5 +92,7 @@ tt_initialise(
 
 ## Value
 
-A `tidytargets` S3 object containing the initialisation arguments, ready
-to be extended with pipeline step functions.
+A `tidytargets` S3 object containing the initialisation arguments in
+`$initialisation` and an empty metadata store (see
+[`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)),
+ready to be extended with pipeline step functions.
