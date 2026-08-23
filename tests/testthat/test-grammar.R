@@ -74,4 +74,97 @@ test_that("grammar steps error on non-tidytargets input", {
   expect_error(tt_merge("not a pipeline"), "tidytargets object")
   expect_error(tt_report("not a pipeline"), "tidytargets object")
   expect_error(tt_evaluate("not a pipeline"), "tidytargets object")
+  expect_error(tt_metadata("not a pipeline"), "tidytargets object")
+})
+
+test_that("tt_metadata reads, writes and survives pipeline steps", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  files <- c(sample_a = file.path(tmp, "a.rds"))
+  saveRDS(1:3, files[[1]])
+
+  store <- file.path(tmp, "store")
+  hpc <- files |> tt_initialise(store = store)
+
+  expect_equal(hpc |> tt_metadata(), list())
+
+  hpc <- hpc |>
+    tt_metadata(api_url = "https://api.example.org", api_version = 2L)
+
+  expect_s3_class(hpc, "tidytargets")
+  expect_equal(hpc |> tt_metadata() |> length(), 2)
+  expect_equal(tt_metadata(hpc)$api_url, "https://api.example.org")
+
+  # Metadata is preserved by, and does not interfere with, later steps
+  hpc <- hpc |>
+    tt_iterate(
+      target_output = "data",
+      user_function = readRDS |> quote(),
+      file = "input_list" |> is_target()
+    )
+
+  expect_equal(tt_metadata(hpc)$api_version, 2L)
+  expect_equal(hpc$data$iterate, "map")
+
+  # Existing entries are updated, new ones merged, NULL removes
+  hpc <- hpc |> tt_metadata(api_version = 3L, token = "abc")
+  expect_equal(tt_metadata(hpc)$api_version, 3L)
+  expect_equal(tt_metadata(hpc) |> names(), c("api_url", "api_version", "token"))
+
+  hpc <- hpc |> tt_metadata(token = NULL)
+  expect_false("token" %in% names(tt_metadata(hpc)))
+})
+
+test_that("tt_metadata rejects unnamed and duplicated entries", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  files <- c(sample_a = file.path(tmp, "a.rds"))
+  saveRDS(1:3, files[[1]])
+
+  hpc <- files |> tt_initialise(store = file.path(tmp, "store"))
+
+  expect_error(hpc |> tt_metadata("https://api.example.org"), "must be named")
+  expect_error(hpc |> tt_metadata(a = 1, a = 2), "unique")
+})
+
+test_that("metadata places no restriction on target names", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  files <- c(sample_a = file.path(tmp, "a.rds"))
+  saveRDS(1:3, files[[1]])
+
+  hpc <- files |>
+    tt_initialise(store = file.path(tmp, "store")) |>
+    tt_metadata(api_url = "https://api.example.org")
+
+  # A target may be called "metadata"; the store is dot-prefixed and targets
+  # forbids dot-prefixed target names, so the two cannot collide
+  hpc <- hpc |>
+    tt_iterate(
+      target_output = "metadata",
+      user_function = readRDS |> quote(),
+      file = "input_list" |> is_target()
+    )
+
+  expect_equal(hpc$metadata$iterate, "map")
+  expect_equal(tt_metadata(hpc)$api_url, "https://api.example.org")
+
+  # The target is still resolvable as an upstream dependency
+  hpc <- hpc |>
+    tt_iterate(
+      target_output = "downstream",
+      user_function = length |> quote(),
+      x = "metadata" |> is_target()
+    )
+
+  expect_equal(hpc$downstream$iterate, "map")
 })

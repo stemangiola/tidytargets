@@ -86,7 +86,23 @@ targets::tar_read(summaries, store = "_targets")
 | `tt_merge()` | Combine iterated results into one object |
 | `tt_report()` | Render a Quarto / R Markdown report |
 | `tt_evaluate()` | Write the target list and run `tar_make()` |
+| `tt_metadata()` | Get or set free-form metadata on the pipeline object |
 | `is_target()` | Mark an argument as an upstream target name |
+
+## Carrying extra information
+
+A `tidytargets` object is a named list: `$initialisation` holds the arguments given to `tt_initialise()`, and every other element is a target you added. Alongside those sits a free-form metadata store, reachable only through `tt_metadata()`, for information that is not part of the graph — an API endpoint, a dataset identifier, a provenance note.
+
+``` r
+pipeline <- files |>
+  tt_initialise(store = "_targets") |>
+  tt_metadata(api_url = "https://api.example.org", api_version = 2)
+
+tt_metadata(pipeline)$api_url
+#> [1] "https://api.example.org"
+```
+
+Metadata is merged on each call, and passing `NULL` removes an entry. It travels with the object through every grammar step but is not written to the targets script, so workers cannot see it; values a target needs must be passed as arguments to `tt_iterate()` or `tt_single()`. The store is inert with respect to the rest of the grammar and constrains nothing — it imposes no restriction on your `target_output` names.
 
 ## Deployment
 

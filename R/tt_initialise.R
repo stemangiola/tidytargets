@@ -31,8 +31,9 @@
 #'   a target errors. Default: `FALSE`.
 #' @param packages Character vector of R packages loaded on workers. Defaults to
 #'   `"tidytargets"`.
-#' @return A `tidytargets` S3 object containing the initialisation arguments,
-#'   ready to be extended with pipeline step functions.
+#' @return A `tidytargets` S3 object containing the initialisation arguments in
+#'   `$initialisation` and an empty metadata store (see `tt_metadata()`), ready
+#'   to be extended with pipeline step functions.
 #'
 #' @importFrom glue glue
 #' @importFrom targets tar_script
@@ -105,7 +106,7 @@ tt_initialise <- function(tt_input,
 
   
   tt_input = 
-    list(initialisation = args_list ) |>
+    list(initialisation = args_list, .metadata = list() ) |>
 
     add_class("tidytargets")
   

@@ -8,6 +8,15 @@
 \description{
 A tidy, pipe-friendly grammar for composing targets pipelines. Internally it is based on targets factories, translating piped steps into a dependency graph that can be deployed locally, on HPC, or in the cloud.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://stemangiola.github.io/tidytargets/}
+  \item \url{https://github.com/stemangiola/tidytargets}
+  \item Report bugs at \url{https://github.com/stemangiola/tidytargets/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Stefano Mangiola \email{mangiolastefano@gmail.com}
 
