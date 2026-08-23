@@ -56,8 +56,9 @@ a target errors. Default: \code{FALSE}.}
 \code{"tidytargets"}.}
 }
 \value{
-A \code{tidytargets} S3 object containing the initialisation arguments,
-ready to be extended with pipeline step functions.
+A \code{tidytargets} S3 object containing the initialisation arguments in
+\verb{$initialisation} and an empty metadata store (see \code{tt_metadata()}), ready
+to be extended with pipeline step functions.
 }
 \description{
 Sets up and writes a \code{targets} pipeline script. Saves input paths and
