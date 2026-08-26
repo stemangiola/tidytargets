@@ -1,6 +1,12 @@
 # Helper function to add class to an object
 add_class <- function(obj, class_name) {
   class(obj) <- c(class_name, class(obj))
+  # Grammar constructors return through here after `c()` drops the class.
+  # Scheduling at this single restore point covers initialise, iterate,
+  # single, merge, and report without each having to remember the notice.
+  if (identical(class_name, "tidytargets")) {
+    schedule_pipeline_ready_notice(obj$initialisation$store)
+  }
   return(obj)
 }
 

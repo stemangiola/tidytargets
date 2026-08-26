@@ -5,12 +5,18 @@
 #' Closes the pipeline target list and calls `targets::tar_make()` to execute
 #' all queued steps. Returns the `tar_meta()` table.
 #'
+#' The generic records that this store has been run before dispatching, so a
+#' subclass `tt_evaluate` method cannot leave the interactive "pipeline is
+#' ready" notice standing after a result that has already been shown.
+#'
 #' @param tt_input A `tidytargets` object constructed by `tt_initialise()` and
 #'   extended with one or more pipeline step functions.
 #' @return A `tibble` with targets metadata.
 #' @name tt_evaluate
 #' @export
 tt_evaluate <- function(tt_input) {
+  store <- if (is.list(tt_input)) tt_input$initialisation$store else NULL
+  mark_pipeline_evaluated(store)
   UseMethod("tt_evaluate")
 }
 

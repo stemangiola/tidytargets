@@ -28,7 +28,7 @@ show_script <- function(store) {
 
 tidytargets is a tidy, pipe-friendly grammar for `{targets}`. `tt_initialise()` constructs a `tidytargets` object; the other building blocks are S3 methods on that class. Each method is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it appends `tar_target` definitions to a pipeline script. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
 
-The composition is **lazy**. `tt_initialise()`, `tt_iterate()`, `tt_single()`, `tt_merge()`, and `tt_report()` only write factories into `{store}.R`. User functions are not called until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console), which closes the script and runs `targets::tar_make()`.
+The composition is **lazy**. `tt_initialise()`, `tt_iterate()`, `tt_single()`, `tt_merge()`, and `tt_report()` only write factories into `{store}.R`. User functions are not called until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console), which closes the script and runs `targets::tar_make()`. Assigning the object does not print it, so an interactive session then says the pipeline is ready to be evaluated, rather than appearing to do nothing.
 
 Pipelines are **incremental**. Add a step, change a parameter, or grow the input vector and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
 
