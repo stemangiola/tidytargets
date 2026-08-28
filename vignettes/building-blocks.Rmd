@@ -18,12 +18,6 @@ library(tidytargets)
 work <- tempfile("tidytargets-vignette-")
 dir.create(work)
 knitr::opts_knit$set(root.dir = work)
-
-show_script <- function(pipe) {
-  path <- paste0(pipe$initialisation$store, ".R")
-  cat("## ", basename(path), "\n\n", sep = "")
-  writeLines(readLines(path))
-}
 ```
 
 tidytargets is a tidy, pipe-friendly grammar for `{targets}`. `tt_initialise()` constructs a `tidytargets` object; the other building blocks are S3 methods on that class. Each method is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it appends `tar_target` definitions to a pipeline script. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
@@ -32,7 +26,7 @@ The composition is **lazy**. `tt_initialise()`, `tt_iterate()`, `tt_single()`, `
 
 Pipelines are **incremental**. Add a step, change a parameter, or grow the input list and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
 
-This vignette walks through every building block and prints the targets script after each step.
+This vignette walks through every building block and prints the targets script after each step with `show_targets_script()`.
 
 ## Building blocks
 
@@ -74,7 +68,7 @@ pipe <- inputs |>
 ```
 
 ```{r initialise-script, comment = ""}
-show_script(pipe)
+show_targets_script(pipe)
 ```
 
 ## `tt_iterate()`
@@ -90,7 +84,7 @@ pipe <- pipe |>
 ```
 
 ```{r iterate-read-script, comment = ""}
-show_script(pipe)
+show_targets_script(pipe)
 ```
 
 A second iterate maps over the result of the first:
@@ -104,7 +98,7 @@ pipe <- pipe |>
 ```
 
 ```{r iterate-length-script, comment = ""}
-show_script(pipe)
+show_targets_script(pipe)
 ```
 
 ## `tt_single()`
@@ -120,7 +114,7 @@ pipe <- pipe |>
 ```
 
 ```{r single-script, comment = ""}
-show_script(pipe)
+show_targets_script(pipe)
 ```
 
 ```{r single-evaluate}
@@ -142,7 +136,7 @@ pipe <- pipe |>
 ```
 
 ```{r merge-script, comment = ""}
-show_script(pipe)
+show_targets_script(pipe)
 ```
 
 ## `tt_report()`
@@ -176,7 +170,7 @@ pipe <- pipe |>
 ```
 
 ```{r report-script, comment = ""}
-show_script(pipe)
+show_targets_script(pipe)
 ```
 
 ## Custom functions from a file

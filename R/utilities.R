@@ -118,6 +118,27 @@ tar_script_append2 = function(code, script = targets::tar_config_get("script"), 
     write_lines(script, append = append)
 }
 
+#' Print the Targets Script for a tidytargets Pipeline
+#'
+#' @description
+#' Reads `{store}.R` for a `tidytargets` object and prints its contents with a
+#' markdown-style heading. Useful for inspecting the pipeline script while
+#' composing steps.
+#'
+#' @param pipe A `tidytargets` object from `tt_initialise()`.
+#'
+#' @return Invisibly returns the script lines; called for its side effect of
+#'   printing.
+#'
+#' @export
+show_targets_script <- function(pipe) {
+  path <- paste0(pipe$initialisation$store, ".R")
+  cat("## ", basename(path), "\n\n", sep = "")
+  lines <- readLines(path)
+  writeLines(lines)
+  invisible(lines)
+}
+
 #' Delete Lines Containing a Word from a File
 #'
 #' @description
