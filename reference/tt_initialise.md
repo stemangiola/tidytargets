@@ -14,7 +14,7 @@ can extend before the pipeline is executed with
 ``` r
 tt_initialise(
   tt_input,
-  store = targets::tar_config_get("store"),
+  store = NULL,
   computing_resources = NULL,
   debug_step = NULL,
   verbosity = targets::tar_config_get("reporter_make"),
@@ -38,6 +38,8 @@ tt_initialise(
 - store:
 
   Directory path where pipeline files and targets store are written.
+  `NULL` (the default) writes to `./tidytargets-<HASH>` in the working
+  directory and prints that path.
 
 - computing_resources:
 

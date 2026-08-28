@@ -6,6 +6,8 @@
   : Delete Lines Containing a Word from a File
 - [`print(`*`<tidytargets>`*`)`](https://stemangiola.github.io/tidytargets/reference/print.tidytargets.md)
   : Print a tidytargets Object
+- [`show_targets_script()`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)
+  : Print the Targets Script for a tidytargets Pipeline
 - [`target_append()`](https://stemangiola.github.io/tidytargets/reference/target_append.md)
   : Append Targets to the Pipeline Target List
 - [`tidytargets`](https://stemangiola.github.io/tidytargets/reference/tidytargets-package.md)
