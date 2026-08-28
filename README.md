@@ -20,7 +20,7 @@ vignette("building-blocks", package = "tidytargets")
 
 ## A minimal pipeline
 
-`tt_initialise()` takes a named vector of inputs (typically file paths). Use `is_target()` to point a step at an upstream target. With no `computing_resources`, the pipeline runs sequentially.
+`tt_initialise()` takes a named vector of inputs (typically file paths), or a named list of in-memory objects. Use `is_target()` to point a step at an upstream target. With no `computing_resources`, the pipeline runs sequentially.
 
 ``` r
 library(tidytargets)
@@ -73,8 +73,8 @@ targets::tar_read(summaries, store = "_targets")
 
 `tt_evaluate()` also returns the `targets::tar_meta()` table. `tt_initialise()` registers two mapped targets for you:
 
-- `input_list` — the named input vector
-- `sample_names` — the names of that vector
+- `input_list` — the named input vector or list
+- `sample_names` — the names of that vector or list
 
 ## Grammar
 

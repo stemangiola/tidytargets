@@ -30,7 +30,42 @@ test_that("tt_initialise returns a tidytargets object with input targets", {
   script <- readLines(paste0(store, ".R"))
   expect_false(any(grepl('library\\("crew', script)))
   expect_false(any(grepl("crew_controller_group", script)))
-  expect_true(any(grepl("controller = readRDS", script)))
+  expect_true(any(grepl("controller = qs_read", script)))
+  expect_true(any(grepl('format = "qs"', script)))
+})
+
+test_that("tt_initialise accepts a named list of objects", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  inputs <- list(sample_a = 1:3, sample_b = 4:6)
+  store <- file.path(tmp, "store")
+  hpc <- inputs |>
+    tt_initialise(store = store)
+
+  expect_s3_class(hpc, "tidytargets")
+  expect_equal(hpc$initialisation$store, store)
+  expect_true(file.exists(paste0(store, ".R")))
+  expect_true("input_list" %in% names(hpc))
+  expect_true("sample_names" %in% names(hpc))
+  expect_equal(hpc$input_list$iterate, "map")
+  expect_equal(qs2::qs_read("sample_names.qs"), c("sample_a", "sample_b"))
+  expect_equal(qs2::qs_read("input_file.qs"), inputs)
+})
+
+test_that("tt_initialise names an unnamed list with integer indices", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  hpc <- list(1:3, 4:6) |>
+    tt_initialise(store = file.path(tmp, "store"))
+
+  expect_s3_class(hpc, "tidytargets")
+  expect_equal(qs2::qs_read("sample_names.qs"), c("1", "2"))
 })
 
 test_that("tt_iterate and tt_single chain onto a tidytargets object", {

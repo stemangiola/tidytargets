@@ -1,14 +1,14 @@
 #' Initialise a tidytargets Pipeline
 #'
 #' @description
-#' Sets up and writes a `targets` pipeline script. Saves input paths and
+#' Sets up and writes a `targets` pipeline script. Saves inputs and
 #' configuration to disk, then returns a `tidytargets` object that downstream
 #' grammar functions (e.g. `tt_iterate()`, `tt_single()`, `tt_evaluate()`)
 #' can extend before the pipeline is executed with `tt_evaluate()`.
 #'
-#' @param tt_input Named vector of inputs, typically file paths, one element
-#'   per unit of iteration (e.g. sample). If names are not set, integer indices
-#'   are used.
+#' @param tt_input Named vector of inputs, typically file paths, or a named
+#'   list of in-memory objects, one element per unit of iteration (e.g. sample).
+#'   If names are not set, integer indices are used.
 #' @param store Directory path where pipeline files and targets store are written.
 #' @param computing_resources A controller object accepted by
 #'   `targets::tar_option_set(controller = )`, such as a `crew` controller or
@@ -36,6 +36,7 @@
 #'   to be extended with pipeline step functions.
 #'
 #' @importFrom glue glue
+#' @importFrom qs2 qs_save qs_read
 #' @importFrom targets tar_script
 #' @importFrom purrr set_names
 #' @import tarchetypes
@@ -69,10 +70,10 @@ tt_initialise <- function(tt_input,
   dir.create(store, showWarnings = FALSE, recursive = TRUE)
   
   # Save parameters to files
-  tt_input |> as.list() |>  saveRDS("input_file.rds")
-  tt_input |> names() |> saveRDS("sample_names.rds")
+  tt_input |> as.list() |>  qs_save("input_file.qs")
+  tt_input |> names() |> qs_save("sample_names.qs")
   
-  computing_resources |> saveRDS("temp_computing_resources.rds")
+  computing_resources |> qs_save("temp_computing_resources.qs")
   backend_packages <- package_of_object(computing_resources)
   
   # Write pipeline to a file
@@ -82,6 +83,7 @@ tt_initialise <- function(tt_input,
     do.call("library", list("magrittr"))
     do.call("library", list("targets"))
     do.call("library", list("tarchetypes"))
+    do.call("library", list("qs2"))
     lapply(bp, function(pkg) do.call("library", list(pkg)))
     
     tar_option_set(
@@ -92,7 +94,8 @@ tt_initialise <- function(tt_input,
       error = e,
       debug = d, # Set the target you want to debug.
       cue = tar_cue(mode = u), # Force skip non-debugging outdated targets.
-      controller = readRDS("temp_computing_resources.rds"), 
+      controller = qs_read("temp_computing_resources.qs"), 
+      format = "qs",
       packages = p,
       trust_timestamps = TRUE, 
       workspace_on_error = w
@@ -101,7 +104,7 @@ tt_initialise <- function(tt_input,
     target_list = list(  )
     
     } |> 
-    substitute(env = list(d = debug_step, e = error, u = update, g = garbage_collection, w = workspace_on_error, p = packages, bp = backend_packages)) |> 
+    substitute(env = list(d = debug_step, e = error, u = update, g = garbage_collection, w = workspace_on_error, p = unique(c(packages, "qs2")), bp = backend_packages)) |> 
     tar_script_append2(script = glue("{store}.R"), append = FALSE)
 
   
@@ -114,22 +117,22 @@ tt_initialise <- function(tt_input,
   tt_input |> 
     
     # Sample names
-    tt_single("sample_names_file", "sample_names.rds", format = "file") |> 
+    tt_single("sample_names_file", "sample_names.qs", format = "file") |> 
     
     tt_single(
       target_output = "sample_names", 
-      user_function = readRDS |> quote(),
+      user_function = qs_read |> quote(),
       file = "sample_names_file" |> is_target(), 
       deployment = "main", 
       iterate = "map"
     ) |> 
     
     # Files
-    tt_single("input_list_file", "input_file.rds", format = "file") |> 
+    tt_single("input_list_file", "input_file.qs", format = "file") |> 
     
     tt_single(
       target_output = "input_list", 
-      user_function = readRDS |> quote(),
+      user_function = qs_read |> quote(),
       file = "input_list_file" |> is_target(), 
       deployment = "main", 
       iterate = "map"

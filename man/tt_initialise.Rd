@@ -19,9 +19,9 @@ tt_initialise(
 )
 }
 \arguments{
-\item{tt_input}{Named vector of inputs, typically file paths, one element
-per unit of iteration (e.g. sample). If names are not set, integer indices
-are used.}
+\item{tt_input}{Named vector of inputs, typically file paths, or a named
+list of in-memory objects, one element per unit of iteration (e.g. sample).
+If names are not set, integer indices are used.}
 
 \item{store}{Directory path where pipeline files and targets store are written.}
 
@@ -61,7 +61,7 @@ A \code{tidytargets} S3 object containing the initialisation arguments in
 to be extended with pipeline step functions.
 }
 \description{
-Sets up and writes a \code{targets} pipeline script. Saves input paths and
+Sets up and writes a \code{targets} pipeline script. Saves inputs and
 configuration to disk, then returns a \code{tidytargets} object that downstream
 grammar functions (e.g. \code{tt_iterate()}, \code{tt_single()}, \code{tt_evaluate()})
 can extend before the pipeline is executed with \code{tt_evaluate()}.

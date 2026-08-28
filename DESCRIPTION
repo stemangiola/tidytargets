@@ -19,8 +19,9 @@ Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.1.0)
 Imports:
-    targets,
+    targets (>= 1.10.0),
     tarchetypes,
+    qs2,
     dplyr,
     glue,
     stringr,
