@@ -22,4 +22,8 @@ A \code{tibble} with targets metadata.
 \description{
 Closes the pipeline target list and calls \code{targets::tar_make()} to execute
 all queued steps. Returns the \code{tar_meta()} table.
+
+The generic records that this store has been run before dispatching, so a
+subclass \code{tt_evaluate} method cannot leave the interactive "pipeline is
+ready" notice standing after a result that has already been shown.
 }

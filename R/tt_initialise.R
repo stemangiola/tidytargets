@@ -4,7 +4,10 @@
 #' Sets up and writes a `targets` pipeline script. Saves inputs and
 #' configuration to disk, then returns a `tidytargets` object that downstream
 #' grammar functions (e.g. `tt_iterate()`, `tt_single()`, `tt_evaluate()`)
-#' can extend before the pipeline is executed with `tt_evaluate()`.
+#' can extend before the pipeline is executed with `tt_evaluate()`. The graph
+#' is not run until you print the object or call [tt_evaluate()]. Assigning
+#' it does not; an interactive session then says the pipeline is ready to be
+#' evaluated, rather than appearing to do nothing.
 #'
 #' @param tt_input Named vector of inputs, typically file paths, or a named
 #'   list of in-memory objects, one element per unit of iteration (e.g. sample).
@@ -36,7 +39,8 @@
 #'   `{target_output}_file`.
 #' @return A `tidytargets` S3 object containing the initialisation arguments in
 #'   `$initialisation` and an empty metadata store (see `tt_metadata()`), ready
-#'   to be extended with pipeline step functions.
+#'   to be extended with pipeline step functions. The graph is not run until
+#'   you print it or call [tt_evaluate()].
 #'
 #' @importFrom glue glue
 #' @importFrom qs2 qs_save qs_read

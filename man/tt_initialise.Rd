@@ -61,11 +61,15 @@ a target errors. Default: \code{FALSE}.}
 \value{
 A \code{tidytargets} S3 object containing the initialisation arguments in
 \verb{$initialisation} and an empty metadata store (see \code{tt_metadata()}), ready
-to be extended with pipeline step functions.
+to be extended with pipeline step functions. The graph is not run until
+you print it or call \code{\link[=tt_evaluate]{tt_evaluate()}}.
 }
 \description{
 Sets up and writes a \code{targets} pipeline script. Saves inputs and
 configuration to disk, then returns a \code{tidytargets} object that downstream
 grammar functions (e.g. \code{tt_iterate()}, \code{tt_single()}, \code{tt_evaluate()})
-can extend before the pipeline is executed with \code{tt_evaluate()}.
+can extend before the pipeline is executed with \code{tt_evaluate()}. The graph
+is not run until you print the object or call \code{\link[=tt_evaluate]{tt_evaluate()}}. Assigning
+it does not; an interactive session then says the pipeline is ready to be
+evaluated, rather than appearing to do nothing.
 }
