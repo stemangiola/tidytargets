@@ -9,7 +9,7 @@
 #'   auto-generated name.
 #' @param command An unevaluated expression. `{targets}` tracks dependencies from
 #'   global symbols in this expression (including upstream target names). Mapped
-#'   and tiered targets referenced here also set the iteration pattern.
+#'   targets referenced here also set the iteration pattern.
 #' @param user_function_source_path Optional character path to an R script that
 #'   should be sourced in the worker before evaluating `command`. `NULL`
 #'   sources nothing.
@@ -41,7 +41,6 @@ tt_iterate.default <- function(
 
 #' @rdname tt_iterate
 #' @importFrom glue glue
-#' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
 tt_iterate.tidytargets <- function(
@@ -62,40 +61,13 @@ tt_iterate.tidytargets <- function(
     
     # Append source if any
     write_source(user_function_source_path, target_script)
-      
-    arguments_to_tier <- command_targets(command, tt_input, "tier")
-    arguments_already_tiered <- command_targets(command, tt_input, "tiered")
-    other_arguments_to_map <- command_targets(command, tt_input, c("tiered", "map"))
-
-    # please, because sometime we set up list target that do not depend on any other ones
-    # if tiers is set to NULL, then the target will not acquire the _<tier> suffix
-    # I HAVE TO MAKE THIS MORE ELEGANT, AND NOT RELY ON tiers ARGUMENT
-    if(tt_input$initialisation$tier |> get_positions() |> length() < 2){
-      iterate_value = "map"
-      tiers_value = NULL
-    }
-      
-    else if(
-      arguments_already_tiered |> length() == 0 &
-      arguments_to_tier |> length() == 0
-    ){
-      iterate_value = "tier"
-      tiers_value = NULL
-    } else {
-      iterate_value = "tiered"
-      tiers_value = tt_input$initialisation$tier |> get_positions()
-    }
 
     tar_append(
       fx = tt_factory |> quote(),
-      tiers = tiers_value ,
       target_output = target_output,
       script = target_script,
       command = wrap_quote(command),
-      
-      arguments_to_tier = arguments_to_tier,
-      arguments_already_tiered = arguments_already_tiered,
-      other_arguments_to_map = other_arguments_to_map,
+      other_arguments_to_map = command_targets(command, tt_input, "map"),
       ...
     )
   
@@ -104,7 +76,7 @@ tt_iterate.tidytargets <- function(
     tt_input |>
       c(
         as.list(environment())[-1] |> 
-          c(list(iterate = iterate_value)) |> 
+          c(list(iterate = "map")) |> 
           list() |> 
           set_names(target_output) 
       ) |>

@@ -1,5 +1,17 @@
 # tidytargets NEWS
 
+## tidytargets 0.4.0
+
+* Dropped processing tiers (`tier`, `get_positions()`, and the tiered factory
+  path). Map iteration is unchanged; elastic `{crew}` controllers replace
+  tiered resource groups.
+* Printing a pipeline no longer fails with `object 'target_list' not found`.
+  The generated script assigns `target_list <- ...` in the script environment
+  (instead of `<<-`), and `tt_initialise()` stores an absolute store path.
+* Input `.qs` files are written inside the store directory (not the working
+  directory), so `print()` / `tt_evaluate()` cannot pick up leftover inputs
+  from another pipeline.
+
 ## tidytargets 0.3.0
 
 * `tt_initialise()` accepts a named list of in-memory objects, in addition to

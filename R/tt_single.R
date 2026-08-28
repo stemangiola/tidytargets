@@ -42,7 +42,6 @@ tt_single.default <- function(
 
 #' @rdname tt_single
 #' @importFrom glue glue
-#' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
 tt_single.tidytargets <- function(

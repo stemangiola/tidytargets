@@ -24,7 +24,6 @@ tt_report.default <- function(tt_input, target_output = NULL, rmd_path = NULL, p
 
 #' @rdname tt_report
 #' @importFrom glue glue
-#' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
 tt_report.tidytargets <- function(tt_input, target_output = NULL, rmd_path = NULL, params = list(), ...) {
@@ -40,13 +39,6 @@ tt_report.tidytargets <- function(tt_input, target_output = NULL, rmd_path = NUL
     external_dir <- file.path(tt_input$initialisation$store, "external")
     dir.create(external_dir, showWarnings = FALSE, recursive = TRUE)
     external_dir <- normalizePath(external_dir)
-
-    if(tt_input$initialisation$tier |> get_positions() |> length() >= 2)
-      params <- expand_tiered_command(
-        params,
-        command_targets(params, tt_input, "tiered"),
-        tt_input$initialisation$tier |> get_positions() |> names()
-      )
 
     tar_append(
       fx = tt_internal_report |> quote(),

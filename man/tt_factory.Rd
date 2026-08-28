@@ -5,11 +5,8 @@
 \title{Internal Factory for Iterating Targets}
 \usage{
 tt_factory(
-  tiers = NULL,
   target_output,
   command,
-  arguments_to_tier = c(),
-  arguments_already_tiered = c(),
   other_arguments_to_map = c(),
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
@@ -18,22 +15,13 @@ tt_factory(
 )
 }
 \arguments{
-\item{tiers}{Named integer list of tier indices (output of \code{get_positions()}).
-\code{NULL} or length-1 produces a single, non-tiered target.}
-
 \item{target_output}{Character name of the output target.}
 
 \item{command}{An unevaluated expression passed to \code{tar_target_raw()}.
 \code{{targets}} tracks dependencies from symbols in this expression.}
 
-\item{arguments_to_tier}{Character vector of target names that should be
-tiered (suffixed with the tier index).}
-
-\item{arguments_already_tiered}{Character vector of target names that have
-already been tiered in a prior call.}
-
 \item{other_arguments_to_map}{Character vector of target names that should
-be mapped over without tiering.}
+be mapped over.}
 
 \item{packages}{Character vector of R packages to load in the worker.}
 
@@ -44,9 +32,9 @@ be mapped over without tiering.}
 \item{...}{Unused; retained so extra factory arguments are ignored.}
 }
 \value{
-A \code{tar_target} object or a list of \code{tar_target} objects (one per tier).
+A \code{tar_target} object.
 }
 \description{
-Low-level factory that builds \code{tar_target_raw()} calls for each tier in the
+Low-level factory that builds a \code{tar_target_raw()} call for the
 tidytargets pipeline. Not intended to be called by end users directly.
 }

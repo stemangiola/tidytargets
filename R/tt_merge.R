@@ -38,7 +38,6 @@ tt_merge.default <- function(
 
 #' @rdname tt_merge
 #' @importFrom glue glue
-#' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
 tt_merge.tidytargets <- function(
@@ -59,38 +58,15 @@ tt_merge.tidytargets <- function(
     
     # Append source if any
     write_source(user_function_source_path, target_script)
-    
-    
-    # If no tiers
-    if(tt_input$initialisation$tier |> get_positions() |> length() < 2)
-      tar_append(
-          fx = tt_factory |> quote(),
-          target_output = target_output,
-          script = target_script,
-          command = wrap_quote(command),
-          ...
-      )
-      
-    else{
-      
-      command <- expand_tiered_command(
-        command,
-        command_targets(command, tt_input, "tiered"),
-        tt_input$initialisation$tier |> get_positions() |> names()
-      )
-      
-      tar_append(
-          fx = tt_factory |> quote(),
-          target_output = target_output,
-          script = target_script,
-          command = wrap_quote(command),
-          ...
-      )
-    }
 
-    
-    
-    
+    tar_append(
+        fx = tt_factory |> quote(),
+        target_output = target_output,
+        script = target_script,
+        command = wrap_quote(command),
+        ...
+    )
+
     # Add pipeline step
     tt_input |>
       c(

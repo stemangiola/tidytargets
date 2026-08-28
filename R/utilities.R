@@ -64,7 +64,7 @@ tar_script_append = function(code, script = targets::tar_config_get("script")){
     write_lines(script, append = TRUE)
 }
 
-tar_append = function(fx, tiers = NULL, script = targets::tar_config_get("script"), ...){
+tar_append = function(fx, script = targets::tar_config_get("script"), ...){
   
   # Deal with additional argument
   additional_args <- 
@@ -77,19 +77,17 @@ tar_append = function(fx, tiers = NULL, script = targets::tar_config_get("script
   
   arguments_to_pass  = c(fx)
   
-  if(tiers |> is.null() |> not())
-    arguments_to_pass = arguments_to_pass |> c(list(tiers = tiers))
-  
   if (length(additional_args) > 0)
     arguments_to_pass = arguments_to_pass |> c(additional_args)
   
   # Construct the call with substitute
-  call_expr = 
-    as.call(arguments_to_pass) |> 
-    deparse()
+  call_expr =
+    as.call(arguments_to_pass) |>
+    deparse(width.cutoff = 500)
   
-  # Add prefix
-  "target_list |> target_append(" |> 
+  # Add prefix. Assign so {targets} `eval(parse(script))` sees the grown list
+  # in the script environment (target_append is a pure function).
+  "target_list <- target_list |> target_append(" |> 
     c(call_expr ) |> 
     c(")") |> 
     
@@ -118,81 +116,6 @@ tar_script_append2 = function(code, script = targets::tar_config_get("script"), 
     head(-1) |>
     tail(-1) |>
     write_lines(script, append = append)
-}
-
-#' Get positions of each unique element in a vector
-#'
-#' This function takes a vector and returns a named list where each unique
-#' element of the input vector maps to the positions at which it occurs.
-#'
-#' @param input_vector A vector of elements.
-#' @return A named list where each name is a unique element from the input vector
-#' and each value is a vector of positions where that element occurs.
-#' @examples
-#' input_vector <- c("a", "a", "b", "c", "a")
-#' positions_list <- get_positions(input_vector)
-#' print(positions_list)
-#' @importFrom dplyr tibble
-#' @importFrom dplyr group_by
-#' @importFrom dplyr summarise
-#' @importFrom purrr set_names
-#' @export
-get_positions <- function(input_vector) {
-  # Create a tibble with the input vector and their positions
-  df <- tibble(value = input_vector, position = seq_along(input_vector))
-  
-  # Group by value and summarise the positions
-  result <- df %>%
-    group_by(value) %>%
-    summarise(positions = list(position), .groups = 'drop')
-  
-  # Convert the result to a named list
-  result_list <- set_names(result$positions, result$value)
-  
-  return(result_list)
-}
-
-#' Add Tier Inputs to a Function Call String
-#'
-#' This function modifies a function call string by appending a tier label to specified arguments.
-#'
-#' @param command A character string representing a function call, e.g., "a(b, c, d)".
-#' @param arguments_to_tier A character vector specifying which arguments should be tiered, e.g., c("b", "c", "d").
-#' @param i A character string representing the tier label to be appended, e.g., "_1".
-#'
-#' @return A character string representing the modified function call with tiered arguments.
-#'
-#' @importFrom stringr str_replace
-#' @importFrom glue glue
-#' @importFrom purrr set_names
-#'
-#' @noRd
-add_tier_inputs <- function(command, arguments_to_tier, i) {
-  
-  if(i |> length() > 1) stop("tidytargets says: argument i must be of length one")
-  
-  if(length(arguments_to_tier)==0) return(command)
-  
-  command = command |> deparse() |> paste(collapse = "")  
-  
-  # Create a named vector for replacements
-  replacement_regexp <- glue("{arguments_to_tier}_{i}") |> as.character() |> set_names(arguments_to_tier)
-  
-  # Function to add word boundaries and perform the replacements
-  # This because we only replace WHOLE words
-  add_word_boundaries_and_replace <- function(command, replacements) {
-    for (pattern in names(replacements)) {
-      # Create the regex pattern with word boundaries
-      pattern_with_boundaries <- paste0("\\b", pattern, "\\b")
-      # Perform the replacement for each pattern
-      command <- str_replace(command, pattern_with_boundaries, replacements[pattern])
-    }
-    return(command)
-  }
-  
-  # Replace the specified arguments in the command with their tiered versions
-  command |> add_word_boundaries_and_replace(replacement_regexp) |>  rlang::parse_expr()
-  
 }
 
 #' Delete Lines Containing a Word from a File
@@ -267,70 +190,12 @@ command_targets <- function(command, tt_input, value) {
   )
 }
 
-#' Replace a symbol throughout an expression
-#'
-#' @noRd
-replace_symbol <- function(expr, from, to) {
-  from_sym <- as.name(from)
-  if (is.name(expr)) {
-    if (identical(expr, from_sym)) return(to)
-    return(expr)
-  }
-  if (is.call(expr)) {
-    return(as.call(lapply(expr, replace_symbol, from = from, to = to)))
-  }
-  expr
-}
+build_pattern = function(other_arguments_to_map = c()){
 
-#' Expand tiered target names in a command to `c(name_tier, ...)`
-#'
-#' @noRd
-expand_tiered_command <- function(command, target_names, tiers) {
-  if (length(target_names) == 0) return(command)
+  if(other_arguments_to_map |> length() == 0) return(NULL)
 
-  for (nm in target_names) {
-    replacement <- as.call(
-      c(as.name("c"), lapply(as.list(tiers), function(tier) as.name(paste0(nm, "_", tier))))
-    )
-    command <- replace_symbol(command, nm, replacement)
-  }
-  command
-}
+  as.call(c(as.name("map"), other_arguments_to_map |> lapply(as.name)))
 
-build_pattern = function(arguments_to_tier = c(), other_arguments_to_map = c(), index = c()){
-  
-  pattern = NULL 
-  
-  if(
-    arguments_to_tier |> length() > 0 |
-    other_arguments_to_map |> length() > 0
-  ){
-    
-    pattern = as.name("map")
-    
-    if(arguments_to_tier |> length() > 0)
-      pattern = pattern |> c(
-        arguments_to_tier |>
-          map(
-            ~ substitute(
-              slice(input, index  = arg ), 
-              list(input = as.symbol(.x), arg=index)
-            ) 
-          )
-      )
-    
-    if(other_arguments_to_map |> length() > 0){
-      
-      pattern = pattern |> c(other_arguments_to_map |> lapply(as.name))
-      
-    }
-    
-    pattern = as.call(pattern)
-    
-  }
-  
-  pattern
-  
 }
 
 write_source = function(user_function_source_path, target_script){
@@ -345,17 +210,14 @@ write_source = function(user_function_source_path, target_script){
 #' Append Targets to the Pipeline Target List
 #'
 #' @description
-#' Appends one or more `tar_target` objects to the global `target_list` used
-#' by the tidytargets pipeline script. This function modifies `target_list` in the
-#' calling environment via `<<-`.
+#' Combines an existing list of `tar_target` objects with one or more new
+#' targets. The generated pipeline script assigns the result back to
+#' `target_list`.
 #'
 #' @param target_list The existing list of `tar_target` objects to append to.
 #' @param ... One or more `tar_target` objects to append.
-#' @return Invisibly returns `NULL`; called for its side effect of updating
-#'   `target_list` in the enclosing environment.
+#' @return The combined list of targets.
 #' @export
 target_append <- function(target_list, ...) {
-  # Append the new elements to the list
-  target_list <<- c(target_list, list(...))
-  
+  c(target_list, list(...))
 }

@@ -8,7 +8,6 @@ tt_initialise(
   tt_input,
   store = targets::tar_config_get("store"),
   computing_resources = NULL,
-  tier = rep(1, length(tt_input)),
   debug_step = NULL,
   verbosity = targets::tar_config_get("reporter_make"),
   error = NULL,
@@ -31,9 +30,6 @@ If names are not set, integer indices are used.}
 controller group. \code{NULL} (the default) runs the pipeline sequentially.
 tidytargets does not depend on any compute backend; pass whatever your
 deployment uses.}
-
-\item{tier}{Integer vector (same length as \code{tt_input}) assigning each input
-to a processing tier for tiered execution. Default: all inputs in tier 1.}
 
 \item{debug_step}{Character name of a single target to debug; passed to
 \code{targets::tar_option_set(debug = ...)}. \code{NULL} disables debugging.}

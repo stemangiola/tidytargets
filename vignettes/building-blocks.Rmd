@@ -19,9 +19,9 @@ work <- tempfile("tidytargets-vignette-")
 dir.create(work)
 knitr::opts_knit$set(root.dir = work)
 
-show_script <- function(store) {
-  path <- paste0(store, ".R")
-  cat("## ", path, "\n\n", sep = "")
+show_script <- function(pipe) {
+  path <- paste0(pipe$initialisation$store, ".R")
+  cat("## ", basename(path), "\n\n", sep = "")
   writeLines(readLines(path))
 }
 ```
@@ -46,7 +46,7 @@ This vignette walks through every building block and prints the targets script a
 | `tt_evaluate()` | Close the script and run `tar_make()` |
 | `tt_factory()` | Internal factory used by iterate / single / merge |
 
-`tt_factory()` is not meant to be called directly. `tt_iterate()`, `tt_single()`, and `tt_merge()` all append `target_list |> target_append(tt_factory(...))` to the script.
+`tt_factory()` is not meant to be called directly. `tt_iterate()`, `tt_single()`, and `tt_merge()` all append `target_list <- target_list |> target_append(tt_factory(...))` to the script.
 
 ## Toy inputs
 
@@ -57,7 +57,7 @@ inputs <- list(
   sample_a = 1:3,
   sample_b = 4:6
 )
-store <- "pipeline"
+store <- tempfile("tidytargets-")
 ```
 
 ## `tt_initialise()`
@@ -75,7 +75,7 @@ pipe <- inputs |>
 ```
 
 ```{r initialise-script, comment = ""}
-show_script(store)
+show_script(pipe)
 ```
 
 ## `tt_iterate()`
@@ -91,7 +91,7 @@ pipe <- pipe |>
 ```
 
 ```{r iterate-read-script, comment = ""}
-show_script(store)
+show_script(pipe)
 ```
 
 A second iterate maps over the result of the first:
@@ -105,7 +105,7 @@ pipe <- pipe |>
 ```
 
 ```{r iterate-length-script, comment = ""}
-show_script(store)
+show_script(pipe)
 ```
 
 ## `tt_single()`
@@ -121,7 +121,11 @@ pipe <- pipe |>
 ```
 
 ```{r single-script, comment = ""}
-show_script(store)
+show_script(pipe)
+```
+
+```{r single-evaluate}
+pipe |> tt_evaluate()
 ```
 
 `tt_initialise()` itself uses `tt_single()` for the `*_file` targets (`format = "file"`).
@@ -139,7 +143,7 @@ pipe <- pipe |>
 ```
 
 ```{r merge-script, comment = ""}
-show_script(store)
+show_script(pipe)
 ```
 
 ## `tt_report()`
@@ -173,32 +177,8 @@ pipe <- pipe |>
 ```
 
 ```{r report-script, comment = ""}
-show_script(store)
+show_script(pipe)
 ```
-
-## `tt_evaluate()`
-
-This is the only eager step. It closes the script with a final `target_list` expression and calls `targets::tar_make()`. Evaluating the object (e.g., printing it in the console) does the same thing. Until then the pipeline is just a script on disk.
-
-The pipeline below runs the same steps as the walkthrough, then evaluates. `tt_evaluate()` prints the `{targets}` progress and returns `tar_meta()`. Read a target from the store to see the computed values.
-
-```{r evaluate}
-inputs |>
-  tt_initialise(store = "_targets") |>
-  tt_iterate(
-    target_output = "data",
-    command = input_list * 2
-  ) |>
-  tt_iterate(
-    target_output = "summaries",
-    command = summary(data)
-  ) |>
-  tt_evaluate()
-
-targets::tar_read(summaries, store = "_targets")
-```
-
-Do not evaluate a `tidytargets` object (e.g., by printing it in the console) unless you intend to run it.
 
 ## Custom functions from a file
 

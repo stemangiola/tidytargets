@@ -19,8 +19,11 @@ test_that("tt_initialise returns a tidytargets object with input targets", {
     tt_initialise(store = store)
 
   expect_s3_class(hpc, "tidytargets")
-  expect_equal(hpc$initialisation$store, store)
-  expect_true(file.exists(paste0(store, ".R")))
+  expect_equal(
+    hpc$initialisation$store,
+    normalizePath(store, winslash = "/", mustWork = TRUE)
+  )
+  expect_true(file.exists(paste0(hpc$initialisation$store, ".R")))
   expect_true("input_list" %in% names(hpc))
   expect_true("sample_names" %in% names(hpc))
   expect_equal(hpc$input_list$iterate, "map")
@@ -46,13 +49,19 @@ test_that("tt_initialise accepts a named list of objects", {
     tt_initialise(store = store)
 
   expect_s3_class(hpc, "tidytargets")
-  expect_equal(hpc$initialisation$store, store)
-  expect_true(file.exists(paste0(store, ".R")))
+  expect_equal(
+    hpc$initialisation$store,
+    normalizePath(store, winslash = "/", mustWork = TRUE)
+  )
+  expect_true(file.exists(paste0(hpc$initialisation$store, ".R")))
   expect_true("input_list" %in% names(hpc))
   expect_true("sample_names" %in% names(hpc))
   expect_equal(hpc$input_list$iterate, "map")
-  expect_equal(qs2::qs_read("sample_names.qs"), c("sample_a", "sample_b"))
-  expect_equal(qs2::qs_read("input_file.qs"), inputs)
+  expect_equal(
+    qs2::qs_read(file.path(hpc$initialisation$store, "sample_names.qs")),
+    c("sample_a", "sample_b")
+  )
+  expect_equal(qs2::qs_read(file.path(hpc$initialisation$store, "input_file.qs")), inputs)
 })
 
 test_that("tt_initialise names an unnamed list with integer indices", {
@@ -65,7 +74,10 @@ test_that("tt_initialise names an unnamed list with integer indices", {
     tt_initialise(store = file.path(tmp, "store"))
 
   expect_s3_class(hpc, "tidytargets")
-  expect_equal(qs2::qs_read("sample_names.qs"), c("1", "2"))
+  expect_equal(
+    qs2::qs_read(file.path(hpc$initialisation$store, "sample_names.qs")),
+    c("1", "2")
+  )
 })
 
 test_that("tt_initialise target_output names the mapped input target", {
@@ -118,6 +130,7 @@ test_that("tt_iterate and tt_single chain onto a tidytargets object", {
   expect_true(any(grepl("target_output = \"n_inputs\"", script)))
   expect_true(any(grepl("quote\\(readRDS\\(input_list\\)\\)", script)))
   expect_true(any(grepl("other_arguments_to_map = \"input_list\"", script)))
+  expect_true(any(grepl("^target_list <- target_list \\|> target_append", script)))
 })
 
 test_that("grammar steps error on non-tidytargets input", {
@@ -248,4 +261,50 @@ test_that("tt_report captures params as command-style symbols", {
   script <- readLines(paste0(store, ".R"))
   expect_true(any(grepl("n_samples = n_samples", script)))
   expect_false(any(grepl("is_target", script)))
+})
+
+test_that("tt_evaluate runs a pipeline and print is idempotent", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  inputs <- list(sample_a = 1:3, sample_b = 4:6)
+  store <- file.path(tmp, "store")
+  pipe <- inputs |>
+    tt_initialise(store = store) |>
+    tt_iterate(target_output = "data", command = input_list * 2)
+
+  meta <- tt_evaluate(pipe)
+  expect_s3_class(meta, "tbl_df")
+  expect_true("data" %in% meta$name)
+
+  values <- targets::tar_read(data, store = pipe$initialisation$store)
+  expect_equal(unname(values), list(c(2, 4, 6), c(8, 10, 12)))
+
+  # A second evaluate must not leave the script as a bare `target_list`
+  meta2 <- tt_evaluate(pipe)
+  expect_true("data" %in% meta2$name)
+  script <- readLines(paste0(pipe$initialisation$store, ".R"))
+  expect_true(any(grepl("target_list <- list", script)))
+  expect_equal(sum(grepl("^\\s*target_list\\s*$", script)), 1L)
+})
+
+test_that("tt_evaluate uses store inputs after the working directory changes", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  pipe <- list(sample_a = 1:3, sample_b = 4:6) |>
+    tt_initialise(store = "store") |>
+    tt_iterate(target_output = "data", command = input_list * 2)
+
+  setwd(old)
+  on.exit(NULL)
+
+  meta <- tt_evaluate(pipe)
+  expect_true("data" %in% meta$name)
+  values <- targets::tar_read(data, store = pipe$initialisation$store)
+  expect_equal(unname(values), list(c(2, 4, 6), c(8, 10, 12)))
 })

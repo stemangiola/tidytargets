@@ -38,7 +38,7 @@ auto-generated name.}
 
 \item{command}{An unevaluated expression. \code{{targets}} tracks dependencies from
 global symbols in this expression (including upstream target names). Mapped
-and tiered targets referenced here also set the iteration pattern.}
+targets referenced here also set the iteration pattern.}
 
 \item{user_function_source_path}{Optional character path to an R script that
 should be sourced in the worker before evaluating \code{command}. \code{NULL}

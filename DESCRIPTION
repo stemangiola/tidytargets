@@ -1,6 +1,6 @@
 Package: tidytargets
 Title: Tidy Pipe-Friendly Grammar for R Targets Pipelines
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: c(
     person("Stefano", "Mangiola", email = "mangiolastefano@gmail.com",
            role = c("aut", "cre")),
@@ -24,11 +24,9 @@ Imports:
     qs2,
     dplyr,
     glue,
-    stringr,
     purrr,
     readr,
     magrittr,
-    rlang,
     callr,
     methods
 Suggests:

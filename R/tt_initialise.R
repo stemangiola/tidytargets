@@ -15,8 +15,6 @@
 #'   controller group. `NULL` (the default) runs the pipeline sequentially.
 #'   tidytargets does not depend on any compute backend; pass whatever your
 #'   deployment uses.
-#' @param tier Integer vector (same length as `tt_input`) assigning each input
-#'   to a processing tier for tiered execution. Default: all inputs in tier 1.
 #' @param debug_step Character name of a single target to debug; passed to
 #'   `targets::tar_option_set(debug = ...)`. `NULL` disables debugging.
 #' @param verbosity Reporter string passed to `targets::tar_make()`. Defaults to
@@ -48,7 +46,6 @@
 tt_initialise <- function(tt_input,
                            store =  targets::tar_config_get("store"),
                            computing_resources = NULL,
-                           tier = rep(1, length(tt_input)),
                            debug_step = NULL,
                            verbosity = targets::tar_config_get("reporter_make"),
                            error = NULL,
@@ -70,14 +67,21 @@ tt_initialise <- function(tt_input,
   # Optionally, you can evaluate the arguments if they are expressions
   args_list <- lapply(args_list, eval, envir = parent.frame())
   
-  # Write targets
+  # Write targets. Resolve store so later evaluate/print still finds `{store}.R`
+  # if the working directory has changed.
   dir.create(store, showWarnings = FALSE, recursive = TRUE)
+  store <- normalizePath(store, winslash = "/", mustWork = TRUE)
+  args_list$store <- store
   
-  # Save parameters to files
-  tt_input |> as.list() |>  qs_save("input_file.qs")
-  tt_input |> names() |> qs_save("sample_names.qs")
-  
-  computing_resources |> qs_save("temp_computing_resources.qs")
+  # Keep inputs with the store so tar_make cannot pick up a leftover
+  # input_file.qs from another pipeline in the working directory.
+  input_qs <- file.path(store, "input_file.qs")
+  sample_names_qs <- file.path(store, "sample_names.qs")
+  resources_qs <- file.path(store, "temp_computing_resources.qs")
+
+  tt_input |> as.list() |> qs_save(input_qs)
+  tt_input |> names() |> qs_save(sample_names_qs)
+  computing_resources |> qs_save(resources_qs)
   backend_packages <- package_of_object(computing_resources)
   
   # Write pipeline to a file
@@ -98,17 +102,21 @@ tt_initialise <- function(tt_input,
       error = e,
       debug = d, # Set the target you want to debug.
       cue = tar_cue(mode = u), # Force skip non-debugging outdated targets.
-      controller = qs_read("temp_computing_resources.qs"), 
+      controller = qs_read(rf),
       format = "qs",
       packages = p,
       trust_timestamps = TRUE, 
       workspace_on_error = w
     )
      
-    target_list = list(  )
+    target_list <- list()
     
     } |> 
-    substitute(env = list(d = debug_step, e = error, u = update, g = garbage_collection, w = workspace_on_error, p = unique(c(packages, "qs2")), bp = backend_packages)) |> 
+    substitute(env = list(
+      d = debug_step, e = error, u = update, g = garbage_collection,
+      w = workspace_on_error, p = unique(c(packages, "qs2")),
+      bp = backend_packages, rf = resources_qs
+    )) |> 
     tar_script_append2(script = glue("{store}.R"), append = FALSE)
 
   
@@ -123,7 +131,7 @@ tt_initialise <- function(tt_input,
     tt_input |>
 
       # Sample names
-      tt_single("sample_names_file", "sample_names.qs", format = "file") |>
+      tt_single("sample_names_file", snf, format = "file") |>
 
       tt_single(
         target_output = "sample_names",
@@ -133,7 +141,7 @@ tt_initialise <- function(tt_input,
       ) |>
 
       # Files
-      tt_single(ift, "input_file.qs", format = "file") |>
+      tt_single(ift, iff, format = "file") |>
 
       tt_single(
         target_output = to,
@@ -144,7 +152,9 @@ tt_initialise <- function(tt_input,
     list(
       ift = input_file_target,
       to = target_output,
-      ifs = as.name(input_file_target)
+      ifs = as.name(input_file_target),
+      snf = sample_names_qs,
+      iff = input_qs
     )
   ))
 }
