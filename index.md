@@ -43,12 +43,13 @@ is in the vignette:
 ## A minimal pipeline
 
 [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)
-takes a named vector of inputs (typically file paths). Use
-[`is_target()`](https://stemangiola.github.io/tidytargets/reference/is_target.md)
-to point a step at an upstream target. With no `computing_resources`,
-the pipeline runs sequentially.
+takes a named vector of inputs (typically file paths), or a named list
+of in-memory objects. Pass a `command` expression the same way you would
+to `tar_target()`; [targets](https://docs.ropensci.org/targets/) tracks
+upstream names in that expression. With no `computing_resources`, the
+pipeline runs sequentially.
 
-[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` ``files`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(`` `` sample_a ``=`` ``"a.rds"``,`` `` sample_b ``=`` ``"b.rds"`` ``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``1``:``3``, ``files``[[``"sample_a"``]``]``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``4``:``6``, ``files``[[``"sample_b"``]``]``)`` `` ``files`` ``|>`` `` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``store ``=`` ``"_targets"``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"data"``,`` `` user_function ``=`` ``readRDS`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` file ``=`` ``"input_list"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"summaries"``,`` `` user_function ``=`` ``summary`` ``|>`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``)``,`` `` object ``=`` ``"data"`` ``|>`` `[`is_target`](https://stemangiola.github.io/tidytargets/reference/is_target.md)`(``)`` `` ``)`` ``|>`` `` `[`tt_evaluate`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)`(``)`
+[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` ``files`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(`` `` sample_a ``=`` ``"a.rds"``,`` `` sample_b ``=`` ``"b.rds"`` ``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``1``:``3``, ``files``[[``"sample_a"``]``]``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``4``:``6``, ``files``[[``"sample_b"``]``]``)`` `` ``files`` ``|>`` `` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``store ``=`` ``"_targets"``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"data"``,`` `` command ``=`` `[`readRDS`](https://rdrr.io/r/base/readRDS.html)`(``input_list``)`` `` ``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` target_output ``=`` ``"summaries"``,`` `` command ``=`` `[`summary`](https://rdrr.io/r/base/summary.html)`(``data``)`` `` ``)`` ``|>`` `` `[`tt_evaluate`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)`(``)`
 
     #> + input_list_file dispatched
     #> ✔ input_list_file completed [0ms, 97 B]
@@ -80,8 +81,9 @@ table.
 [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)
 registers two mapped targets for you:
 
-- `input_list` — the named input vector
-- `sample_names` — the names of that vector
+- `input_list` — the named input vector or list (override with
+  `target_output`)
+- `sample_names` — the names of that vector or list
 
 ## Grammar
 
@@ -94,7 +96,6 @@ registers two mapped targets for you:
 | [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md) | Render a Quarto / R Markdown report |
 | [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md) | Write the target list and run `tar_make()` |
 | [`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md) | Get or set free-form metadata on the pipeline object |
-| [`is_target()`](https://stemangiola.github.io/tidytargets/reference/is_target.md) | Mark an argument as an upstream target name |
 
 ## Carrying extra information
 
@@ -112,13 +113,9 @@ dataset identifier, a provenance note.
 Metadata is merged on each call, and passing `NULL` removes an entry. It
 travels with the object through every grammar step but is not written to
 the targets script, so workers cannot see it; values a target needs must
-be passed as arguments to
-[`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)
-or
-[`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md).
-The store is inert with respect to the rest of the grammar and
-constrains nothing — it imposes no restriction on your `target_output`
-names.
+appear in `command`. The store is inert with respect to the rest of the
+grammar and constrains nothing — it imposes no restriction on your
+`target_output` names.
 
 ## Deployment
 

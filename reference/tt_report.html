@@ -9,7 +9,7 @@ generates an HTML report using tarchetypes::tar_quarto_raw()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,13 +46,31 @@ generates an HTML report using <code><a href="https://docs.ropensci.org/tarchety
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tt_report</span><span class="op">(</span><span class="va">tt_input</span>, target_output <span class="op">=</span> <span class="cn">NULL</span>, rmd_path <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tt_report</span><span class="op">(</span></span>
+<span>  <span class="va">tt_input</span>,</span>
+<span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rmd_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Default S3 method</span></span>
-<span><span class="fu">tt_report</span><span class="op">(</span><span class="va">tt_input</span>, target_output <span class="op">=</span> <span class="cn">NULL</span>, rmd_path <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">tt_report</span><span class="op">(</span></span>
+<span>  <span class="va">tt_input</span>,</span>
+<span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rmd_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'tidytargets'</span></span>
-<span><span class="fu">tt_report</span><span class="op">(</span><span class="va">tt_input</span>, target_output <span class="op">=</span> <span class="cn">NULL</span>, rmd_path <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">tt_report</span><span class="op">(</span></span>
+<span>  <span class="va">tt_input</span>,</span>
+<span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rmd_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -71,8 +89,13 @@ generates an HTML report using <code><a href="https://docs.ropensci.org/tarchety
 <dd><p>Character path to the <code>.qmd</code> or <code>.Rmd</code> report file.</p></dd>
 
 
+<dt id="arg-params">params<a class="anchor" aria-label="anchor" href="#arg-params"></a></dt>
+<dd><p>An unevaluated <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> of report parameters. <code>{targets}</code> tracks
+dependencies from symbols in this expression (including upstream target names).</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Named arguments passed as report parameters.</p></dd>
+<dd><p>Additional factory arguments such as <code>deployment</code> or <code>packages</code>.</p></dd>
 
 </dl></div>
 

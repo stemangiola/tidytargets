@@ -3,7 +3,7 @@ pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   building-blocks: building-blocks.html
-last_built: 2026-08-23T05:03Z
+last_built: 2026-08-28T05:13Z
 urls:
   reference: https://stemangiola.github.io/tidytargets/reference
   article: https://stemangiola.github.io/tidytargets/articles

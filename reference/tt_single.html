@@ -9,7 +9,7 @@ Use tt_iterate() instead when the step should be mapped over all samples."></hea
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ Use <code><a href="tt_iterate.html">tt_iterate()</a></code> instead when the ste
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tt_single</span><span class="op">(</span></span>
 <span>  <span class="va">tt_input</span>,</span>
 <span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  user_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  command <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user_function_source_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  iterate <span class="op">=</span> <span class="st">"none"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -59,7 +59,7 @@ Use <code><a href="tt_iterate.html">tt_iterate()</a></code> instead when the ste
 <span><span class="fu">tt_single</span><span class="op">(</span></span>
 <span>  <span class="va">tt_input</span>,</span>
 <span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  user_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  command <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user_function_source_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  iterate <span class="op">=</span> <span class="st">"none"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -69,7 +69,7 @@ Use <code><a href="tt_iterate.html">tt_iterate()</a></code> instead when the ste
 <span><span class="fu">tt_single</span><span class="op">(</span></span>
 <span>  <span class="va">tt_input</span>,</span>
 <span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  user_function <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  command <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user_function_source_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  iterate <span class="op">=</span> <span class="st">"none"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -88,22 +88,24 @@ Use <code><a href="tt_iterate.html">tt_iterate()</a></code> instead when the ste
 <dd><p>Character name of the output target.</p></dd>
 
 
-<dt id="arg-user-function">user_function<a class="anchor" aria-label="anchor" href="#arg-user-function"></a></dt>
-<dd><p>A quoted function call or function object to execute.</p></dd>
+<dt id="arg-command">command<a class="anchor" aria-label="anchor" href="#arg-command"></a></dt>
+<dd><p>An unevaluated expression. <code>{targets}</code> tracks dependencies from
+global symbols in this expression (including upstream target names).</p></dd>
 
 
 <dt id="arg-user-function-source-path">user_function_source_path<a class="anchor" aria-label="anchor" href="#arg-user-function-source-path"></a></dt>
 <dd><p>Optional character path to an R script to
-source in the worker before calling <code>user_function</code>. <code>NULL</code> sources nothing.</p></dd>
+source in the worker before evaluating <code>command</code>. <code>NULL</code> sources nothing.</p></dd>
 
 
 <dt id="arg-iterate">iterate<a class="anchor" aria-label="anchor" href="#arg-iterate"></a></dt>
-<dd><p>Iteration mode string. <code>"none"</code> disables iteration; <code>"map"</code>
-maps over input values.</p></dd>
+<dd><p>Iteration mode string stored on the pipeline object. <code>"none"</code>
+disables iteration; <code>"map"</code> marks the result as mapped for later steps.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Named arguments passed as target inputs.</p></dd>
+<dd><p>Additional factory arguments such as <code>format</code>, <code>deployment</code>,
+or <code>packages</code>.</p></dd>
 
 </dl></div>
 

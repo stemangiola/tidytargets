@@ -11,7 +11,7 @@ applied.
 tt_iterate(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -20,7 +20,7 @@ tt_iterate(
 tt_iterate(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -29,7 +29,7 @@ tt_iterate(
 tt_iterate(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -46,17 +46,18 @@ tt_iterate(
   Character name of the output target. `NULL` uses an auto-generated
   name.
 
-- user_function:
+- command:
 
-  A quoted function call to execute per iteration.
+  An unevaluated expression. `{targets}` tracks dependencies from global
+  symbols in this expression (including upstream target names). Mapped
+  targets referenced here also set the iteration pattern.
 
 - user_function_source_path:
 
   Optional character path to an R script that should be sourced in the
-  worker before calling `user_function`. `NULL` sources nothing.
+  worker before evaluating `command`. `NULL` sources nothing.
 
 - ...:
 
-  Named arguments passed as target inputs; use
-  [`is_target()`](https://stemangiola.github.io/tidytargets/reference/is_target.md)
-  to reference upstream targets by name.
+  Additional factory arguments such as `format`, `deployment`, or
+  `packages`.

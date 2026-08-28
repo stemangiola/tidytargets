@@ -12,7 +12,7 @@ anywhere in a pipeline. Passing `NULL` as a value removes that entry.
 
 Metadata lives in the pipeline object only; it is not written to the
 targets script and is not available to workers. To pass values to
-workers, supply them as target arguments in
+workers, include them in the `command` expression of
 [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)
 or
 [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md).

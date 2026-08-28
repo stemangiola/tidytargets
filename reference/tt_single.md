@@ -11,7 +11,7 @@ instead when the step should be mapped over all samples.
 tt_single(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   iterate = "none",
   ...
@@ -21,7 +21,7 @@ tt_single(
 tt_single(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   iterate = "none",
   ...
@@ -31,7 +31,7 @@ tt_single(
 tt_single(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   iterate = "none",
   ...
@@ -48,20 +48,22 @@ tt_single(
 
   Character name of the output target.
 
-- user_function:
+- command:
 
-  A quoted function call or function object to execute.
+  An unevaluated expression. `{targets}` tracks dependencies from global
+  symbols in this expression (including upstream target names).
 
 - user_function_source_path:
 
   Optional character path to an R script to source in the worker before
-  calling `user_function`. `NULL` sources nothing.
+  evaluating `command`. `NULL` sources nothing.
 
 - iterate:
 
-  Iteration mode string. `"none"` disables iteration; `"map"` maps over
-  input values.
+  Iteration mode string stored on the pipeline object. `"none"` disables
+  iteration; `"map"` marks the result as mapped for later steps.
 
 - ...:
 
-  Named arguments passed as target inputs.
+  Additional factory arguments such as `format`, `deployment`, or
+  `packages`.

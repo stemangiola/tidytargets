@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@
 <div class="section level2">
 <h2 id="a-minimal-pipeline">A minimal pipeline<a class="anchor" aria-label="anchor" href="#a-minimal-pipeline"></a>
 </h2>
-<p><code><a href="reference/tt_initialise.html">tt_initialise()</a></code> takes a named vector of inputs (typically file paths). Use <code><a href="reference/is_target.html">is_target()</a></code> to point a step at an upstream target. With no <code>computing_resources</code>, the pipeline runs sequentially.</p>
+<p><code><a href="reference/tt_initialise.html">tt_initialise()</a></code> takes a named vector of inputs (typically file paths), or a named list of in-memory objects. Pass a <code>command</code> expression the same way you would to <code>tar_target()</code>; <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> tracks upstream names in that expression. With no <code>computing_resources</code>, the pipeline runs sequentially.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stemangiola.github.io/tidytargets/">tidytargets</a></span><span class="op">)</span></span>
 <span></span>
@@ -85,13 +85,11 @@
 <span>  <span class="fu"><a href="reference/tt_initialise.html">tt_initialise</a></span><span class="op">(</span>store <span class="op">=</span> <span class="st">"_targets"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_iterate.html">tt_iterate</a></span><span class="op">(</span></span>
 <span>    target_output <span class="op">=</span> <span class="st">"data"</span>,</span>
-<span>    user_function <span class="op">=</span> <span class="va">readRDS</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    file <span class="op">=</span> <span class="st">"input_list"</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/is_target.html">is_target</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>    command <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">input_list</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_iterate.html">tt_iterate</a></span><span class="op">(</span></span>
 <span>    target_output <span class="op">=</span> <span class="st">"summaries"</span>,</span>
-<span>    user_function <span class="op">=</span> <span class="va">summary</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    object <span class="op">=</span> <span class="st">"data"</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/is_target.html">is_target</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>    command <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_evaluate.html">tt_evaluate</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; + input_list_file dispatched</span></span>
@@ -119,9 +117,9 @@
 <p><code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code> also returns the <code><a href="https://docs.ropensci.org/targets/reference/tar_meta.html" class="external-link">targets::tar_meta()</a></code> table. <code><a href="reference/tt_initialise.html">tt_initialise()</a></code> registers two mapped targets for you:</p>
 <ul>
 <li>
-<code>input_list</code> — the named input vector</li>
+<code>input_list</code> — the named input vector or list (override with <code>target_output</code>)</li>
 <li>
-<code>sample_names</code> — the names of that vector</li>
+<code>sample_names</code> — the names of that vector or list</li>
 </ul>
 </div>
 <div class="section level2">
@@ -166,10 +164,6 @@
 <td><code><a href="reference/tt_metadata.html">tt_metadata()</a></code></td>
 <td>Get or set free-form metadata on the pipeline object</td>
 </tr>
-<tr>
-<td><code><a href="reference/is_target.html">is_target()</a></code></td>
-<td>Mark an argument as an upstream target name</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -184,7 +178,7 @@
 <span></span>
 <span><span class="fu"><a href="reference/tt_metadata.html">tt_metadata</a></span><span class="op">(</span><span class="va">pipeline</span><span class="op">)</span><span class="op">$</span><span class="va">api_url</span></span>
 <span><span class="co">#&gt; [1] "https://api.example.org"</span></span></code></pre></div>
-<p>Metadata is merged on each call, and passing <code>NULL</code> removes an entry. It travels with the object through every grammar step but is not written to the targets script, so workers cannot see it; values a target needs must be passed as arguments to <code><a href="reference/tt_iterate.html">tt_iterate()</a></code> or <code><a href="reference/tt_single.html">tt_single()</a></code>. The store is inert with respect to the rest of the grammar and constrains nothing — it imposes no restriction on your <code>target_output</code> names.</p>
+<p>Metadata is merged on each call, and passing <code>NULL</code> removes an entry. It travels with the object through every grammar step but is not written to the targets script, so workers cannot see it; values a target needs must appear in <code>command</code>. The store is inert with respect to the rest of the grammar and constrains nothing — it imposes no restriction on your <code>target_output</code> names.</p>
 </div>
 <div class="section level2">
 <h2 id="deployment">Deployment<a class="anchor" aria-label="anchor" href="#deployment"></a>

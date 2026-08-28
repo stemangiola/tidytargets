@@ -1,18 +1,14 @@
 # Internal Factory for Iterating Targets
 
-Low-level factory that builds `tar_target_raw()` calls for each tier in
-the tidytargets pipeline. Not intended to be called by end users
-directly.
+Low-level factory that builds a `tar_target_raw()` call for the
+tidytargets pipeline. Not intended to be called by end users directly.
 
 ## Usage
 
 ``` r
 tt_factory(
-  tiers = NULL,
   target_output,
-  user_function,
-  arguments_to_tier = c(),
-  arguments_already_tiered = c(),
+  command,
   other_arguments_to_map = c(),
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
@@ -23,34 +19,18 @@ tt_factory(
 
 ## Arguments
 
-- tiers:
-
-  Named integer list of tier indices (output of
-  [`get_positions()`](https://stemangiola.github.io/tidytargets/reference/get_positions.md)).
-  `NULL` or length-1 produces a single, non-tiered target.
-
 - target_output:
 
   Character name of the output target.
 
-- user_function:
+- command:
 
-  A quoted function call to execute for this target.
-
-- arguments_to_tier:
-
-  Character vector of argument names that should be tiered (suffixed
-  with the tier index).
-
-- arguments_already_tiered:
-
-  Character vector of argument names that have already been tiered in a
-  prior call.
+  An unevaluated expression passed to `tar_target_raw()`. `{targets}`
+  tracks dependencies from symbols in this expression.
 
 - other_arguments_to_map:
 
-  Character vector of argument names that should be mapped over without
-  tiering.
+  Character vector of target names that should be mapped over.
 
 - packages:
 
@@ -66,8 +46,8 @@ tt_factory(
 
 - ...:
 
-  Additional named arguments passed as target inputs.
+  Unused; retained so extra factory arguments are ignored.
 
 ## Value
 
-A `tar_target` object or a list of `tar_target` objects (one per tier).
+A `tar_target` object.

@@ -1,8 +1,8 @@
 # Append Targets to the Pipeline Target List
 
-Appends one or more `tar_target` objects to the global `target_list`
-used by the tidytargets pipeline script. This function modifies
-`target_list` in the calling environment via `<<-`.
+Combines an existing list of `tar_target` objects with one or more new
+targets. The generated pipeline script assigns the result back to
+`target_list`.
 
 ## Usage
 
@@ -22,5 +22,4 @@ target_append(target_list, ...)
 
 ## Value
 
-Invisibly returns `NULL`; called for its side effect of updating
-`target_list` in the enclosing environment.
+The combined list of targets.

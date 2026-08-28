@@ -9,7 +9,7 @@ pipeline report targets. Not intended to be called by end users directly."></hea
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,14 +47,10 @@ pipeline report targets. Not intended to be called by end users directly.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tt_internal_report</span><span class="op">(</span></span>
-<span>  tiers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">target_output</span>,</span>
 <span>  <span class="va">rmd_path</span>,</span>
 <span>  render_arguments <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  output_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  arguments_to_tier <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  arguments_already_tiered <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  other_arguments_to_map <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  packages <span class="op">=</span> <span class="fu">targets</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/targets/reference/tar_option_get.html" class="external-link">tar_option_get</a></span><span class="op">(</span><span class="st">"packages"</span><span class="op">)</span>,</span>
 <span>  deployment <span class="op">=</span> <span class="fu">targets</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/targets/reference/tar_option_get.html" class="external-link">tar_option_get</a></span><span class="op">(</span><span class="st">"deployment"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -65,12 +61,7 @@ pipeline report targets. Not intended to be called by end users directly.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-tiers">tiers<a class="anchor" aria-label="anchor" href="#arg-tiers"></a></dt>
-<dd><p>Named integer list of tier indices. <code>NULL</code> or length-1 produces
-a single, non-tiered target.</p></dd>
-
-
-<dt id="arg-target-output">target_output<a class="anchor" aria-label="anchor" href="#arg-target-output"></a></dt>
+<dl><dt id="arg-target-output">target_output<a class="anchor" aria-label="anchor" href="#arg-target-output"></a></dt>
 <dd><p>Character name of the output target.</p></dd>
 
 
@@ -88,18 +79,6 @@ at render time.</p></dd>
 <dd><p>Optional character name for the rendered output file.</p></dd>
 
 
-<dt id="arg-arguments-to-tier">arguments_to_tier<a class="anchor" aria-label="anchor" href="#arg-arguments-to-tier"></a></dt>
-<dd><p>Character vector of argument names to tier.</p></dd>
-
-
-<dt id="arg-arguments-already-tiered">arguments_already_tiered<a class="anchor" aria-label="anchor" href="#arg-arguments-already-tiered"></a></dt>
-<dd><p>Character vector of already-tiered arguments.</p></dd>
-
-
-<dt id="arg-other-arguments-to-map">other_arguments_to_map<a class="anchor" aria-label="anchor" href="#arg-other-arguments-to-map"></a></dt>
-<dd><p>Character vector of arguments to map over.</p></dd>
-
-
 <dt id="arg-packages">packages<a class="anchor" aria-label="anchor" href="#arg-packages"></a></dt>
 <dd><p>Character vector of R packages to load in the worker.</p></dd>
 
@@ -114,7 +93,7 @@ at render time.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>tar_target</code> object or a list of <code>tar_target</code> objects.</p>
+    <p>A <code>tar_target</code> object.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

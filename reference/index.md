@@ -4,10 +4,6 @@
 
 - [`delete_lines_with_word()`](https://stemangiola.github.io/tidytargets/reference/delete_lines_with_word.md)
   : Delete Lines Containing a Word from a File
-- [`get_positions()`](https://stemangiola.github.io/tidytargets/reference/get_positions.md)
-  : Get positions of each unique element in a vector
-- [`is_target()`](https://stemangiola.github.io/tidytargets/reference/is_target.md)
-  : Mark a String as a Targets Target Reference
 - [`print(`*`<tidytargets>`*`)`](https://stemangiola.github.io/tidytargets/reference/print.tidytargets.md)
   : Print a tidytargets Object
 - [`target_append()`](https://stemangiola.github.io/tidytargets/reference/target_append.md)

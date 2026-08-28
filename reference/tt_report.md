@@ -7,13 +7,31 @@ which generates an HTML report using
 ## Usage
 
 ``` r
-tt_report(tt_input, target_output = NULL, rmd_path = NULL, ...)
+tt_report(
+  tt_input,
+  target_output = NULL,
+  rmd_path = NULL,
+  params = list(),
+  ...
+)
 
 # Default S3 method
-tt_report(tt_input, target_output = NULL, rmd_path = NULL, ...)
+tt_report(
+  tt_input,
+  target_output = NULL,
+  rmd_path = NULL,
+  params = list(),
+  ...
+)
 
 # S3 method for class 'tidytargets'
-tt_report(tt_input, target_output = NULL, rmd_path = NULL, ...)
+tt_report(
+  tt_input,
+  target_output = NULL,
+  rmd_path = NULL,
+  params = list(),
+  ...
+)
 ```
 
 ## Arguments
@@ -30,6 +48,12 @@ tt_report(tt_input, target_output = NULL, rmd_path = NULL, ...)
 
   Character path to the `.qmd` or `.Rmd` report file.
 
+- params:
+
+  An unevaluated [`list()`](https://rdrr.io/r/base/list.html) of report
+  parameters. `{targets}` tracks dependencies from symbols in this
+  expression (including upstream target names).
+
 - ...:
 
-  Named arguments passed as report parameters.
+  Additional factory arguments such as `deployment` or `packages`.

@@ -7,8 +7,8 @@ with named arguments the entries are merged into the existing metadata and
 the tidytargets object is returned, so the call can sit anywhere in a
 pipeline. Passing NULL as a value removes that entry.
 Metadata lives in the pipeline object only; it is not written to the targets
-script and is not available to workers. To pass values to workers, supply
-them as target arguments in tt_iterate() or tt_single()."><meta property="og:description" content="Reads and writes the metadata store of a tidytargets object, a free-form
+script and is not available to workers. To pass values to workers, include
+them in the command expression of tt_iterate() or tt_single()."><meta property="og:description" content="Reads and writes the metadata store of a tidytargets object, a free-form
 named list for information that is not part of the pipeline itself, such as
 API endpoints, credentials handles, dataset identifiers or provenance notes.
 Called with no additional arguments the metadata list is returned. Called
@@ -16,8 +16,8 @@ with named arguments the entries are merged into the existing metadata and
 the tidytargets object is returned, so the call can sit anywhere in a
 pipeline. Passing NULL as a value removes that entry.
 Metadata lives in the pipeline object only; it is not written to the targets
-script and is not available to workers. To pass values to workers, supply
-them as target arguments in tt_iterate() or tt_single()."></head><body>
+script and is not available to workers. To pass values to workers, include
+them in the command expression of tt_iterate() or tt_single()."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -25,7 +25,7 @@ them as target arguments in tt_iterate() or tt_single()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,8 +64,8 @@ with named arguments the entries are merged into the existing metadata and
 the <code>tidytargets</code> object is returned, so the call can sit anywhere in a
 pipeline. Passing <code>NULL</code> as a value removes that entry.</p>
 <p>Metadata lives in the pipeline object only; it is not written to the targets
-script and is not available to workers. To pass values to workers, supply
-them as target arguments in <code><a href="tt_iterate.html">tt_iterate()</a></code> or <code><a href="tt_single.html">tt_single()</a></code>.</p>
+script and is not available to workers. To pass values to workers, include
+them in the <code>command</code> expression of <code><a href="tt_iterate.html">tt_iterate()</a></code> or <code><a href="tt_single.html">tt_single()</a></code>.</p>
     </div>
 
     <div class="section level2">

@@ -1,6 +1,6 @@
 # Initialise a tidytargets Pipeline
 
-Sets up and writes a `targets` pipeline script. Saves input paths and
+Sets up and writes a `targets` pipeline script. Saves inputs and
 configuration to disk, then returns a `tidytargets` object that
 downstream grammar functions (e.g.
 [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md),
@@ -16,14 +16,14 @@ tt_initialise(
   tt_input,
   store = targets::tar_config_get("store"),
   computing_resources = NULL,
-  tier = rep(1, length(tt_input)),
   debug_step = NULL,
   verbosity = targets::tar_config_get("reporter_make"),
   error = NULL,
   update = "thorough",
   garbage_collection = 0,
   workspace_on_error = FALSE,
-  packages = "tidytargets"
+  packages = "tidytargets",
+  target_output = "input_list"
 )
 ```
 
@@ -31,9 +31,9 @@ tt_initialise(
 
 - tt_input:
 
-  Named vector of inputs, typically file paths, one element per unit of
-  iteration (e.g. sample). If names are not set, integer indices are
-  used.
+  Named vector of inputs, typically file paths, or a named list of
+  in-memory objects, one element per unit of iteration (e.g. sample). If
+  names are not set, integer indices are used.
 
 - store:
 
@@ -46,11 +46,6 @@ tt_initialise(
   or controller group. `NULL` (the default) runs the pipeline
   sequentially. tidytargets does not depend on any compute backend; pass
   whatever your deployment uses.
-
-- tier:
-
-  Integer vector (same length as `tt_input`) assigning each input to a
-  processing tier for tiered execution. Default: all inputs in tier 1.
 
 - debug_step:
 
@@ -89,6 +84,12 @@ tt_initialise(
 
   Character vector of R packages loaded on workers. Defaults to
   `"tidytargets"`.
+
+- target_output:
+
+  Character name of the mapped input target. Default: `"input_list"`. A
+  companion file-tracking target is registered as
+  `{target_output}_file`.
 
 ## Value
 

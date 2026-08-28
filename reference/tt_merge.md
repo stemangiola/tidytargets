@@ -9,7 +9,7 @@ iterated upstream targets into a single aggregate object.
 tt_merge(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -18,7 +18,7 @@ tt_merge(
 tt_merge(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -27,7 +27,7 @@ tt_merge(
 tt_merge(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -43,15 +43,17 @@ tt_merge(
 
   Character name of the output target.
 
-- user_function:
+- command:
 
-  A quoted function call to execute for the merge.
+  An unevaluated expression. `{targets}` tracks dependencies from global
+  symbols in this expression (including upstream target names).
 
 - user_function_source_path:
 
-  Optional character path to an R script to source in the worker. `NULL`
-  sources nothing.
+  Optional character path to an R script to source in the worker before
+  evaluating `command`. `NULL` sources nothing.
 
 - ...:
 
-  Named arguments passed as target inputs.
+  Additional factory arguments such as `format`, `deployment`, or
+  `packages`.

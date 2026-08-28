@@ -9,14 +9,10 @@ users directly.
 
 ``` r
 tt_internal_report(
-  tiers = NULL,
   target_output,
   rmd_path,
   render_arguments = quote(list()),
   output_file = NULL,
-  arguments_to_tier = c(),
-  arguments_already_tiered = c(),
-  other_arguments_to_map = c(),
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
   ...
@@ -24,11 +20,6 @@ tt_internal_report(
 ```
 
 ## Arguments
-
-- tiers:
-
-  Named integer list of tier indices. `NULL` or length-1 produces a
-  single, non-tiered target.
 
 - target_output:
 
@@ -48,18 +39,6 @@ tt_internal_report(
 
   Optional character name for the rendered output file.
 
-- arguments_to_tier:
-
-  Character vector of argument names to tier.
-
-- arguments_already_tiered:
-
-  Character vector of already-tiered arguments.
-
-- other_arguments_to_map:
-
-  Character vector of arguments to map over.
-
 - packages:
 
   Character vector of R packages to load in the worker.
@@ -74,4 +53,4 @@ tt_internal_report(
 
 ## Value
 
-A `tar_target` object or a list of `tar_target` objects.
+A `tar_target` object.
