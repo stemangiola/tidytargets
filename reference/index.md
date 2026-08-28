@@ -15,6 +15,8 @@
   : tidytargets: Tidy Pipe-Friendly Grammar for Targets Pipelines
 - [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)
   : Execute the tidytargets Pipeline
+- [`tt_explore()`](https://stemangiola.github.io/tidytargets/reference/tt_explore.md)
+  : Return One Instance of a Pipeline Target
 - [`tt_factory()`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)
   : Internal Factory for Iterating Targets
 - [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)
