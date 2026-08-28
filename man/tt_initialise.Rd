@@ -6,7 +6,7 @@
 \usage{
 tt_initialise(
   tt_input,
-  store = targets::tar_config_get("store"),
+  store = NULL,
   computing_resources = NULL,
   debug_step = NULL,
   verbosity = targets::tar_config_get("reporter_make"),
@@ -23,7 +23,9 @@ tt_initialise(
 list of in-memory objects, one element per unit of iteration (e.g. sample).
 If names are not set, integer indices are used.}
 
-\item{store}{Directory path where pipeline files and targets store are written.}
+\item{store}{Directory path where pipeline files and targets store are written.
+\code{NULL} (the default) writes to \verb{./tidytargets-<HASH>} in the working
+directory and prints that path.}
 
 \item{computing_resources}{A controller object accepted by
 \code{targets::tar_option_set(controller = )}, such as a \code{crew} controller or

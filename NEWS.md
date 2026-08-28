@@ -3,6 +3,9 @@
 
 ## tidytargets 0.4.0
 
+* `tt_explore()` returns one stored instance of a named target (one branch)
+  of a mapped target, without loading the rest) and messages a short heading
+  so you can inspect it or pipe it onward.
 * Dropped processing tiers (`tier`, `get_positions()`, and the tiered factory
   path). Map iteration is unchanged; elastic `{crew}` controllers replace
   tiered resource groups.
@@ -12,9 +15,9 @@
 * Input `.qs` files are written inside the store directory (not the working
   directory), so `print()` / `tt_evaluate()` cannot pick up leftover inputs
   from another pipeline.
-* In interactive sessions, building a pipeline without evaluating it now
-  prints a notice after the expression. Assignment never auto-prints, so
-  `pipeline <- files |> tt_initialise()` would otherwise look like a no-op.
+* `tt_initialise(store = NULL)` is the default. A unique `./tidytargets-<HASH>`
+  directory is created and the path is printed.
+
 
 ## tidytargets 0.3.0
 

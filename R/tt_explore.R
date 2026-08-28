@@ -1,0 +1,170 @@
+#' Return One Instance of a Pipeline Target
+#'
+#' @description
+#' Reads a stored target from a `tidytargets` pipeline and returns a single
+#' instance so you can inspect it or pipe it onward. A short heading is
+#' issued with `message()` (target name and, for collections, which instance).
+#' The object itself is returned, not printed: a top-level call still shows
+#' it because R auto-prints the result; a piped call does not.
+#'
+#' For a mapped (patterned) target this is one branch, loaded without pulling
+#' every branch into memory. For a mapped list stored as a single stem
+#' (e.g. `input_list`) this is one list element. For a non-mapped target the
+#' whole object is returned.
+#'
+#' If the target has not been built yet, the pipeline is evaluated first
+#' (same incremental `tar_make()` as `tt_evaluate()`).
+#'
+#' @param tt_input A `tidytargets` object from `tt_initialise()`.
+#' @param target_output Character name of the target to inspect.
+#' @param index 1-based index of the instance to return when the target has
+#'   more than one. Default: `1`.
+#'
+#' @return The retrieved instance.
+#'
+#' @examples
+#' \dontrun{
+#' pipeline |> tt_explore("data")
+#' pipeline |> tt_explore("data") |> summary()
+#' pipeline |> tt_explore("data", index = 2)
+#' }
+#' @name tt_explore
+#' @export
+tt_explore <- function(tt_input, target_output, index = 1L) {
+  UseMethod("tt_explore")
+}
+
+#' @rdname tt_explore
+#' @export
+tt_explore.default <- function(tt_input, target_output, index = 1L) {
+  stop_if_not_tidytargets()
+}
+
+#' @rdname tt_explore
+#' @importFrom glue glue
+#' @importFrom targets tar_meta tar_read_raw tar_exist_objects
+#' @export
+tt_explore.tidytargets <- function(tt_input, target_output, index = 1L) {
+
+  if (missing(target_output) || length(target_output) != 1L ||
+      !is.character(target_output) || !nzchar(target_output)) {
+    stop(
+      "tidytargets says: please supply target_output as a string, ",
+      "e.g. tt_explore(pipeline, \"data\").",
+      call. = FALSE
+    )
+  }
+
+  target_names <- setdiff(names(tt_input), c("initialisation", ".metadata"))
+  if (!target_output %in% target_names) {
+    stop(
+      glue(
+        "tidytargets says: `{target_output}` is not a target in this pipeline. ",
+        "Available targets: {paste(target_names, collapse = ', ')}."
+      ),
+      call. = FALSE
+    )
+  }
+
+  index <- as.integer(index)
+  if (length(index) != 1L || is.na(index) || index < 1L) {
+    stop("tidytargets says: index must be a single integer >= 1.", call. = FALSE)
+  }
+
+  store <- tt_input$initialisation$store
+  if (!output_is_built(store, target_output)) {
+    tt_evaluate(tt_input)
+  }
+
+  instance <- read_output_instance(tt_input, target_output, index)
+
+  n <- instance$n
+  x <- instance$value
+  if (!is.null(n) && n > 1L) {
+    message("## ", target_output, " (instance ", index, " of ", n, ")")
+  } else {
+    message("## ", target_output)
+  }
+  x
+}
+
+#' Metadata row for a single target, without tidyselect on an external vector
+#'
+#' @noRd
+meta_for_target <- function(store, name) {
+  meta <- targets::tar_meta(store = store)
+  meta[meta$name == name, , drop = FALSE]
+}
+
+#' Whether a named target has a completed stored value
+#'
+#' @noRd
+output_is_built <- function(store, name) {
+  if (!file.exists(file.path(store, "meta", "meta"))) return(FALSE)
+
+  meta <- meta_for_target(store, name)
+  if (nrow(meta) == 0L) return(FALSE)
+
+  err <- meta$error
+  if (length(err) && !is.na(err) && nzchar(as.character(err))) return(FALSE)
+
+  if (identical(meta$type, "pattern")) {
+    children <- meta$children[[1]]
+    children <- children[!is.na(children)]
+    length(children) > 0L &&
+      all(targets::tar_exist_objects(children, store = store))
+  } else {
+    isTRUE(targets::tar_exist_objects(name, store = store))
+  }
+}
+
+#' Read one instance of a stored target
+#'
+#' @return A list with `value` (the instance) and `n` (how many instances
+#'   exist, or `NULL` when the target is not a collection of instances).
+#' @noRd
+read_output_instance <- function(tt_input, target_output, index) {
+  store <- tt_input$initialisation$store
+  meta <- meta_for_target(store, target_output)
+
+  if (identical(meta$type, "pattern")) {
+    children <- meta$children[[1]]
+    children <- children[!is.na(children)]
+    n <- length(children)
+    stop_if_index_out_of_range(target_output, index, n)
+    value <- targets::tar_read_raw(
+      target_output,
+      branches = index,
+      store = store
+    )
+    # tar_read(..., branches = k) wraps a single branch in a length-1 list
+    if (is.list(value) && !is.object(value) && length(value) == 1L) {
+      value <- value[[1]]
+    }
+    return(list(value = value, n = n))
+  }
+
+  value <- targets::tar_read_raw(target_output, store = store)
+  iterate <- tt_input[[target_output]]$iterate
+  if (identical(iterate, "map") && is.list(value) && !is.object(value) &&
+      length(value) > 0L) {
+    n <- length(value)
+    stop_if_index_out_of_range(target_output, index, n)
+    return(list(value = value[[index]], n = n))
+  }
+
+  list(value = value, n = NULL)
+}
+
+#' @noRd
+stop_if_index_out_of_range <- function(target_output, index, n) {
+  if (index > n) {
+    stop(
+      glue::glue(
+        "tidytargets says: index {index} is out of range; ",
+        "`{target_output}` has {n} instance{if (n == 1L) '' else 's'}."
+      ),
+      call. = FALSE
+    )
+  }
+}
