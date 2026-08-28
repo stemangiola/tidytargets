@@ -10,6 +10,8 @@
 #'   list of in-memory objects, one element per unit of iteration (e.g. sample).
 #'   If names are not set, integer indices are used.
 #' @param store Directory path where pipeline files and targets store are written.
+#'   `NULL` (the default) writes to `./tidytargets-<HASH>` in the working
+#'   directory and prints that path.
 #' @param computing_resources A controller object accepted by
 #'   `targets::tar_option_set(controller = )`, such as a `crew` controller or
 #'   controller group. `NULL` (the default) runs the pipeline sequentially.
@@ -44,7 +46,7 @@
 #' @import targets
 #' @export
 tt_initialise <- function(tt_input,
-                           store =  targets::tar_config_get("store"),
+                           store = NULL,
                            computing_resources = NULL,
                            debug_step = NULL,
                            verbosity = targets::tar_config_get("reporter_make"),
@@ -69,6 +71,10 @@ tt_initialise <- function(tt_input,
   
   # Write targets. Resolve store so later evaluate/print still finds `{store}.R`
   # if the working directory has changed.
+  if (is.null(store)) {
+    store <- paste0("./", basename(tempfile(pattern = "tidytargets-")))
+    message("tidytargets says: the store is ", store)
+  }
   dir.create(store, showWarnings = FALSE, recursive = TRUE)
   store <- normalizePath(store, winslash = "/", mustWork = TRUE)
   args_list$store <- store

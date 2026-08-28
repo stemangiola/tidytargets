@@ -37,6 +37,26 @@ test_that("tt_initialise returns a tidytargets object with input targets", {
   expect_true(any(grepl('format = "qs"', script)))
 })
 
+test_that("tt_initialise defaults store to ./tidytargets-<hash> and messages", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  inputs <- list(sample_a = 1:3, sample_b = 4:6)
+  expect_message(
+    hpc <- inputs |> tt_initialise(),
+    "tidytargets says: the store is \\./tidytargets-"
+  )
+
+  expect_match(basename(hpc$initialisation$store), "^tidytargets-")
+  expect_true(dir.exists(hpc$initialisation$store))
+  expect_true(file.exists(paste0(hpc$initialisation$store, ".R")))
+
+  store <- file.path(tmp, "explicit-store")
+  expect_no_message(inputs |> tt_initialise(store = store))
+})
+
 test_that("tt_initialise accepts a named list of objects", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)

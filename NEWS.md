@@ -11,6 +11,8 @@
 * Input `.qs` files are written inside the store directory (not the working
   directory), so `print()` / `tt_evaluate()` cannot pick up leftover inputs
   from another pipeline.
+* `tt_initialise(store = NULL)` is the default. A unique `./tidytargets-<HASH>`
+  directory is created and the path is printed.
 
 ## tidytargets 0.3.0
 

@@ -20,7 +20,7 @@ vignette("building-blocks", package = "tidytargets")
 
 ## A minimal pipeline
 
-`tt_initialise()` takes a named vector of inputs (typically file paths), or a named list of in-memory objects. Pass a `command` expression the same way you would to `tar_target()`; `{targets}` tracks upstream names in that expression. With no `computing_resources`, the pipeline runs sequentially.
+`tt_initialise()` takes a named vector of inputs (typically file paths), or a named list of in-memory objects. Pass a `command` expression the same way you would to `tar_target()`; `{targets}` tracks upstream names in that expression. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
 
 ``` r
 library(tidytargets)
