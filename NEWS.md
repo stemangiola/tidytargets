@@ -2,6 +2,9 @@
 
 ## tidytargets 0.4.0
 
+* `tt_explore()` returns one stored instance of a named target (one branch)
+  of a mapped target, without loading the rest) and messages a short heading
+  so you can inspect it or pipe it onward.
 * Dropped processing tiers (`tier`, `get_positions()`, and the tiered factory
   path). Map iteration is unchanged; elastic `{crew}` controllers replace
   tiered resource groups.

@@ -160,6 +160,7 @@ test_that("grammar steps error on non-tidytargets input", {
   expect_error(tt_report("not a pipeline"), "tidytargets object")
   expect_error(tt_evaluate("not a pipeline"), "tidytargets object")
   expect_error(tt_metadata("not a pipeline"), "tidytargets object")
+  expect_error(tt_explore("not a pipeline", "data"), "tidytargets object")
 })
 
 test_that("tt_metadata reads, writes and survives pipeline steps", {
@@ -327,4 +328,53 @@ test_that("tt_evaluate uses store inputs after the working directory changes", {
   expect_true("data" %in% meta$name)
   values <- targets::tar_read(data, store = pipe$initialisation$store)
   expect_equal(unname(values), list(c(2, 4, 6), c(8, 10, 12)))
+})
+
+test_that("tt_explore returns one mapped instance and one stem target", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  pipe <- list(sample_a = 1:3, sample_b = 4:6) |>
+    tt_initialise(store = file.path(tmp, "store")) |>
+    tt_iterate(target_output = "data", command = input_list * 2) |>
+    tt_single(target_output = "n_inputs", command = length(sample_names))
+
+  expect_error(tt_explore(pipe, "missing"), "not a target")
+  expect_error(tt_explore(pipe, 1), "target_output")
+
+  first <- NULL
+  expect_message(
+    first <- tt_explore(pipe, "data"),
+    "instance 1 of 2",
+    fixed = TRUE
+  )
+  expect_equal(first, c(2, 4, 6))
+
+  second <- NULL
+  expect_message(second <- tt_explore(pipe, "data", index = 2))
+  expect_equal(second, c(8, 10, 12))
+
+  expect_error(tt_explore(pipe, "data", index = 3), "out of range")
+
+  piped <- NULL
+  expect_message(
+    piped <- tt_explore(pipe, "data") |> sum(),
+    "instance 1 of 2",
+    fixed = TRUE
+  )
+  expect_equal(piped, 12)
+
+  n_inputs <- NULL
+  expect_message(
+    n_inputs <- tt_explore(pipe, "n_inputs"),
+    "## n_inputs",
+    fixed = TRUE
+  )
+  expect_equal(n_inputs, 2)
+
+  input <- NULL
+  expect_message(input <- tt_explore(pipe, "input_list"))
+  expect_equal(input, 1:3)
 })

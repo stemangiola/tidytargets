@@ -84,6 +84,7 @@ targets::tar_read(summaries, store = "_targets")
 | `tt_merge()` | Combine iterated results into one object |
 | `tt_report()` | Render a Quarto / R Markdown report |
 | `tt_evaluate()` | Write the target list and run `tar_make()` |
+| `tt_explore()` | Return one stored instance of a named target |
 | `tt_metadata()` | Get or set free-form metadata on the pipeline object |
 
 ## Carrying extra information
