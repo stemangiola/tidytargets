@@ -6,18 +6,20 @@
 #'
 #' @param tt_input A `tidytargets` object.
 #' @param target_output Character name of the output target.
-#' @param user_function A quoted function call or function object to execute.
+#' @param command An unevaluated expression. `{targets}` tracks dependencies from
+#'   global symbols in this expression (including upstream target names).
 #' @param user_function_source_path Optional character path to an R script to
-#'   source in the worker before calling `user_function`. `NULL` sources nothing.
-#' @param iterate Iteration mode string. `"none"` disables iteration; `"map"`
-#'   maps over input values.
-#' @param ... Named arguments passed as target inputs.
+#'   source in the worker before evaluating `command`. `NULL` sources nothing.
+#' @param iterate Iteration mode string stored on the pipeline object. `"none"`
+#'   disables iteration; `"map"` marks the result as mapped for later steps.
+#' @param ... Additional factory arguments such as `format`, `deployment`,
+#'   or `packages`.
 #'
 #' @export
 tt_single <- function(
     tt_input,
     target_output = NULL,
-    user_function = NULL,
+    command = NULL,
     user_function_source_path = NULL,
     iterate = "none",
     ...
@@ -30,7 +32,7 @@ tt_single <- function(
 tt_single.default <- function(
     tt_input,
     target_output = NULL,
-    user_function = NULL,
+    command = NULL,
     user_function_source_path = NULL,
     iterate = "none",
     ...
@@ -40,17 +42,18 @@ tt_single.default <- function(
 
 #' @rdname tt_single
 #' @importFrom glue glue
-#' @importFrom magrittr %>%
 #' @importFrom purrr set_names
 #' @export
 tt_single.tidytargets <- function(
     tt_input,
     target_output = NULL,
-    user_function = NULL,
+    command = NULL,
     user_function_source_path = NULL,
     iterate = "none",
     ...
 ) {
+    
+    command <- substitute(command)
     
     # Target script
     target_script = glue("{tt_input$initialisation$store}.R")
@@ -66,7 +69,7 @@ tt_single.tidytargets <- function(
       fx = tt_factory |> quote(),
       target_output = target_output,
       script = target_script,
-      user_function = user_function,
+      command = wrap_quote(command),
       ...
     )
     

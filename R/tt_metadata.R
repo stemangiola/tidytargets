@@ -11,8 +11,8 @@
 #' pipeline. Passing `NULL` as a value removes that entry.
 #'
 #' Metadata lives in the pipeline object only; it is not written to the targets
-#' script and is not available to workers. To pass values to workers, supply
-#' them as target arguments in `tt_iterate()` or `tt_single()`.
+#' script and is not available to workers. To pass values to workers, include
+#' them in the `command` expression of `tt_iterate()` or `tt_single()`.
 #'
 #' @param tt_input A `tidytargets` object.
 #' @param ... Named values to store. Omit to read the metadata instead.

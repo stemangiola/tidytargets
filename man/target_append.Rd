@@ -12,11 +12,10 @@ target_append(target_list, ...)
 \item{...}{One or more \code{tar_target} objects to append.}
 }
 \value{
-Invisibly returns \code{NULL}; called for its side effect of updating
-\code{target_list} in the enclosing environment.
+The combined list of targets.
 }
 \description{
-Appends one or more \code{tar_target} objects to the global \code{target_list} used
-by the tidytargets pipeline script. This function modifies \code{target_list} in the
-calling environment via \verb{<<-}.
+Combines an existing list of \code{tar_target} objects with one or more new
+targets. The generated pipeline script assigns the result back to
+\code{target_list}.
 }

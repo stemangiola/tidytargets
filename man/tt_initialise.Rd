@@ -8,20 +8,20 @@ tt_initialise(
   tt_input,
   store = targets::tar_config_get("store"),
   computing_resources = NULL,
-  tier = rep(1, length(tt_input)),
   debug_step = NULL,
   verbosity = targets::tar_config_get("reporter_make"),
   error = NULL,
   update = "thorough",
   garbage_collection = 0,
   workspace_on_error = FALSE,
-  packages = "tidytargets"
+  packages = "tidytargets",
+  target_output = "input_list"
 )
 }
 \arguments{
-\item{tt_input}{Named vector of inputs, typically file paths, one element
-per unit of iteration (e.g. sample). If names are not set, integer indices
-are used.}
+\item{tt_input}{Named vector of inputs, typically file paths, or a named
+list of in-memory objects, one element per unit of iteration (e.g. sample).
+If names are not set, integer indices are used.}
 
 \item{store}{Directory path where pipeline files and targets store are written.}
 
@@ -30,9 +30,6 @@ are used.}
 controller group. \code{NULL} (the default) runs the pipeline sequentially.
 tidytargets does not depend on any compute backend; pass whatever your
 deployment uses.}
-
-\item{tier}{Integer vector (same length as \code{tt_input}) assigning each input
-to a processing tier for tiered execution. Default: all inputs in tier 1.}
 
 \item{debug_step}{Character name of a single target to debug; passed to
 \code{targets::tar_option_set(debug = ...)}. \code{NULL} disables debugging.}
@@ -54,6 +51,10 @@ a target errors. Default: \code{FALSE}.}
 
 \item{packages}{Character vector of R packages loaded on workers. Defaults to
 \code{"tidytargets"}.}
+
+\item{target_output}{Character name of the mapped input target. Default:
+\code{"input_list"}. A companion file-tracking target is registered as
+\verb{\{target_output\}_file}.}
 }
 \value{
 A \code{tidytargets} S3 object containing the initialisation arguments in
@@ -62,7 +63,7 @@ to be extended with pipeline step functions. The graph is not run until
 you print it or call \code{\link[=tt_evaluate]{tt_evaluate()}}.
 }
 \description{
-Sets up and writes a \code{targets} pipeline script. Saves input paths and
+Sets up and writes a \code{targets} pipeline script. Saves inputs and
 configuration to disk, then returns a \code{tidytargets} object that downstream
 grammar functions (e.g. \code{tt_iterate()}, \code{tt_single()}, \code{tt_evaluate()})
 can extend before the pipeline is executed with \code{tt_evaluate()}. The graph

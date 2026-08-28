@@ -6,11 +6,29 @@
 \alias{tt_report.tidytargets}
 \title{Add a Report Step to the tidytargets Pipeline}
 \usage{
-tt_report(tt_input, target_output = NULL, rmd_path = NULL, ...)
+tt_report(
+  tt_input,
+  target_output = NULL,
+  rmd_path = NULL,
+  params = list(),
+  ...
+)
 
-\method{tt_report}{default}(tt_input, target_output = NULL, rmd_path = NULL, ...)
+\method{tt_report}{default}(
+  tt_input,
+  target_output = NULL,
+  rmd_path = NULL,
+  params = list(),
+  ...
+)
 
-\method{tt_report}{tidytargets}(tt_input, target_output = NULL, rmd_path = NULL, ...)
+\method{tt_report}{tidytargets}(
+  tt_input,
+  target_output = NULL,
+  rmd_path = NULL,
+  params = list(),
+  ...
+)
 }
 \arguments{
 \item{tt_input}{A \code{tidytargets} object.}
@@ -19,7 +37,10 @@ tt_report(tt_input, target_output = NULL, rmd_path = NULL, ...)
 
 \item{rmd_path}{Character path to the \code{.qmd} or \code{.Rmd} report file.}
 
-\item{...}{Named arguments passed as report parameters.}
+\item{params}{An unevaluated \code{list()} of report parameters. \code{{targets}} tracks
+dependencies from symbols in this expression (including upstream target names).}
+
+\item{...}{Additional factory arguments such as \code{deployment} or \code{packages}.}
 }
 \description{
 Appends a Quarto/R Markdown rendering step to the tidytargets pipeline, which

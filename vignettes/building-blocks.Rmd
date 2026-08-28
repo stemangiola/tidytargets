@@ -19,9 +19,9 @@ work <- tempfile("tidytargets-vignette-")
 dir.create(work)
 knitr::opts_knit$set(root.dir = work)
 
-show_script <- function(store) {
-  path <- paste0(store, ".R")
-  cat("## ", path, "\n\n", sep = "")
+show_script <- function(pipe) {
+  path <- paste0(pipe$initialisation$store, ".R")
+  cat("## ", basename(path), "\n\n", sep = "")
   writeLines(readLines(path))
 }
 ```
@@ -30,7 +30,7 @@ tidytargets is a tidy, pipe-friendly grammar for `{targets}`. `tt_initialise()` 
 
 The composition is **lazy**. `tt_initialise()`, `tt_iterate()`, `tt_single()`, `tt_merge()`, and `tt_report()` only write factories into `{store}.R`. User functions are not called until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console), which closes the script and runs `targets::tar_make()`. Assigning the object does not print it, so an interactive session then says the pipeline is ready to be evaluated, rather than appearing to do nothing.
 
-Pipelines are **incremental**. Add a step, change a parameter, or grow the input vector and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
+Pipelines are **incremental**. Add a step, change a parameter, or grow the input list and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
 
 This vignette walks through every building block and prints the targets script after each step.
 
@@ -46,55 +46,52 @@ This vignette walks through every building block and prints the targets script a
 | `tt_evaluate()` | Close the script and run `tar_make()` |
 | `tt_factory()` | Internal factory used by iterate / single / merge |
 
-`tt_factory()` is not meant to be called directly. `tt_iterate()`, `tt_single()`, and `tt_merge()` all append `target_list |> target_append(tt_factory(...))` to the script.
+`tt_factory()` is not meant to be called directly. `tt_iterate()`, `tt_single()`, and `tt_merge()` all append `target_list <- target_list |> target_append(tt_factory(...))` to the script.
 
 ## Toy inputs
 
-`tt_initialise()` takes a named vector of inputs, typically file paths. Here two RDS files stand in for samples.
+`tt_initialise()` takes a named list of in-memory objects, one element per unit of iteration (e.g. sample). A named vector of file paths works the same way.
 
 ```{r inputs}
-files <- c(
-  sample_a = "a.rds",
-  sample_b = "b.rds"
+inputs <- list(
+  sample_a = 1:3,
+  sample_b = 4:6
 )
-saveRDS(1:3, files[["sample_a"]])
-saveRDS(4:6, files[["sample_b"]])
-store <- "pipeline"
+store <- tempfile("tidytargets-")
 ```
 
 ## `tt_initialise()`
 
-This writes `{store}.R`, saves the input vector, and registers two mapped targets:
+This writes `{store}.R`, saves the inputs, and registers two mapped targets:
 
-- `input_list` — the named input vector
-- `sample_names` — the names of that vector
+- `input_list` — the named input vector or list (override with `target_output`)
+- `sample_names` — the names of that vector or list
 
 With no `computing_resources`, the pipeline is sequential.
 
 ```{r initialise}
-pipe <- files |>
+pipe <- inputs |>
   tt_initialise(store = store)
 ```
 
 ```{r initialise-script, comment = ""}
-show_script(store)
+show_script(pipe)
 ```
 
 ## `tt_iterate()`
 
-Map a function over every input. Wrap an upstream target name with `is_target()` so the argument is a dependency, not a literal string.
+Map a function over every input. Write `command` as you would in `tar_target()`; `{targets}` tracks upstream names, and tidytargets infers `map()` from mapped targets in the expression.
 
 ```{r iterate-read}
 pipe <- pipe |>
   tt_iterate(
     target_output = "data",
-    user_function = readRDS |> quote(),
-    file = "input_list" |> is_target()
+    command = input_list * 2
   )
 ```
 
 ```{r iterate-read-script, comment = ""}
-show_script(store)
+show_script(pipe)
 ```
 
 A second iterate maps over the result of the first:
@@ -103,13 +100,12 @@ A second iterate maps over the result of the first:
 pipe <- pipe |>
   tt_iterate(
     target_output = "n",
-    user_function = length |> quote(),
-    x = "data" |> is_target()
+    command = length(data)
   )
 ```
 
 ```{r iterate-length-script, comment = ""}
-show_script(store)
+show_script(pipe)
 ```
 
 ## `tt_single()`
@@ -120,13 +116,16 @@ One target, not mapped over samples. Use this for file-tracking targets, scalars
 pipe <- pipe |>
   tt_single(
     target_output = "n_samples",
-    user_function = length |> quote(),
-    x = "sample_names" |> is_target()
+    command = length(sample_names)
   )
 ```
 
 ```{r single-script, comment = ""}
-show_script(store)
+show_script(pipe)
+```
+
+```{r single-evaluate}
+pipe |> tt_evaluate()
 ```
 
 `tt_initialise()` itself uses `tt_single()` for the `*_file` targets (`format = "file"`).
@@ -139,13 +138,12 @@ Collect every branch of an iterated target into one object.
 pipe <- pipe |>
   tt_merge(
     target_output = "n_total",
-    user_function = (function(lengths) sum(unlist(lengths))) |> quote(),
-    lengths = "n" |> is_target()
+    command = sum(unlist(n))
   )
 ```
 
 ```{r merge-script, comment = ""}
-show_script(store)
+show_script(pipe)
 ```
 
 ## `tt_report()`
@@ -174,40 +172,13 @@ pipe <- pipe |>
   tt_report(
     target_output = "report",
     rmd_path = "example-report.qmd",
-    n_total = "n_total" |> is_target(),
-    n_samples = "n_samples" |> is_target()
+    params = list(n_total = n_total, n_samples = n_samples)
   )
 ```
 
 ```{r report-script, comment = ""}
-show_script(store)
+show_script(pipe)
 ```
-
-## `tt_evaluate()`
-
-This is the only eager step. It closes the script with a final `target_list` expression and calls `targets::tar_make()`. Evaluating the object (e.g., printing it in the console) does the same thing. Until then the pipeline is just a script on disk.
-
-The pipeline below matches the README example. `tt_evaluate()` prints the `{targets}` progress and returns `tar_meta()`. Read a target from the store to see the computed values.
-
-```{r evaluate}
-files |>
-  tt_initialise(store = "_targets") |>
-  tt_iterate(
-    target_output = "data",
-    user_function = readRDS |> quote(),
-    file = "input_list" |> is_target()
-  ) |>
-  tt_iterate(
-    target_output = "summaries",
-    user_function = summary |> quote(),
-    object = "data" |> is_target()
-  ) |>
-  tt_evaluate()
-
-targets::tar_read(summaries, store = "_targets")
-```
-
-Do not evaluate a `tidytargets` object (e.g., by printing it in the console) unless you intend to run it.
 
 ## Custom functions from a file
 
@@ -217,8 +188,7 @@ Do not evaluate a `tidytargets` object (e.g., by printing it in the console) unl
 pipe |>
   tt_iterate(
     target_output = "transformed",
-    user_function = my_transform |> quote(),
-    user_function_source_path = "helpers.R",
-    x = "data" |> is_target()
+    command = my_transform(data),
+    user_function_source_path = "helpers.R"
   )
 ```
