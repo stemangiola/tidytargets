@@ -9,7 +9,7 @@
 tt_single(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   iterate = "none",
   ...
@@ -18,7 +18,7 @@ tt_single(
 \method{tt_single}{default}(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   iterate = "none",
   ...
@@ -27,7 +27,7 @@ tt_single(
 \method{tt_single}{tidytargets}(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   iterate = "none",
   ...
@@ -38,15 +38,17 @@ tt_single(
 
 \item{target_output}{Character name of the output target.}
 
-\item{user_function}{A quoted function call or function object to execute.}
+\item{command}{An unevaluated expression. \code{{targets}} tracks dependencies from
+global symbols in this expression (including upstream target names).}
 
 \item{user_function_source_path}{Optional character path to an R script to
-source in the worker before calling \code{user_function}. \code{NULL} sources nothing.}
+source in the worker before evaluating \code{command}. \code{NULL} sources nothing.}
 
-\item{iterate}{Iteration mode string. \code{"none"} disables iteration; \code{"map"}
-maps over input values.}
+\item{iterate}{Iteration mode string stored on the pipeline object. \code{"none"}
+disables iteration; \code{"map"} marks the result as mapped for later steps.}
 
-\item{...}{Named arguments passed as target inputs.}
+\item{...}{Additional factory arguments such as \code{format}, \code{deployment},
+or \code{packages}.}
 }
 \description{
 Appends a single, non-parallelised targets step to the tidytargets pipeline script.

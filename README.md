@@ -20,7 +20,7 @@ vignette("building-blocks", package = "tidytargets")
 
 ## A minimal pipeline
 
-`tt_initialise()` takes a named vector of inputs (typically file paths), or a named list of in-memory objects. Use `is_target()` to point a step at an upstream target. With no `computing_resources`, the pipeline runs sequentially.
+`tt_initialise()` takes a named vector of inputs (typically file paths), or a named list of in-memory objects. Pass a `command` expression the same way you would to `tar_target()`; `{targets}` tracks upstream names in that expression. With no `computing_resources`, the pipeline runs sequentially.
 
 ``` r
 library(tidytargets)
@@ -36,13 +36,11 @@ files |>
   tt_initialise(store = "_targets") |>
   tt_iterate(
     target_output = "data",
-    user_function = readRDS |> quote(),
-    file = "input_list" |> is_target()
+    command = readRDS(input_list)
   ) |>
   tt_iterate(
     target_output = "summaries",
-    user_function = summary |> quote(),
-    object = "data" |> is_target()
+    command = summary(data)
   ) |>
   tt_evaluate()
 ```
@@ -73,7 +71,7 @@ targets::tar_read(summaries, store = "_targets")
 
 `tt_evaluate()` also returns the `targets::tar_meta()` table. `tt_initialise()` registers two mapped targets for you:
 
-- `input_list` — the named input vector or list
+- `input_list` — the named input vector or list (override with `target_output`)
 - `sample_names` — the names of that vector or list
 
 ## Grammar
@@ -87,7 +85,6 @@ targets::tar_read(summaries, store = "_targets")
 | `tt_report()` | Render a Quarto / R Markdown report |
 | `tt_evaluate()` | Write the target list and run `tar_make()` |
 | `tt_metadata()` | Get or set free-form metadata on the pipeline object |
-| `is_target()` | Mark an argument as an upstream target name |
 
 ## Carrying extra information
 
@@ -102,7 +99,7 @@ tt_metadata(pipeline)$api_url
 #> [1] "https://api.example.org"
 ```
 
-Metadata is merged on each call, and passing `NULL` removes an entry. It travels with the object through every grammar step but is not written to the targets script, so workers cannot see it; values a target needs must be passed as arguments to `tt_iterate()` or `tt_single()`. The store is inert with respect to the rest of the grammar and constrains nothing — it imposes no restriction on your `target_output` names.
+Metadata is merged on each call, and passing `NULL` removes an entry. It travels with the object through every grammar step but is not written to the targets script, so workers cannot see it; values a target needs must appear in `command`. The store is inert with respect to the rest of the grammar and constrains nothing — it imposes no restriction on your `target_output` names.
 
 ## Deployment
 

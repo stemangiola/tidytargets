@@ -9,7 +9,7 @@
 tt_iterate(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -17,7 +17,7 @@ tt_iterate(
 \method{tt_iterate}{default}(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -25,7 +25,7 @@ tt_iterate(
 \method{tt_iterate}{tidytargets}(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -36,14 +36,16 @@ tt_iterate(
 \item{target_output}{Character name of the output target. \code{NULL} uses an
 auto-generated name.}
 
-\item{user_function}{A quoted function call to execute per iteration.}
+\item{command}{An unevaluated expression. \code{{targets}} tracks dependencies from
+global symbols in this expression (including upstream target names). Mapped
+and tiered targets referenced here also set the iteration pattern.}
 
 \item{user_function_source_path}{Optional character path to an R script that
-should be sourced in the worker before calling \code{user_function}. \code{NULL}
+should be sourced in the worker before evaluating \code{command}. \code{NULL}
 sources nothing.}
 
-\item{...}{Named arguments passed as target inputs; use \code{is_target()} to
-reference upstream targets by name.}
+\item{...}{Additional factory arguments such as \code{format}, \code{deployment},
+or \code{packages}.}
 }
 \description{
 This function adds a new step to the HPC pipeline by appending the appropriate

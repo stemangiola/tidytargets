@@ -7,7 +7,7 @@
 tt_factory(
   tiers = NULL,
   target_output,
-  user_function,
+  command,
   arguments_to_tier = c(),
   arguments_already_tiered = c(),
   other_arguments_to_map = c(),
@@ -23,15 +23,16 @@ tt_factory(
 
 \item{target_output}{Character name of the output target.}
 
-\item{user_function}{A quoted function call to execute for this target.}
+\item{command}{An unevaluated expression passed to \code{tar_target_raw()}.
+\code{{targets}} tracks dependencies from symbols in this expression.}
 
-\item{arguments_to_tier}{Character vector of argument names that should be
+\item{arguments_to_tier}{Character vector of target names that should be
 tiered (suffixed with the tier index).}
 
-\item{arguments_already_tiered}{Character vector of argument names that have
+\item{arguments_already_tiered}{Character vector of target names that have
 already been tiered in a prior call.}
 
-\item{other_arguments_to_map}{Character vector of argument names that should
+\item{other_arguments_to_map}{Character vector of target names that should
 be mapped over without tiering.}
 
 \item{packages}{Character vector of R packages to load in the worker.}
@@ -40,7 +41,7 @@ be mapped over without tiering.}
 
 \item{format}{Storage format string for the target value.}
 
-\item{...}{Additional named arguments passed as target inputs.}
+\item{...}{Unused; retained so extra factory arguments are ignored.}
 }
 \value{
 A \code{tar_target} object or a list of \code{tar_target} objects (one per tier).

@@ -9,7 +9,7 @@
 tt_merge(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -17,7 +17,7 @@ tt_merge(
 \method{tt_merge}{default}(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -25,7 +25,7 @@ tt_merge(
 \method{tt_merge}{tidytargets}(
   tt_input,
   target_output = NULL,
-  user_function = NULL,
+  command = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -35,12 +35,14 @@ tt_merge(
 
 \item{target_output}{Character name of the output target.}
 
-\item{user_function}{A quoted function call to execute for the merge.}
+\item{command}{An unevaluated expression. \code{{targets}} tracks dependencies from
+global symbols in this expression (including upstream target names).}
 
 \item{user_function_source_path}{Optional character path to an R script to
-source in the worker. \code{NULL} sources nothing.}
+source in the worker before evaluating \code{command}. \code{NULL} sources nothing.}
 
-\item{...}{Named arguments passed as target inputs.}
+\item{...}{Additional factory arguments such as \code{format}, \code{deployment},
+or \code{packages}.}
 }
 \description{
 Appends a targets step that collects and merges results from all iterated

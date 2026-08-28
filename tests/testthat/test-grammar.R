@@ -68,6 +68,23 @@ test_that("tt_initialise names an unnamed list with integer indices", {
   expect_equal(qs2::qs_read("sample_names.qs"), c("1", "2"))
 })
 
+test_that("tt_initialise target_output names the mapped input target", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  inputs <- list(sample_a = 1:3, sample_b = 4:6)
+  hpc <- inputs |>
+    tt_initialise(store = file.path(tmp, "store"), target_output = "samples")
+
+  expect_true("samples" %in% names(hpc))
+  expect_true("samples_file" %in% names(hpc))
+  expect_false("input_list" %in% names(hpc))
+  expect_equal(hpc$samples$iterate, "map")
+  expect_equal(hpc$initialisation$target_output, "samples")
+})
+
 test_that("tt_iterate and tt_single chain onto a tidytargets object", {
 
   tmp <- tempfile("tidytargets-")
@@ -83,13 +100,11 @@ test_that("tt_iterate and tt_single chain onto a tidytargets object", {
     tt_initialise(store = store) |>
     tt_iterate(
       target_output = "data",
-      user_function = readRDS |> quote(),
-      file = "input_list" |> is_target()
+      command = readRDS(input_list)
     ) |>
     tt_single(
       target_output = "n_inputs",
-      user_function = length |> quote(),
-      x = "sample_names" |> is_target()
+      command = length(sample_names)
     )
 
   expect_s3_class(hpc, "tidytargets")
@@ -101,6 +116,8 @@ test_that("tt_iterate and tt_single chain onto a tidytargets object", {
   script <- readLines(paste0(store, ".R"))
   expect_true(any(grepl("target_output = \"data\"", script)))
   expect_true(any(grepl("target_output = \"n_inputs\"", script)))
+  expect_true(any(grepl("quote\\(readRDS\\(input_list\\)\\)", script)))
+  expect_true(any(grepl("other_arguments_to_map = \"input_list\"", script)))
 })
 
 test_that("grammar steps error on non-tidytargets input", {
@@ -137,8 +154,7 @@ test_that("tt_metadata reads, writes and survives pipeline steps", {
   hpc <- hpc |>
     tt_iterate(
       target_output = "data",
-      user_function = readRDS |> quote(),
-      file = "input_list" |> is_target()
+      command = readRDS(input_list)
     )
 
   expect_equal(tt_metadata(hpc)$api_version, 2L)
@@ -186,8 +202,7 @@ test_that("metadata places no restriction on target names", {
   hpc <- hpc |>
     tt_iterate(
       target_output = "metadata",
-      user_function = readRDS |> quote(),
-      file = "input_list" |> is_target()
+      command = readRDS(input_list)
     )
 
   expect_equal(hpc$metadata$iterate, "map")
@@ -197,9 +212,40 @@ test_that("metadata places no restriction on target names", {
   hpc <- hpc |>
     tt_iterate(
       target_output = "downstream",
-      user_function = length |> quote(),
-      x = "metadata" |> is_target()
+      command = length(metadata)
     )
 
   expect_equal(hpc$downstream$iterate, "map")
+})
+
+test_that("tt_report captures params as command-style symbols", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  files <- c(sample_a = file.path(tmp, "a.rds"))
+  saveRDS(1:3, files[[1]])
+  writeLines("n_samples: `r params$n_samples`", "example-report.qmd")
+
+  store <- file.path(tmp, "store")
+  hpc <- files |>
+    tt_initialise(store = store) |>
+    tt_single(
+      target_output = "n_samples",
+      command = length(sample_names)
+    ) |>
+    tt_report(
+      target_output = "report",
+      rmd_path = "example-report.qmd",
+      params = list(n_samples = n_samples)
+    )
+
+  expect_s3_class(hpc, "tidytargets")
+  expect_true("report" %in% names(hpc))
+  expect_equal(hpc$report$iterate, "single")
+
+  script <- readLines(paste0(store, ".R"))
+  expect_true(any(grepl("n_samples = n_samples", script)))
+  expect_false(any(grepl("is_target", script)))
 })

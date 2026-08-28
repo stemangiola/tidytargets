@@ -5,23 +5,16 @@
 \title{Internal Factory for Report Targets}
 \usage{
 tt_internal_report(
-  tiers = NULL,
   target_output,
   rmd_path,
   render_arguments = quote(list()),
   output_file = NULL,
-  arguments_to_tier = c(),
-  arguments_already_tiered = c(),
-  other_arguments_to_map = c(),
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
   ...
 )
 }
 \arguments{
-\item{tiers}{Named integer list of tier indices. \code{NULL} or length-1 produces
-a single, non-tiered target.}
-
 \item{target_output}{Character name of the output target.}
 
 \item{rmd_path}{Character path to the Quarto (\code{.qmd}) or R Markdown (\code{.Rmd})
@@ -32,12 +25,6 @@ at render time.}
 
 \item{output_file}{Optional character name for the rendered output file.}
 
-\item{arguments_to_tier}{Character vector of argument names to tier.}
-
-\item{arguments_already_tiered}{Character vector of already-tiered arguments.}
-
-\item{other_arguments_to_map}{Character vector of arguments to map over.}
-
 \item{packages}{Character vector of R packages to load in the worker.}
 
 \item{deployment}{Deployment strategy string.}
@@ -45,7 +32,7 @@ at render time.}
 \item{...}{Additional named arguments.}
 }
 \value{
-A \code{tar_target} object or a list of \code{tar_target} objects.
+A \code{tar_target} object.
 }
 \description{
 Low-level factory that builds \code{tarchetypes::tar_quarto_raw()} calls for

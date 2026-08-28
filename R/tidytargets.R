@@ -16,4 +16,4 @@
 #' @importFrom callr r
 "_PACKAGE"
 
-utils::globalVariables(c("target_list", "value", "position", "user_function"))
+utils::globalVariables(c("target_list", "value", "position", "command"))

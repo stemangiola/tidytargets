@@ -32,8 +32,8 @@ the \code{tidytargets} object is returned, so the call can sit anywhere in a
 pipeline. Passing \code{NULL} as a value removes that entry.
 
 Metadata lives in the pipeline object only; it is not written to the targets
-script and is not available to workers. To pass values to workers, supply
-them as target arguments in \code{tt_iterate()} or \code{tt_single()}.
+script and is not available to workers. To pass values to workers, include
+them in the \code{command} expression of \code{tt_iterate()} or \code{tt_single()}.
 }
 \details{
 The store is held under a dot-prefixed element of the object. \code{targets}

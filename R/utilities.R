@@ -219,71 +219,6 @@ delete_lines_with_word <- function(word, file_path) {
   writeLines(filtered_lines, file_path)
 }
 
-#' Get Arguments to Tier Based on Iteration Settings
-#'
-#' This function identifies elements from a list that have the class 'name',
-#' converts them to character strings, and returns only those elements that are
-#' present in the names of a specified input list (`tt_input`) and have the
-#' `iterate` field set to `"tier"`.
-#'
-#' @param lst A list containing various elements, some of which may have the class 'name'.
-#' @param tt_input A list whose names are used to filter the elements from `lst`.
-#'                  The elements in `tt_input` should include an `iterate` field with the value `"tier"`.
-#' @param value Character vector of iterate modes to match.
-#' @return A character vector of elements from `lst` that have the class 'name',
-#'         are present in the names of `tt_input`, and have `iterate` set to `"tier"`.
-#' @importFrom purrr set_names
-#' @noRd
-arguments_to_action <- function(lst, tt_input, value) {
-  matching_elements <- character()
-  
-  for (arg_name in names(lst)) {
-    arg_value <- lst[[arg_name]]
-    
-    # Skip NULL and complex values, because they cannot be a name of a target
-    if (
-      arg_value |> length() == 0 |
-      is.null(arg_value) | !(
-        arg_value |> is("character") | 
-        arg_value |> is("name") | 
-        arg_value |> is("list")
-      )) next
-    
-    # This because I cannot loop over a single "name" class, while I can loop over a single "character" class
-    # NOT SO ELEGANT 
-    if(arg_value |> length() == 1){
-      
-      if (
-        (arg_value |> is("character") | arg_value |> is("name")) &&
-        as.character(arg_value) %in% names(tt_input) && 
-        tt_input[[arg_value]]$iterate %in% value
-      ) 
-        matching_elements <- c(matching_elements, as.character(arg_value) |> set_names(arg_name))
-      
-    }
-    
-    else{
-      # Iterate over each element in arg_value_as_char
-      for (val in arg_value) {
-        
-        # Again, skip if the list include complex elements
-        if (is.null(arg_value) | !(
-          arg_value |> is("character") | 
-          arg_value |> is("name") 
-        )) next
-        
-        # Check if the value exists in tt_input and iterate is equal to the specified value
-        if (val %in% names(tt_input) && tt_input[[val]]$iterate == value) 
-          matching_elements <- c(matching_elements, as.character(arg_value) |> set_names(arg_name))
-        
-      }
-    }
-    
-  }
-  
-  return(matching_elements)
-}
-
 #' Quote elements with class 'name'
 #'
 #' This function takes a list and returns a new list where any elements
@@ -304,87 +239,63 @@ quote_name_classes <- function(lst) {
   })
 }
 
-#' Safe as.name Wrapper
+#' Wrap a language object so it deparses as quote(...)
 #'
-#' This function wraps `as.name()` to safely handle `NULL` input.
-#' If the input is `NULL`, the function returns `NULL`; otherwise,
-#' it returns the result of `as.name()`.
-#'
-#' @param input The input to be converted to a name. If `NULL`, the function returns `NULL`.
-#' @return The result of `as.name()` applied to the input, or `NULL` if the input is `NULL`.
 #' @noRd
-safe_as_name <- function(input) {
-  if (is.null(input)) {
-    return(NULL)
-  } else {
-    return(as.name(input))
-  }
+wrap_quote <- function(expr) {
+  if (is.null(expr) || !is.language(expr)) return(expr)
+  as.call(list(as.name("quote"), expr))
 }
 
-#' Check for Name-Value Conflicts in Arguments
+#' Names of pipeline targets referenced in a command expression
 #'
-#' This function checks if any argument names in a given function call are identical
-#' to any of their corresponding values. If such a conflict is found, an error is thrown.
-#'
-#' @param ... Arguments to be checked for name-value conflicts.
-#' @return The function returns the input arguments as a list if no conflicts are found.
-#' @importFrom glue glue
+#' @param command A language object (or something that is not, in which case
+#'   nothing is returned).
+#' @param tt_input A `tidytargets` object.
+#' @param value Character vector of `iterate` modes to match.
+#' @return A character vector of target names.
 #' @noRd
-check_for_name_value_conflicts <- function(...) {
-  # Capture the arguments passed to the function
-  args_list <- list(...)
-  
-  # Iterate through the list and check for name-value conflicts
-  for (arg_name in names(args_list)) {
-    arg_value <- args_list[[arg_name]]
-    
-    # Skip NULL values
-    if (is.null(arg_value)) next
-    
-    # Convert the argument value to a character string
-    arg_value_as_char <- as.character(arg_value)
-    
-    # Check if the argument name matches any of the values in arg_value_as_char
-    if (arg_name %in% c(arg_value)) {
-      stop(glue::glue("tidytargets says: Argument name '{arg_name}' cannot be the same as its value '{arg_value_as_char}'"))
-    }
-  }
-  
-  # If no conflicts, return the arguments as is or proceed with the function logic
-  return(args_list)
+command_targets <- function(command, tt_input, value) {
+  if (!is.language(command)) return(character())
+
+  vars <- all.vars(command)
+  vars <- vars[vars %in% names(tt_input)]
+
+  Filter(
+    function(v) isTRUE(tt_input[[v]]$iterate %in% value),
+    vars
+  )
 }
 
-#' Expand Tiered Arguments in a List
+#' Replace a symbol throughout an expression
 #'
-#' This function takes a list of arguments (`lst`), identifies a specific argument to replace (`argument_to_replace`),
-#' and expands it into a list of quoted tiered values.
-#'
-#' @param lst A list of arguments where one argument will be replaced by a list of tiered versions.
-#' @param tiers A vector of tiers (e.g., `c("1", "2")`) used to generate the tiered versions of the argument.
-#' @param argument_to_replace The name of the argument in `lst` that should be replaced by the tiered versions.
-#' @param tiered_args The base name used to create the tiered versions. The tiers will be appended to this base name.
-#' @return The modified list where the specified argument is replaced by a list of quoted tiered values.
 #' @noRd
-expand_tiered_arguments <- function(lst, tiers, argument_to_replace, tiered_args) {
-  # Check if the argument to replace exists in the list
-  if (argument_to_replace %in% names(lst)) {
-    # Fetch the correct value of the tiered argument from the list
-    tiered_base <- lst[[argument_to_replace]]
-    
-    # Create a vector of tiered values by combining tiered_base with tiers
-    # If no tier do not add the suffix
-    tiered_values <- lapply(tiers, function(tier) paste0(tiered_base, "_", tier) |> as.name() )
-    
-    # Construct the c(...) call with the tiered values
-    c_call <- as.call(c(as.name("c"), tiered_values))
-    
-    # Wrap the entire c(...) call with quote(quote(...))
-    lst[[argument_to_replace]] <- substitute(quote(quote(expr)), list(expr = c_call))
+replace_symbol <- function(expr, from, to) {
+  from_sym <- as.name(from)
+  if (is.name(expr)) {
+    if (identical(expr, from_sym)) return(to)
+    return(expr)
   }
-  
-  return(lst)
+  if (is.call(expr)) {
+    return(as.call(lapply(expr, replace_symbol, from = from, to = to)))
+  }
+  expr
 }
 
+#' Expand tiered target names in a command to `c(name_tier, ...)`
+#'
+#' @noRd
+expand_tiered_command <- function(command, target_names, tiers) {
+  if (length(target_names) == 0) return(command)
+
+  for (nm in target_names) {
+    replacement <- as.call(
+      c(as.name("c"), lapply(as.list(tiers), function(tier) as.name(paste0(nm, "_", tier))))
+    )
+    command <- replace_symbol(command, nm, replacement)
+  }
+  command
+}
 
 build_pattern = function(arguments_to_tier = c(), other_arguments_to_map = c(), index = c()){
   
@@ -447,25 +358,4 @@ target_append <- function(target_list, ...) {
   # Append the new elements to the list
   target_list <<- c(target_list, list(...))
   
-}
-
-#' Mark a String as a Targets Target Reference
-#'
-#' @description
-#' Converts a character string into an unquoted symbol so that targets pipeline
-#' functions can recognise it as a reference to an upstream target rather than
-#' a literal string value.
-#'
-#' @param x A character scalar naming the upstream targets target.
-#' @return An unquoted symbol (`name`) representing the target, or `NULL` if
-#'   `x` is `NULL`.
-#' @export
-is_target = function(x) {
-  
-  if(x |> is.null()) return(NULL)
-  
-  if(x |> is("character") |> not())
-    stop("tidytargets says: the input to `is_target` must be a character")
-  
-  as.name(x) 
 }

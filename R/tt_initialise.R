@@ -31,6 +31,9 @@
 #'   a target errors. Default: `FALSE`.
 #' @param packages Character vector of R packages loaded on workers. Defaults to
 #'   `"tidytargets"`.
+#' @param target_output Character name of the mapped input target. Default:
+#'   `"input_list"`. A companion file-tracking target is registered as
+#'   `{target_output}_file`.
 #' @return A `tidytargets` S3 object containing the initialisation arguments in
 #'   `$initialisation` and an empty metadata store (see `tt_metadata()`), ready
 #'   to be extended with pipeline step functions.
@@ -52,7 +55,8 @@ tt_initialise <- function(tt_input,
                            update = "thorough",
                            garbage_collection = 0,
                            workspace_on_error = FALSE,
-                           packages = "tidytargets"
+                           packages = "tidytargets",
+                           target_output = "input_list"
                           ) {
   
   # Capture all arguments including defaults
@@ -112,30 +116,35 @@ tt_initialise <- function(tt_input,
     list(initialisation = args_list, .metadata = list() ) |>
 
     add_class("tidytargets")
-  
-  
-  tt_input |> 
-    
-    # Sample names
-    tt_single("sample_names_file", "sample_names.qs", format = "file") |> 
-    
-    tt_single(
-      target_output = "sample_names", 
-      user_function = qs_read |> quote(),
-      file = "sample_names_file" |> is_target(), 
-      deployment = "main", 
-      iterate = "map"
-    ) |> 
-    
-    # Files
-    tt_single("input_list_file", "input_file.qs", format = "file") |> 
-    
-    tt_single(
-      target_output = "input_list", 
-      user_function = qs_read |> quote(),
-      file = "input_list_file" |> is_target(), 
-      deployment = "main", 
-      iterate = "map"
+
+  input_file_target <- paste0(target_output, "_file")
+
+  eval(substitute(
+    tt_input |>
+
+      # Sample names
+      tt_single("sample_names_file", "sample_names.qs", format = "file") |>
+
+      tt_single(
+        target_output = "sample_names",
+        command = qs_read(sample_names_file),
+        deployment = "main",
+        iterate = "map"
+      ) |>
+
+      # Files
+      tt_single(ift, "input_file.qs", format = "file") |>
+
+      tt_single(
+        target_output = to,
+        command = qs_read(ifs),
+        deployment = "main",
+        iterate = "map"
+      ),
+    list(
+      ift = input_file_target,
+      to = target_output,
+      ifs = as.name(input_file_target)
     )
-  
+  ))
 }

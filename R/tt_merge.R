@@ -6,16 +6,18 @@
 #'
 #' @param tt_input A `tidytargets` object.
 #' @param target_output Character name of the output target.
-#' @param user_function A quoted function call to execute for the merge.
+#' @param command An unevaluated expression. `{targets}` tracks dependencies from
+#'   global symbols in this expression (including upstream target names).
 #' @param user_function_source_path Optional character path to an R script to
-#'   source in the worker. `NULL` sources nothing.
-#' @param ... Named arguments passed as target inputs.
+#'   source in the worker before evaluating `command`. `NULL` sources nothing.
+#' @param ... Additional factory arguments such as `format`, `deployment`,
+#'   or `packages`.
 #'
 #' @export
 tt_merge <- function(
     tt_input,
     target_output = NULL,
-    user_function = NULL,
+    command = NULL,
     user_function_source_path = NULL,
     ...
 ) {
@@ -27,7 +29,7 @@ tt_merge <- function(
 tt_merge.default <- function(
     tt_input,
     target_output = NULL,
-    user_function = NULL,
+    command = NULL,
     user_function_source_path = NULL,
     ...
 ) {
@@ -42,13 +44,12 @@ tt_merge.default <- function(
 tt_merge.tidytargets <- function(
     tt_input,
     target_output = NULL,
-    user_function = NULL,
+    command = NULL,
     user_function_source_path = NULL,
     ...
 ) {
     
-    # Check for argument consistency
-    check_for_name_value_conflicts(...)
+    command <- substitute(command)
     
     # Target script
     target_script = glue("{tt_input$initialisation$store}.R")
@@ -66,31 +67,25 @@ tt_merge.tidytargets <- function(
           fx = tt_factory |> quote(),
           target_output = target_output,
           script = target_script,
-          user_function = user_function,
+          command = wrap_quote(command),
           ...
       )
       
     else{
       
-      args = 
-        list(...)  |> 
-        expand_tiered_arguments(
-          tiers = tt_input$initialisation$tier |> get_positions() |> names(), 
-          argument_to_replace = list(...) |> arguments_to_action(tt_input, "tiered") |> names(),
-          tiered_args = list(...) |> arguments_to_action(tt_input, "tiered") |> names()
-        )
+      command <- expand_tiered_command(
+        command,
+        command_targets(command, tt_input, "tiered"),
+        tt_input$initialisation$tier |> get_positions() |> names()
+      )
       
-      # this is needed because I cannot use ellipse (...) anymore, I have to use do.call.
-      do.call(tar_append, c(
-        list(
-          fx = tt_factory |> quote() |> quote(),
-          #tiers = tt_input$initialisation$tier |> get_positions(),
-          target_output = t |> substitute(env = list(t = target_output)) ,
+      tar_append(
+          fx = tt_factory |> quote(),
+          target_output = target_output,
           script = target_script,
-          user_function = u |> quote() |> substitute(env = list(u = user_function))
-        ),
-        args
-      ))
+          command = wrap_quote(command),
+          ...
+      )
     }
 
     

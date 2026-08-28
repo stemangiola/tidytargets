@@ -30,7 +30,7 @@ tidytargets is a tidy, pipe-friendly grammar for `{targets}`. `tt_initialise()` 
 
 The composition is **lazy**. `tt_initialise()`, `tt_iterate()`, `tt_single()`, `tt_merge()`, and `tt_report()` only write factories into `{store}.R`. User functions are not called until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console), which closes the script and runs `targets::tar_make()`.
 
-Pipelines are **incremental**. Add a step, change a parameter, or grow the input vector and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
+Pipelines are **incremental**. Add a step, change a parameter, or grow the input list and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
 
 This vignette walks through every building block and prints the targets script after each step.
 
@@ -50,15 +50,13 @@ This vignette walks through every building block and prints the targets script a
 
 ## Toy inputs
 
-`tt_initialise()` takes a named vector of inputs, typically file paths, or a named list of in-memory objects. Here two RDS files stand in for samples.
+`tt_initialise()` takes a named list of in-memory objects, one element per unit of iteration (e.g. sample). A named vector of file paths works the same way.
 
 ```{r inputs}
-files <- c(
-  sample_a = "a.rds",
-  sample_b = "b.rds"
+inputs <- list(
+  sample_a = 1:3,
+  sample_b = 4:6
 )
-saveRDS(1:3, files[["sample_a"]])
-saveRDS(4:6, files[["sample_b"]])
 store <- "pipeline"
 ```
 
@@ -66,13 +64,13 @@ store <- "pipeline"
 
 This writes `{store}.R`, saves the inputs, and registers two mapped targets:
 
-- `input_list` — the named input vector or list
+- `input_list` — the named input vector or list (override with `target_output`)
 - `sample_names` — the names of that vector or list
 
 With no `computing_resources`, the pipeline is sequential.
 
 ```{r initialise}
-pipe <- files |>
+pipe <- inputs |>
   tt_initialise(store = store)
 ```
 
@@ -82,14 +80,13 @@ show_script(store)
 
 ## `tt_iterate()`
 
-Map a function over every input. Wrap an upstream target name with `is_target()` so the argument is a dependency, not a literal string.
+Map a function over every input. Write `command` as you would in `tar_target()`; `{targets}` tracks upstream names, and tidytargets infers `map()` from mapped targets in the expression.
 
 ```{r iterate-read}
 pipe <- pipe |>
   tt_iterate(
     target_output = "data",
-    user_function = readRDS |> quote(),
-    file = "input_list" |> is_target()
+    command = input_list * 2
   )
 ```
 
@@ -103,8 +100,7 @@ A second iterate maps over the result of the first:
 pipe <- pipe |>
   tt_iterate(
     target_output = "n",
-    user_function = length |> quote(),
-    x = "data" |> is_target()
+    command = length(data)
   )
 ```
 
@@ -120,8 +116,7 @@ One target, not mapped over samples. Use this for file-tracking targets, scalars
 pipe <- pipe |>
   tt_single(
     target_output = "n_samples",
-    user_function = length |> quote(),
-    x = "sample_names" |> is_target()
+    command = length(sample_names)
   )
 ```
 
@@ -139,8 +134,7 @@ Collect every branch of an iterated target into one object.
 pipe <- pipe |>
   tt_merge(
     target_output = "n_total",
-    user_function = (function(lengths) sum(unlist(lengths))) |> quote(),
-    lengths = "n" |> is_target()
+    command = sum(unlist(n))
   )
 ```
 
@@ -174,8 +168,7 @@ pipe <- pipe |>
   tt_report(
     target_output = "report",
     rmd_path = "example-report.qmd",
-    n_total = "n_total" |> is_target(),
-    n_samples = "n_samples" |> is_target()
+    params = list(n_total = n_total, n_samples = n_samples)
   )
 ```
 
@@ -187,20 +180,18 @@ show_script(store)
 
 This is the only eager step. It closes the script with a final `target_list` expression and calls `targets::tar_make()`. Evaluating the object (e.g., printing it in the console) does the same thing. Until then the pipeline is just a script on disk.
 
-The pipeline below matches the README example. `tt_evaluate()` prints the `{targets}` progress and returns `tar_meta()`. Read a target from the store to see the computed values.
+The pipeline below runs the same steps as the walkthrough, then evaluates. `tt_evaluate()` prints the `{targets}` progress and returns `tar_meta()`. Read a target from the store to see the computed values.
 
 ```{r evaluate}
-files |>
+inputs |>
   tt_initialise(store = "_targets") |>
   tt_iterate(
     target_output = "data",
-    user_function = readRDS |> quote(),
-    file = "input_list" |> is_target()
+    command = input_list * 2
   ) |>
   tt_iterate(
     target_output = "summaries",
-    user_function = summary |> quote(),
-    object = "data" |> is_target()
+    command = summary(data)
   ) |>
   tt_evaluate()
 
@@ -217,8 +208,7 @@ Do not evaluate a `tidytargets` object (e.g., by printing it in the console) unl
 pipe |>
   tt_iterate(
     target_output = "transformed",
-    user_function = my_transform |> quote(),
-    user_function_source_path = "helpers.R",
-    x = "data" |> is_target()
+    command = my_transform(data),
+    user_function_source_path = "helpers.R"
   )
 ```

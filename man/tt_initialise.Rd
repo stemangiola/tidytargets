@@ -15,7 +15,8 @@ tt_initialise(
   update = "thorough",
   garbage_collection = 0,
   workspace_on_error = FALSE,
-  packages = "tidytargets"
+  packages = "tidytargets",
+  target_output = "input_list"
 )
 }
 \arguments{
@@ -54,6 +55,10 @@ a target errors. Default: \code{FALSE}.}
 
 \item{packages}{Character vector of R packages loaded on workers. Defaults to
 \code{"tidytargets"}.}
+
+\item{target_output}{Character name of the mapped input target. Default:
+\code{"input_list"}. A companion file-tracking target is registered as
+\verb{\{target_output\}_file}.}
 }
 \value{
 A \code{tidytargets} S3 object containing the initialisation arguments in
