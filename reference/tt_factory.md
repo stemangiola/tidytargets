@@ -7,8 +7,8 @@ tidytargets pipeline. Not intended to be called by end users directly.
 
 ``` r
 tt_factory(
-  target_output,
   command,
+  target_output,
   other_arguments_to_map = c(),
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
@@ -19,14 +19,14 @@ tt_factory(
 
 ## Arguments
 
-- target_output:
-
-  Character name of the output target.
-
 - command:
 
   An unevaluated expression passed to `tar_target_raw()`. `{targets}`
   tracks dependencies from symbols in this expression.
+
+- target_output:
+
+  Character name of the output target.
 
 - other_arguments_to_map:
 

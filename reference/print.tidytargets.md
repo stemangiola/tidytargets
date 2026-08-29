@@ -1,7 +1,9 @@
 # Print a tidytargets Object
 
 Prints a summary of a `tidytargets` pipeline object by evaluating it and
-displaying the resulting targets metadata.
+displaying the resulting targets metadata. Assignment never prints, so
+an interactive session then says the pipeline is ready to be evaluated,
+rather than appearing to do nothing.
 
 ## Usage
 

@@ -1,19 +1,24 @@
 # Initialise a tidytargets Pipeline
 
-Sets up and writes a `targets` pipeline script. Saves inputs and
-configuration to disk, then returns a `tidytargets` object that
-downstream grammar functions (e.g.
+Sets up and writes a `targets` pipeline script. Saves configuration (and
+optional mapped inputs) to disk, then returns a `tidytargets` object
+that downstream grammar functions (e.g.
+[`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md),
 [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md),
 [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md),
 [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md))
 can extend before the pipeline is executed with
 [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md).
+The graph is not run until you print the object or call
+[`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md).
+Assigning it does not; an interactive session then says the pipeline is
+ready to be evaluated, rather than appearing to do nothing.
 
 ## Usage
 
 ``` r
 tt_initialise(
-  tt_input,
+  tt_input = NULL,
   store = NULL,
   computing_resources = NULL,
   debug_step = NULL,
@@ -33,7 +38,10 @@ tt_initialise(
 
   Named vector of inputs, typically file paths, or a named list of
   in-memory objects, one element per unit of iteration (e.g. sample). If
-  names are not set, integer indices are used.
+  names are not set, integer indices are used. `NULL` (the default)
+  writes only the script header; add objects later with
+  [`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md)
+  or pass a list here to map over.
 
 - store:
 
@@ -89,13 +97,15 @@ tt_initialise(
 
 - target_output:
 
-  Character name of the mapped input target. Default: `"input_list"`. A
-  companion file-tracking target is registered as
-  `{target_output}_file`.
+  Character name of the mapped input target. Default: `"input_list"`.
+  Ignored when `tt_input` is `NULL`. A companion file-tracking target is
+  registered as `{target_output}_file`.
 
 ## Value
 
 A `tidytargets` S3 object containing the initialisation arguments in
 `$initialisation` and an empty metadata store (see
 [`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)),
-ready to be extended with pipeline step functions.
+ready to be extended with pipeline step functions. The graph is not run
+until you print it or call
+[`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md).

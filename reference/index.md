@@ -19,6 +19,10 @@
   : Return One Instance of a Pipeline Target
 - [`tt_factory()`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)
   : Internal Factory for Iterating Targets
+- [`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md)
+  : Import a Session Object as a Pipeline Target
+- [`tt_import_list()`](https://stemangiola.github.io/tidytargets/reference/tt_import_list.md)
+  : Import a List of Units as a Mapped Pipeline Target
 - [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)
   : Initialise a tidytargets Pipeline
 - [`tt_internal_report()`](https://stemangiola.github.io/tidytargets/reference/tt_internal_report.md)

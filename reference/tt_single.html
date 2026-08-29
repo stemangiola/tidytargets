@@ -48,8 +48,8 @@ Use <code><a href="tt_iterate.html">tt_iterate()</a></code> instead when the ste
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tt_single</span><span class="op">(</span></span>
 <span>  <span class="va">tt_input</span>,</span>
-<span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  command <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user_function_source_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  iterate <span class="op">=</span> <span class="st">"none"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -58,8 +58,8 @@ Use <code><a href="tt_iterate.html">tt_iterate()</a></code> instead when the ste
 <span><span class="co"># Default S3 method</span></span>
 <span><span class="fu">tt_single</span><span class="op">(</span></span>
 <span>  <span class="va">tt_input</span>,</span>
-<span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  command <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user_function_source_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  iterate <span class="op">=</span> <span class="st">"none"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -68,8 +68,8 @@ Use <code><a href="tt_iterate.html">tt_iterate()</a></code> instead when the ste
 <span><span class="co"># S3 method for class 'tidytargets'</span></span>
 <span><span class="fu">tt_single</span><span class="op">(</span></span>
 <span>  <span class="va">tt_input</span>,</span>
-<span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  command <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user_function_source_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  iterate <span class="op">=</span> <span class="st">"none"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -84,13 +84,13 @@ Use <code><a href="tt_iterate.html">tt_iterate()</a></code> instead when the ste
 <dd><p>A <code>tidytargets</code> object.</p></dd>
 
 
-<dt id="arg-target-output">target_output<a class="anchor" aria-label="anchor" href="#arg-target-output"></a></dt>
-<dd><p>Character name of the output target.</p></dd>
-
-
 <dt id="arg-command">command<a class="anchor" aria-label="anchor" href="#arg-command"></a></dt>
 <dd><p>An unevaluated expression. <code>{targets}</code> tracks dependencies from
 global symbols in this expression (including upstream target names).</p></dd>
+
+
+<dt id="arg-target-output">target_output<a class="anchor" aria-label="anchor" href="#arg-target-output"></a></dt>
+<dd><p>Character name of the output target.</p></dd>
 
 
 <dt id="arg-user-function-source-path">user_function_source_path<a class="anchor" aria-label="anchor" href="#arg-user-function-source-path"></a></dt>

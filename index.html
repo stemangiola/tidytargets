@@ -57,7 +57,7 @@
 </h1></div>
 <p>A tidy, pipe-friendly grammar for <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a>, internally based on <a href="https://books.ropensci.org/targets/static.html#target-factories" class="external-link">targets factories</a>.</p>
 <p>Compose pipelines with pipes (<code>|&gt;</code>) and run them locally, on HPC, or in the cloud. <code><a href="reference/tt_initialise.html">tt_initialise()</a></code> constructs a <code>tidytargets</code> object; <code><a href="reference/tt_iterate.html">tt_iterate()</a></code>, <code><a href="reference/tt_single.html">tt_single()</a></code>, <code><a href="reference/tt_merge.html">tt_merge()</a></code>, <code><a href="reference/tt_report.html">tt_report()</a></code>, and <code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code> are methods on that class. Those calls are factories that write a <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> dependency graph. Compute backends (for example <a href="https://wlandau.github.io/crew/" class="external-link">crew</a> or <a href="https://wlandau.github.io/crew.cluster/" class="external-link">crew.cluster</a>) are optional and passed in at <code><a href="reference/tt_initialise.html">tt_initialise()</a></code>.</p>
-<p>The grammar is <strong>lazy</strong> and <strong>incremental</strong>. Piping steps only appends factories to the targets script; nothing is computed until <code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code> (or evaluating the object; e.g., printing it in the console). You can add inputs or steps later and <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> re-runs only the outdated branches of the graph.</p>
+<p>The grammar is <strong>lazy</strong> and <strong>incremental</strong>. Piping steps only appends factories to the targets script; nothing is computed until <code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code> (or evaluating the object; e.g., printing it in the console). Assigning the object does not print it, so an interactive session then says the pipeline is ready to be evaluated, rather than appearing to do nothing. You can add inputs or steps later and <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> re-runs only the outdated branches of the graph.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -70,7 +70,7 @@
 <div class="section level2">
 <h2 id="a-minimal-pipeline">A minimal pipeline<a class="anchor" aria-label="anchor" href="#a-minimal-pipeline"></a>
 </h2>
-<p><code><a href="reference/tt_initialise.html">tt_initialise()</a></code> takes a named vector of inputs (typically file paths), or a named list of in-memory objects. Pass a <code>command</code> expression the same way you would to <code>tar_target()</code>; <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> tracks upstream names in that expression. With no <code>computing_resources</code>, the pipeline runs sequentially. With no <code>store</code>, a unique <code>./tidytargets-&lt;HASH&gt;</code> directory is created and printed.</p>
+<p><code><a href="reference/tt_initialise.html">tt_initialise()</a></code> can start a pipeline with no inputs. Pass a named list (or file paths) to register mapped units, or call it with only <code>store</code> / <code>computing_resources</code> and bring objects in with <code><a href="reference/tt_import.html">tt_import()</a></code>. Pass a <code>command</code> expression the same way you would to <code>tar_target()</code>; <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> tracks upstream names in that expression. With no <code>computing_resources</code>, the pipeline runs sequentially. With no <code>store</code>, a unique <code>./tidytargets-&lt;HASH&gt;</code> directory is created and printed.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stemangiola.github.io/tidytargets/">tidytargets</a></span><span class="op">)</span></span>
 <span></span>
@@ -84,12 +84,12 @@
 <span><span class="va">files</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_initialise.html">tt_initialise</a></span><span class="op">(</span>store <span class="op">=</span> <span class="st">"_targets"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_iterate.html">tt_iterate</a></span><span class="op">(</span></span>
-<span>    target_output <span class="op">=</span> <span class="st">"data"</span>,</span>
-<span>    command <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">input_list</span><span class="op">)</span></span>
+<span>    command <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">input_list</span><span class="op">)</span>,</span>
+<span>    target_output <span class="op">=</span> <span class="st">"data"</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_iterate.html">tt_iterate</a></span><span class="op">(</span></span>
-<span>    target_output <span class="op">=</span> <span class="st">"summaries"</span>,</span>
-<span>    command <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span>    command <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>,</span>
+<span>    target_output <span class="op">=</span> <span class="st">"summaries"</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_evaluate.html">tt_evaluate</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; + input_list_file dispatched</span></span>
@@ -114,7 +114,7 @@
 <span><span class="co">#&gt; $summaries_71c6d136bc334ef4</span></span>
 <span><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.</span></span>
 <span><span class="co">#&gt;     4.0     4.5     5.0     5.0     5.5     6.0</span></span></code></pre>
-<p><code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code> also returns the <code><a href="https://docs.ropensci.org/targets/reference/tar_meta.html" class="external-link">targets::tar_meta()</a></code> table. <code><a href="reference/tt_initialise.html">tt_initialise()</a></code> registers two mapped targets for you:</p>
+<p><code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code> also returns the <code><a href="https://docs.ropensci.org/targets/reference/tar_meta.html" class="external-link">targets::tar_meta()</a></code> table. When you pass mapped inputs, <code><a href="reference/tt_initialise.html">tt_initialise()</a></code> registers two mapped targets:</p>
 <ul>
 <li>
 <code>input_list</code> — the named input vector or list (override with <code>target_output</code>)</li>
@@ -137,7 +137,15 @@
 <tbody>
 <tr>
 <td><code><a href="reference/tt_initialise.html">tt_initialise()</a></code></td>
-<td>Start a pipeline: store, optional controller</td>
+<td>Start a pipeline: store, optional mapped inputs</td>
+</tr>
+<tr>
+<td><code><a href="reference/tt_import.html">tt_import()</a></code></td>
+<td>Snapshot a session object onto the store as one target</td>
+</tr>
+<tr>
+<td><code><a href="reference/tt_import_list.html">tt_import_list()</a></code></td>
+<td>Snapshot a list onto the store as mapped units</td>
 </tr>
 <tr>
 <td><code><a href="reference/tt_iterate.html">tt_iterate()</a></code></td>

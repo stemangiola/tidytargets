@@ -10,8 +10,8 @@ instead when the step should be mapped over all samples.
 ``` r
 tt_single(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   iterate = "none",
   ...
@@ -20,8 +20,8 @@ tt_single(
 # Default S3 method
 tt_single(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   iterate = "none",
   ...
@@ -30,8 +30,8 @@ tt_single(
 # S3 method for class 'tidytargets'
 tt_single(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   iterate = "none",
   ...
@@ -44,14 +44,14 @@ tt_single(
 
   A `tidytargets` object.
 
-- target_output:
-
-  Character name of the output target.
-
 - command:
 
   An unevaluated expression. `{targets}` tracks dependencies from global
   symbols in this expression (including upstream target names).
+
+- target_output:
+
+  Character name of the output target.
 
 - user_function_source_path:
 

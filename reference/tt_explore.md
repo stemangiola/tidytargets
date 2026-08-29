@@ -37,7 +37,9 @@ tt_explore(tt_input, target_output, index = 1L)
 
 - target_output:
 
-  Character name of the target to inspect.
+  Name of the target to inspect, unquoted (`data`) or as a string
+  (`"data"`), like
+  [`targets::tar_read()`](https://docs.ropensci.org/targets/reference/tar_read.html).
 
 - index:
 
@@ -52,8 +54,8 @@ The retrieved instance.
 
 ``` r
 if (FALSE) { # \dontrun{
-pipeline |> tt_explore("data")
-pipeline |> tt_explore("data") |> summary()
+pipeline |> tt_explore(data)
+pipeline |> tt_explore(data) |> summary()
 pipeline |> tt_explore("data", index = 2)
 } # }
 ```

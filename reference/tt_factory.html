@@ -47,8 +47,8 @@ tidytargets pipeline. Not intended to be called by end users directly.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">tt_factory</span><span class="op">(</span></span>
-<span>  <span class="va">target_output</span>,</span>
 <span>  <span class="va">command</span>,</span>
+<span>  <span class="va">target_output</span>,</span>
 <span>  other_arguments_to_map <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  packages <span class="op">=</span> <span class="fu">targets</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/targets/reference/tar_option_get.html" class="external-link">tar_option_get</a></span><span class="op">(</span><span class="st">"packages"</span><span class="op">)</span>,</span>
 <span>  deployment <span class="op">=</span> <span class="fu">targets</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/targets/reference/tar_option_get.html" class="external-link">tar_option_get</a></span><span class="op">(</span><span class="st">"deployment"</span><span class="op">)</span>,</span>
@@ -61,13 +61,13 @@ tidytargets pipeline. Not intended to be called by end users directly.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-target-output">target_output<a class="anchor" aria-label="anchor" href="#arg-target-output"></a></dt>
-<dd><p>Character name of the output target.</p></dd>
-
-
-<dt id="arg-command">command<a class="anchor" aria-label="anchor" href="#arg-command"></a></dt>
+<dl><dt id="arg-command">command<a class="anchor" aria-label="anchor" href="#arg-command"></a></dt>
 <dd><p>An unevaluated expression passed to <code>tar_target_raw()</code>.
 <code>{targets}</code> tracks dependencies from symbols in this expression.</p></dd>
+
+
+<dt id="arg-target-output">target_output<a class="anchor" aria-label="anchor" href="#arg-target-output"></a></dt>
+<dd><p>Character name of the output target.</p></dd>
 
 
 <dt id="arg-other-arguments-to-map">other_arguments_to_map<a class="anchor" aria-label="anchor" href="#arg-other-arguments-to-map"></a></dt>

@@ -8,8 +8,8 @@ iterated upstream targets into a single aggregate object.
 ``` r
 tt_merge(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -17,8 +17,8 @@ tt_merge(
 # Default S3 method
 tt_merge(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -26,8 +26,8 @@ tt_merge(
 # S3 method for class 'tidytargets'
 tt_merge(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -39,14 +39,14 @@ tt_merge(
 
   A `tidytargets` object.
 
-- target_output:
-
-  Character name of the output target.
-
 - command:
 
   An unevaluated expression. `{targets}` tracks dependencies from global
   symbols in this expression (including upstream target names).
+
+- target_output:
+
+  Character name of the output target.
 
 - user_function_source_path:
 

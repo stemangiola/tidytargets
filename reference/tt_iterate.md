@@ -10,8 +10,8 @@ applied.
 ``` r
 tt_iterate(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -19,8 +19,8 @@ tt_iterate(
 # Default S3 method
 tt_iterate(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -28,8 +28,8 @@ tt_iterate(
 # S3 method for class 'tidytargets'
 tt_iterate(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -41,16 +41,15 @@ tt_iterate(
 
   A `tidytargets` object.
 
-- target_output:
-
-  Character name of the output target. `NULL` uses an auto-generated
-  name.
-
 - command:
 
   An unevaluated expression. `{targets}` tracks dependencies from global
   symbols in this expression (including upstream target names). Mapped
   targets referenced here also set the iteration pattern.
+
+- target_output:
+
+  Character name of the output target.
 
 - user_function_source_path:
 
