@@ -1,17 +1,20 @@
 #' Initialise a tidytargets Pipeline
 #'
 #' @description
-#' Sets up and writes a `targets` pipeline script. Saves inputs and
-#' configuration to disk, then returns a `tidytargets` object that downstream
-#' grammar functions (e.g. `tt_iterate()`, `tt_single()`, `tt_evaluate()`)
-#' can extend before the pipeline is executed with `tt_evaluate()`. The graph
-#' is not run until you print the object or call [tt_evaluate()]. Assigning
-#' it does not; an interactive session then says the pipeline is ready to be
-#' evaluated, rather than appearing to do nothing.
+#' Sets up and writes a `targets` pipeline script. Saves configuration (and
+#' optional mapped inputs) to disk, then returns a `tidytargets` object that
+#' downstream grammar functions (e.g. `tt_import()`, `tt_iterate()`,
+#' `tt_single()`, `tt_evaluate()`) can extend before the pipeline is executed
+#' with `tt_evaluate()`. The graph is not run until you print the object or
+#' call [tt_evaluate()]. Assigning it does not; an interactive session then
+#' says the pipeline is ready to be evaluated, rather than appearing to do
+#' nothing.
 #'
 #' @param tt_input Named vector of inputs, typically file paths, or a named
 #'   list of in-memory objects, one element per unit of iteration (e.g. sample).
-#'   If names are not set, integer indices are used.
+#'   If names are not set, integer indices are used. `NULL` (the default)
+#'   writes only the script header; add objects later with [tt_import()] or
+#'   pass a list here to map over.
 #' @param store Directory path where pipeline files and targets store are written.
 #'   `NULL` (the default) writes to `./tidytargets-<HASH>` in the working
 #'   directory and prints that path.
@@ -35,8 +38,8 @@
 #' @param packages Character vector of R packages loaded on workers. Defaults to
 #'   `"tidytargets"`.
 #' @param target_output Character name of the mapped input target. Default:
-#'   `"input_list"`. A companion file-tracking target is registered as
-#'   `{target_output}_file`.
+#'   `"input_list"`. Ignored when `tt_input` is `NULL`. A companion
+#'   file-tracking target is registered as `{target_output}_file`.
 #' @return A `tidytargets` S3 object containing the initialisation arguments in
 #'   `$initialisation` and an empty metadata store (see `tt_metadata()`), ready
 #'   to be extended with pipeline step functions. The graph is not run until
@@ -49,7 +52,7 @@
 #' @import tarchetypes
 #' @import targets
 #' @export
-tt_initialise <- function(tt_input,
+tt_initialise <- function(tt_input = NULL,
                            store = NULL,
                            computing_resources = NULL,
                            debug_step = NULL,
@@ -64,9 +67,11 @@ tt_initialise <- function(tt_input,
   
   # Capture all arguments including defaults
   args_list <- as.list(environment())
-  
+
+  has_input <- !is.null(tt_input)
+
   # if simple names are not set, use integers
-  if(tt_input |> names() |> is.null())
+  if (has_input && is.null(names(tt_input)))
     tt_input = tt_input |> set_names(seq_len(length(tt_input)))
   
 
@@ -83,16 +88,18 @@ tt_initialise <- function(tt_input,
   store <- normalizePath(store, winslash = "/", mustWork = TRUE)
   args_list$store <- store
   
-  # Keep inputs with the store so tar_make cannot pick up a leftover
-  # input_file.qs from another pipeline in the working directory.
-  input_qs <- file.path(store, "input_file.qs")
-  sample_names_qs <- file.path(store, "sample_names.qs")
+  # Keep computing resources with the store. Mapped inputs (if any) stay here
+  # too so tar_make cannot pick up leftover input_file.qs from another pipeline.
   resources_qs <- file.path(store, "temp_computing_resources.qs")
-
-  tt_input |> as.list() |> qs_save(input_qs)
-  tt_input |> names() |> qs_save(sample_names_qs)
   computing_resources |> qs_save(resources_qs)
   backend_packages <- package_of_object(computing_resources)
+
+  if (has_input) {
+    input_qs <- file.path(store, "input_file.qs")
+    sample_names_qs <- file.path(store, "sample_names.qs")
+    tt_input |> as.list() |> qs_save(input_qs)
+    tt_input |> names() |> qs_save(sample_names_qs)
+  }
   
   # Write pipeline to a file
   {
@@ -130,15 +137,16 @@ tt_initialise <- function(tt_input,
     tar_script_append2(script = glue("{store}.R"), append = FALSE)
 
   
-  tt_input = 
+  pipe <-
     list(initialisation = args_list, .metadata = list() ) |>
-
     add_class("tidytargets")
+
+  if (!has_input) return(pipe)
 
   input_file_target <- paste0(target_output, "_file")
 
   eval(substitute(
-    tt_input |>
+    pipe |>
 
       # Sample names
       tt_single("sample_names_file", snf, format = "file") |>

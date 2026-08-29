@@ -15,7 +15,8 @@ tt_explore(tt_input, target_output, index = 1L)
 \arguments{
 \item{tt_input}{A \code{tidytargets} object from \code{tt_initialise()}.}
 
-\item{target_output}{Character name of the target to inspect.}
+\item{target_output}{Name of the target to inspect, unquoted (\code{data}) or
+as a string (\code{"data"}), like \code{targets::tar_read()}.}
 
 \item{index}{1-based index of the instance to return when the target has
 more than one. Default: \code{1}.}
@@ -40,8 +41,8 @@ If the target has not been built yet, the pipeline is evaluated first
 }
 \examples{
 \dontrun{
-pipeline |> tt_explore("data")
-pipeline |> tt_explore("data") |> summary()
+pipeline |> tt_explore(data)
+pipeline |> tt_explore(data) |> summary()
 pipeline |> tt_explore("data", index = 2)
 }
 }

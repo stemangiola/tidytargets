@@ -5,8 +5,7 @@
 #' targets, as well as a custom user function to be applied.
 #'
 #' @param tt_input A `tidytargets` object.
-#' @param target_output Character name of the output target. `NULL` uses an
-#'   auto-generated name.
+#' @param target_output Character name of the output target.
 #' @param command An unevaluated expression. `{targets}` tracks dependencies from
 #'   global symbols in this expression (including upstream target names). Mapped
 #'   targets referenced here also set the iteration pattern.
@@ -52,6 +51,8 @@ tt_iterate.tidytargets <- function(
 ) {
     
     command <- substitute(command)
+
+    require_target_output(target_output)
     
     # Target script
     target_script = glue("{tt_input$initialisation$store}.R")

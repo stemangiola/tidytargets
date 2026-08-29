@@ -47,3 +47,7 @@ test_that("non-interactive sessions never queue a notice", {
   schedule_pipeline_ready_notice("store_a")
   expect_false(pipeline_pending_flush())
 })
+
+test_that("task callback names come from base", {
+  expect_type(getTaskCallbackNames(), "character")
+})

@@ -16,7 +16,8 @@
 #' (same incremental `tar_make()` as `tt_evaluate()`).
 #'
 #' @param tt_input A `tidytargets` object from `tt_initialise()`.
-#' @param target_output Character name of the target to inspect.
+#' @param target_output Name of the target to inspect, unquoted (`data`) or
+#'   as a string (`"data"`), like `targets::tar_read()`.
 #' @param index 1-based index of the instance to return when the target has
 #'   more than one. Default: `1`.
 #'
@@ -24,8 +25,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' pipeline |> tt_explore("data")
-#' pipeline |> tt_explore("data") |> summary()
+#' pipeline |> tt_explore(data)
+#' pipeline |> tt_explore(data) |> summary()
 #' pipeline |> tt_explore("data", index = 2)
 #' }
 #' @name tt_explore
@@ -46,14 +47,15 @@ tt_explore.default <- function(tt_input, target_output, index = 1L) {
 #' @export
 tt_explore.tidytargets <- function(tt_input, target_output, index = 1L) {
 
-  if (missing(target_output) || length(target_output) != 1L ||
-      !is.character(target_output) || !nzchar(target_output)) {
+  if (missing(target_output)) {
     stop(
-      "tidytargets says: please supply target_output as a string, ",
-      "e.g. tt_explore(pipeline, \"data\").",
+      "tidytargets says: please supply a target name, ",
+      "e.g. tt_explore(pipeline, data).",
       call. = FALSE
     )
   }
+
+  target_output <- as_explore_target_name(substitute(target_output))
 
   target_names <- setdiff(names(tt_input), c("initialisation", ".metadata"))
   if (!target_output %in% target_names) {
@@ -86,6 +88,19 @@ tt_explore.tidytargets <- function(tt_input, target_output, index = 1L) {
     message("## ", target_output)
   }
   x
+}
+
+#' Target name from an unquoted symbol or a string, like tar_read()
+#'
+#' @noRd
+as_explore_target_name <- function(expr) {
+  if (is.symbol(expr)) return(as.character(expr))
+  if (is.character(expr) && length(expr) == 1L && nzchar(expr)) return(expr)
+  stop(
+    "tidytargets says: please supply a target name, ",
+    "e.g. tt_explore(pipeline, data).",
+    call. = FALSE
+  )
 }
 
 #' Metadata row for a single target, without tidyselect on an external vector

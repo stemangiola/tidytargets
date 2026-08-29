@@ -49,6 +49,8 @@ tt_merge.tidytargets <- function(
 ) {
     
     command <- substitute(command)
+
+    require_target_output(target_output)
     
     # Target script
     target_script = glue("{tt_input$initialisation$store}.R")

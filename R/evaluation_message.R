@@ -150,10 +150,10 @@ schedule_pipeline_ready_notice <- function(store) {
     return(invisible())
   }
   pipeline_pending_add(store)
-  if (PIPELINE_READY_CALLBACK %in% utils::getTaskCallbackNames()) {
+  if (PIPELINE_READY_CALLBACK %in% getTaskCallbackNames()) {
     return(invisible())
   }
-  utils::addTaskCallback(
+  addTaskCallback(
     function(...) {
       if (pipeline_pending_flush()) {
         pipeline_ready_message()

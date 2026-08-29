@@ -3,9 +3,16 @@
 
 ## tidytargets 0.4.0
 
-* `tt_explore()` returns one stored instance of a named target (one branch)
+* `tt_initialise()` no longer requires mapped inputs. `tt_initialise()` alone
+  writes the script header; add session objects with `tt_import()`.
+* `tt_import()` snapshots a session object onto the store as a single
+  (non-mapped) target, so local values can be used as pipeline dependencies.
+* `tt_import_list()` snapshots a list as mapped iteration units, for example
+  each row of a parameter grid.
+* `tt_explore()` returns one stored instance of a named target (one branch
   of a mapped target, without loading the rest) and messages a short heading
-  so you can inspect it or pipe it onward.
+  so you can inspect it or pipe it onward. The target may be unquoted
+  (`tt_explore(data)`) or a string, like `targets::tar_read()`.
 * Dropped processing tiers (`tier`, `get_positions()`, and the tiered factory
   path). Map iteration is unchanged; elastic `{crew}` controllers replace
   tiered resource groups.

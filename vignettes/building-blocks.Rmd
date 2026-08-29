@@ -24,7 +24,7 @@ tidytargets is a tidy, pipe-friendly grammar for `{targets}`.
 
 `tt_initialise()` constructs a `tidytargets` object. Each method is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it appends `tar_target` definitions to a pipeline script. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
 
-The composition is **lazy**. `tt_initialise()`, `tt_single()`, `tt_iterate()`, `tt_merge()`, and `tt_report()` only write factories into `{store}.R`. User functions are not called until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console), which closes the script and runs `targets::tar_make()`.
+The composition is **lazy**. `tt_initialise()`, `tt_import()`, `tt_import_list()`, `tt_single()`, `tt_iterate()`, `tt_merge()`, and `tt_report()` only write factories into `{store}.R`. User functions are not called until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console), which closes the script and runs `targets::tar_make()`.
 Assigning the object does not print it, so an interactive session then says the pipeline is ready to be evaluated, rather than appearing to do nothing.
 
 Pipelines are **incremental**. Add a step, change a parameter, or grow the input list and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
@@ -35,7 +35,9 @@ This vignette walks through every building block and prints the targets script a
 
 | Function | Role |
 | --- | --- |
-| `tt_initialise()` | Start a pipeline: write the script header, register inputs |
+| `tt_initialise()` | Start a pipeline: write the script header, optional mapped inputs |
+| `tt_import()` | Snapshot a session object onto the store as one target |
+| `tt_import_list()` | Snapshot a list onto the store as mapped units |
 | `tt_single()` | Add one non-iterated target |
 | `tt_iterate()` | Map a function over inputs |
 | `tt_merge()` | Combine iterated results into one object |
@@ -48,7 +50,7 @@ This vignette walks through every building block and prints the targets script a
 
 ## Toy inputs
 
-`tt_initialise()` takes a named list of in-memory objects, one element per unit of iteration (e.g. sample). A named vector of file paths works the same way.
+`tt_initialise()` can be called with no inputs (script header and store only). A named list of in-memory objects, one element per unit of iteration (e.g. sample), or a named vector of file paths, registers mapped targets. `tt_import()` adds a session object later without splitting it.
 
 ```{r inputs}
 inputs <- list(
@@ -59,12 +61,12 @@ inputs <- list(
 
 ## `tt_initialise()`
 
-This writes `{store}.R`, saves the inputs, and registers two mapped targets:
+This writes `{store}.R` and saves configuration. If you passed mapped inputs, it also registers:
 
 - `input_list` — the named input vector or list (override with `target_output`)
 - `sample_names` — the names of that vector or list
 
-With no `computing_resources`, the pipeline is sequential. With no `store`, a unique `./tidytargets-<HASH>` directory is created.
+With no `computing_resources`, the pipeline is sequential. With no `store`, a unique `./tidytargets-<HASH>` directory is created. With no inputs, start from `tt_initialise()` and add objects with `tt_import()`.
 
 ```{r initialise}
 pipe <- inputs |>
@@ -72,6 +74,37 @@ pipe <- inputs |>
 ```
 
 ```{r initialise-script, comment = ""}
+show_targets_script(pipe)
+```
+
+## `tt_import()`
+
+Write a local object onto the store as a single target. Unlike `tt_initialise()`, the value is not split into iteration units.
+
+```{r import}
+extra <- list(label = "demo")
+pipe <- pipe |>
+  tt_import(extra, target_output = "extra")
+```
+
+```{r import-script, comment = ""}
+show_targets_script(pipe)
+```
+
+## `tt_import_list()`
+
+Same snapshot, but each list element is a mapped unit. Use this for a parameter grid split into rows (`split()`, or `dplyr::group_split()`). Because the value is an expression, not a name, `target_output` is required.
+
+```{r import-list}
+grid <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
+pipe <- pipe |>
+  tt_import_list(
+    grid |> split(seq_len(nrow(grid))),
+    target_output = "settings"
+  )
+```
+
+```{r import-list-script, comment = ""}
 show_targets_script(pipe)
 ```
 
@@ -134,7 +167,7 @@ pipe |> tt_evaluate()
 Return one stored instance of a target so you can inspect it or pipe it onward. A heading names the target (and which instance, for collections). Mapped targets load a single branch rather than every sample.
 
 ```{r tt-explore}
-pipe |> tt_explore("data")
+pipe |> tt_explore(data)
 ```
 
 ## `tt_merge()`

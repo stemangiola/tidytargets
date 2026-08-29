@@ -33,8 +33,7 @@ tt_iterate(
 \arguments{
 \item{tt_input}{A \code{tidytargets} object.}
 
-\item{target_output}{Character name of the output target. \code{NULL} uses an
-auto-generated name.}
+\item{target_output}{Character name of the output target.}
 
 \item{command}{An unevaluated expression. \code{{targets}} tracks dependencies from
 global symbols in this expression (including upstream target names). Mapped

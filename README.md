@@ -20,7 +20,7 @@ vignette("building-blocks", package = "tidytargets")
 
 ## A minimal pipeline
 
-`tt_initialise()` takes a named vector of inputs (typically file paths), or a named list of in-memory objects. Pass a `command` expression the same way you would to `tar_target()`; `{targets}` tracks upstream names in that expression. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
+`tt_initialise()` can start a pipeline with no inputs. Pass a named list (or file paths) to register mapped units, or call it with only `store` / `computing_resources` and bring objects in with `tt_import()`. Pass a `command` expression the same way you would to `tar_target()`; `{targets}` tracks upstream names in that expression. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
 
 ``` r
 library(tidytargets)
@@ -69,7 +69,7 @@ targets::tar_read(summaries, store = "_targets")
 #>     4.0     4.5     5.0     5.0     5.5     6.0
 ```
 
-`tt_evaluate()` also returns the `targets::tar_meta()` table. `tt_initialise()` registers two mapped targets for you:
+`tt_evaluate()` also returns the `targets::tar_meta()` table. When you pass mapped inputs, `tt_initialise()` registers two mapped targets:
 
 - `input_list` — the named input vector or list (override with `target_output`)
 - `sample_names` — the names of that vector or list
@@ -78,7 +78,9 @@ targets::tar_read(summaries, store = "_targets")
 
 | Function | Role |
 | --- | --- |
-| `tt_initialise()` | Start a pipeline: store, optional controller |
+| `tt_initialise()` | Start a pipeline: store, optional mapped inputs |
+| `tt_import()` | Snapshot a session object onto the store as one target |
+| `tt_import_list()` | Snapshot a list onto the store as mapped units |
 | `tt_iterate()` | Map a function over inputs |
 | `tt_single()` | Add one non-iterated target |
 | `tt_merge()` | Combine iterated results into one object |

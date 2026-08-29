@@ -29,6 +29,8 @@ tt_report.default <- function(tt_input, target_output = NULL, rmd_path = NULL, p
 tt_report.tidytargets <- function(tt_input, target_output = NULL, rmd_path = NULL, params = list(), ...) {
     
     params <- substitute(params)
+
+    require_target_output(target_output)
     
     # Target script
     target_script = glue("{tt_input$initialisation$store}.R")
