@@ -9,6 +9,9 @@
   (non-mapped) target, so local values can be used as pipeline dependencies.
 * `tt_import_list()` snapshots a list as mapped iteration units, for example
   each row of a parameter grid.
+* When `tar_make()` fails with an S4 dispatch error on a `list`,
+  `tt_evaluate()` adds a hint to use `tt_import_list()` for list inputs that
+  should be iterated.
 * `tt_explore()` returns one stored instance of a named target (one branch
   of a mapped target, without loading the rest) and messages a short heading
   so you can inspect it or pipe it onward. The target may be unquoted

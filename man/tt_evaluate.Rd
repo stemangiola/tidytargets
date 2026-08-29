@@ -23,6 +23,11 @@ A \code{tibble} with targets metadata.
 Closes the pipeline target list and calls \code{targets::tar_make()} to execute
 all queued steps. Returns the \code{tar_meta()} table.
 
+If a target fails with an S4 method-dispatch error on a \code{list} (typically
+because a list was brought in with \code{\link[=tt_import]{tt_import()}} instead of
+\code{\link[=tt_import_list]{tt_import_list()}}), the error is rethrown with a hint to use
+\code{tt_import_list()}.
+
 The generic records that this store has been run before dispatching, so a
 subclass \code{tt_evaluate} method cannot leave the interactive "pipeline is
 ready" notice standing after a result that has already been shown.

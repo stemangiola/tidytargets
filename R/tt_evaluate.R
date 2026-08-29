@@ -5,6 +5,11 @@
 #' Closes the pipeline target list and calls `targets::tar_make()` to execute
 #' all queued steps. Returns the `tar_meta()` table.
 #'
+#' If a target fails with an S4 method-dispatch error on a `list` (typically
+#' because a list was brought in with [tt_import()] instead of
+#' [tt_import_list()]), the error is rethrown with a hint to use
+#' `tt_import_list()`.
+#'
 #' The generic records that this store has been run before dispatching, so a
 #' subclass `tt_evaluate` method cannot leave the interactive "pipeline is
 #' ready" notice standing after a result that has already been shown.
@@ -46,11 +51,30 @@ tt_evaluate.tidytargets = function(tt_input) {
   else
     my_callr_function =  NULL
   
-  tar_make(
-    callr_function = my_callr_function,
-    script = script,
-    store = tt_input$initialisation$store, 
-    reporter = tt_input$initialisation$verbosity 
+  tryCatch(
+    tar_make(
+      callr_function = my_callr_function,
+      script = script,
+      store = tt_input$initialisation$store,
+      reporter = tt_input$initialisation$verbosity
+    ),
+    error = function(e) {
+
+      # Capture the error message and check if it's an S4 dispatch error on a list
+      # It is likely due to a list being imported with tt_import() instead of tt_import_list()
+      msg <- conditionMessage(e)
+      if (
+        grepl("unable to find an inherited method", msg, fixed = TRUE) &&
+        grepl('= "list"', msg, fixed = TRUE)
+      ) {
+        stop(
+          msg, "\n",
+          "tidytargets says: did you remember to use tt_import_list for your list inputs you want to iterate on?",
+          call. = FALSE
+        )
+      }
+      stop(e)
+    }
   )
   
   tar_meta(store = glue("{tt_input$initialisation$store}"))

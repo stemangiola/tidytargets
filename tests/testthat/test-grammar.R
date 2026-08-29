@@ -369,6 +369,25 @@ test_that("tt_evaluate uses store inputs after the working directory changes", {
   expect_equal(unname(values), list(c(2, 4, 6), c(8, 10, 12)))
 })
 
+test_that("tt_evaluate appends the import_list hint to tar_make list-dispatch errors", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  pipe <- tt_initialise(store = file.path(tmp, "store")) |>
+    tt_single(
+      target_output = "oops",
+      command = stop(
+        "unable to find an inherited method for function ",
+        "\u2018test_differential_expression\u2019 for signature ",
+        "\u2018.data = \"list\"\u2019"
+      )
+    )
+
+  expect_error(tt_evaluate(pipe), "tt_import_list")
+})
+
 test_that("tt_explore returns one mapped instance and one stem target", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
