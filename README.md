@@ -35,12 +35,12 @@ saveRDS(4:6, files[["sample_b"]])
 files |>
   tt_initialise(store = "_targets") |>
   tt_iterate(
-    target_output = "data",
-    command = readRDS(input_list)
+    command = readRDS(input_list),
+    target_output = "data"
   ) |>
   tt_iterate(
-    target_output = "summaries",
-    command = summary(data)
+    command = summary(data),
+    target_output = "summaries"
   ) |>
   tt_evaluate()
 ```

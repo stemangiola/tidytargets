@@ -4,9 +4,9 @@
 #' Low-level factory that builds a `tar_target_raw()` call for the
 #' tidytargets pipeline. Not intended to be called by end users directly.
 #'
-#' @param target_output Character name of the output target.
 #' @param command An unevaluated expression passed to `tar_target_raw()`.
 #'   `{targets}` tracks dependencies from symbols in this expression.
+#' @param target_output Character name of the output target.
 #' @param other_arguments_to_map Character vector of target names that should
 #'   be mapped over.
 #' @param packages Character vector of R packages to load in the worker.
@@ -16,8 +16,8 @@
 #' @return A `tar_target` object.
 #' @export
 tt_factory = function(
-    target_output, 
     command,
+    target_output, 
     other_arguments_to_map = c(), 
     packages = targets::tar_option_get("packages") , 
     deployment = targets::tar_option_get("deployment"),

@@ -5,8 +5,8 @@
 \title{Internal Factory for Iterating Targets}
 \usage{
 tt_factory(
-  target_output,
   command,
+  target_output,
   other_arguments_to_map = c(),
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
@@ -15,10 +15,10 @@ tt_factory(
 )
 }
 \arguments{
-\item{target_output}{Character name of the output target.}
-
 \item{command}{An unevaluated expression passed to \code{tar_target_raw()}.
 \code{{targets}} tracks dependencies from symbols in this expression.}
+
+\item{target_output}{Character name of the output target.}
 
 \item{other_arguments_to_map}{Character vector of target names that should
 be mapped over.}

@@ -5,9 +5,9 @@
 #' Use `tt_iterate()` instead when the step should be mapped over all samples.
 #'
 #' @param tt_input A `tidytargets` object.
-#' @param target_output Character name of the output target.
 #' @param command An unevaluated expression. `{targets}` tracks dependencies from
 #'   global symbols in this expression (including upstream target names).
+#' @param target_output Character name of the output target.
 #' @param user_function_source_path Optional character path to an R script to
 #'   source in the worker before evaluating `command`. `NULL` sources nothing.
 #' @param iterate Iteration mode string stored on the pipeline object. `"none"`
@@ -18,8 +18,8 @@
 #' @export
 tt_single <- function(
     tt_input,
-    target_output = NULL,
     command = NULL,
+    target_output = NULL,
     user_function_source_path = NULL,
     iterate = "none",
     ...
@@ -31,8 +31,8 @@ tt_single <- function(
 #' @export
 tt_single.default <- function(
     tt_input,
-    target_output = NULL,
     command = NULL,
+    target_output = NULL,
     user_function_source_path = NULL,
     iterate = "none",
     ...
@@ -46,8 +46,8 @@ tt_single.default <- function(
 #' @export
 tt_single.tidytargets <- function(
     tt_input,
-    target_output = NULL,
     command = NULL,
+    target_output = NULL,
     user_function_source_path = NULL,
     iterate = "none",
     ...
@@ -69,9 +69,9 @@ tt_single.tidytargets <- function(
     
     tar_append(
       fx = tt_factory |> quote(),
+      command = wrap_quote(command),
       target_output = target_output,
       script = target_script,
-      command = wrap_quote(command),
       ...
     )
     

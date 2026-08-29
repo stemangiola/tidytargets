@@ -8,24 +8,24 @@
 \usage{
 tt_iterate(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
 
 \method{tt_iterate}{default}(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
 
 \method{tt_iterate}{tidytargets}(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -33,11 +33,11 @@ tt_iterate(
 \arguments{
 \item{tt_input}{A \code{tidytargets} object.}
 
-\item{target_output}{Character name of the output target.}
-
 \item{command}{An unevaluated expression. \code{{targets}} tracks dependencies from
 global symbols in this expression (including upstream target names). Mapped
 targets referenced here also set the iteration pattern.}
+
+\item{target_output}{Character name of the output target.}
 
 \item{user_function_source_path}{Optional character path to an R script that
 should be sourced in the worker before evaluating \code{command}. \code{NULL}

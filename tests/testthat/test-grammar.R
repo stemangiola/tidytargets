@@ -156,12 +156,12 @@ test_that("tt_iterate and tt_single chain onto a tidytargets object", {
   hpc <- files |>
     tt_initialise(store = store) |>
     tt_iterate(
-      target_output = "data",
-      command = readRDS(input_list)
+      command = readRDS(input_list),
+      target_output = "data"
     ) |>
     tt_single(
-      target_output = "n_inputs",
-      command = length(sample_names)
+      command = length(sample_names),
+      target_output = "n_inputs"
     )
 
   expect_s3_class(hpc, "tidytargets")
@@ -226,8 +226,8 @@ test_that("tt_metadata reads, writes and survives pipeline steps", {
   # Metadata is preserved by, and does not interfere with, later steps
   hpc <- hpc |>
     tt_iterate(
-      target_output = "data",
-      command = readRDS(input_list)
+      command = readRDS(input_list),
+      target_output = "data"
     )
 
   expect_equal(tt_metadata(hpc)$api_version, 2L)
@@ -274,8 +274,8 @@ test_that("metadata places no restriction on target names", {
   # forbids dot-prefixed target names, so the two cannot collide
   hpc <- hpc |>
     tt_iterate(
-      target_output = "metadata",
-      command = readRDS(input_list)
+      command = readRDS(input_list),
+      target_output = "metadata"
     )
 
   expect_equal(hpc$metadata$iterate, "map")
@@ -284,8 +284,8 @@ test_that("metadata places no restriction on target names", {
   # The target is still resolvable as an upstream dependency
   hpc <- hpc |>
     tt_iterate(
-      target_output = "downstream",
-      command = length(metadata)
+      command = length(metadata),
+      target_output = "downstream"
     )
 
   expect_equal(hpc$downstream$iterate, "map")
@@ -305,8 +305,8 @@ test_that("tt_report captures params as command-style symbols", {
   hpc <- files |>
     tt_initialise(store = store) |>
     tt_single(
-      target_output = "n_samples",
-      command = length(sample_names)
+      command = length(sample_names),
+      target_output = "n_samples"
     ) |>
     tt_report(
       target_output = "report",
@@ -333,7 +333,7 @@ test_that("tt_evaluate runs a pipeline and print is idempotent", {
   store <- file.path(tmp, "store")
   pipe <- inputs |>
     tt_initialise(store = store) |>
-    tt_iterate(target_output = "data", command = input_list * 2)
+    tt_iterate(command = input_list * 2, target_output = "data")
 
   meta <- tt_evaluate(pipe)
   expect_s3_class(meta, "tbl_df")
@@ -358,7 +358,7 @@ test_that("tt_evaluate uses store inputs after the working directory changes", {
 
   pipe <- list(sample_a = 1:3, sample_b = 4:6) |>
     tt_initialise(store = "store") |>
-    tt_iterate(target_output = "data", command = input_list * 2)
+    tt_iterate(command = input_list * 2, target_output = "data")
 
   setwd(old)
   on.exit(NULL)
@@ -377,12 +377,12 @@ test_that("tt_evaluate appends the import_list hint to tar_make list-dispatch er
 
   pipe <- tt_initialise(store = file.path(tmp, "store")) |>
     tt_single(
-      target_output = "oops",
       command = stop(
         "unable to find an inherited method for function ",
         "\u2018test_differential_expression\u2019 for signature ",
         "\u2018.data = \"list\"\u2019"
-      )
+      ),
+      target_output = "oops"
     )
 
   expect_error(tt_evaluate(pipe), "tt_import_list")
@@ -396,8 +396,8 @@ test_that("tt_explore returns one mapped instance and one stem target", {
 
   pipe <- list(sample_a = 1:3, sample_b = 4:6) |>
     tt_initialise(store = file.path(tmp, "store")) |>
-    tt_iterate(target_output = "data", command = input_list * 2) |>
-    tt_single(target_output = "n_inputs", command = length(sample_names))
+    tt_iterate(command = input_list * 2, target_output = "data") |>
+    tt_single(command = length(sample_names), target_output = "n_inputs")
 
   expect_error(tt_explore(pipe, "missing"), "not a target")
   expect_error(tt_explore(pipe, 1), "target name")
@@ -465,7 +465,7 @@ test_that("tt_import snapshots a session object as a single stem target", {
   expect_equal(qs2::qs_read(file.path(store, "airway_import.qs")), airway)
 
   pipe <- pipe |>
-    tt_single(target_output = "n_assays", command = length(airway))
+    tt_single(command = length(airway), target_output = "n_assays")
 
   expect_equal(pipe$n_assays$iterate, "none")
 
@@ -516,7 +516,7 @@ test_that("tt_import_list snapshots a list as mapped units", {
   expect_equal(names(saved), c("1", "2", "3", "4"))
 
   pipe <- pipe |>
-    tt_iterate(target_output = "alpha", command = settings$alpha)
+    tt_iterate(command = settings$alpha, target_output = "alpha")
 
   expect_equal(pipe$alpha$iterate, "map")
   script <- readLines(paste0(store, ".R"))

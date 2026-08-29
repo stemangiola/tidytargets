@@ -3,6 +3,8 @@
 
 ## tidytargets 0.4.0
 
+* `tt_iterate()`, `tt_single()`, `tt_merge()`, and `tt_factory()` take
+  `command` before `target_output`.
 * `tt_initialise()` no longer requires mapped inputs. `tt_initialise()` alone
   writes the script header; add session objects with `tt_import()`.
 * `tt_import()` snapshots a session object onto the store as a single

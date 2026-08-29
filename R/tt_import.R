@@ -36,10 +36,10 @@ snapshot_import <- function(tt_input, x, target_output, iterate) {
 
   eval(substitute(
     tt_input |>
-      tt_single(ft, qp, format = "file") |>
+      tt_single(qp, ft, format = "file") |>
       tt_single(
-        target_output = to,
         command = qs_read(fts),
+        target_output = to,
         deployment = "main",
         iterate = it
       ),

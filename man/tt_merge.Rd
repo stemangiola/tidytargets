@@ -8,24 +8,24 @@
 \usage{
 tt_merge(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
 
 \method{tt_merge}{default}(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
 
 \method{tt_merge}{tidytargets}(
   tt_input,
-  target_output = NULL,
   command = NULL,
+  target_output = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -33,10 +33,10 @@ tt_merge(
 \arguments{
 \item{tt_input}{A \code{tidytargets} object.}
 
-\item{target_output}{Character name of the output target.}
-
 \item{command}{An unevaluated expression. \code{{targets}} tracks dependencies from
 global symbols in this expression (including upstream target names).}
+
+\item{target_output}{Character name of the output target.}
 
 \item{user_function_source_path}{Optional character path to an R script to
 source in the worker before evaluating \code{command}. \code{NULL} sources nothing.}

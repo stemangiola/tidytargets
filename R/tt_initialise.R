@@ -149,21 +149,21 @@ tt_initialise <- function(tt_input = NULL,
     pipe |>
 
       # Sample names
-      tt_single("sample_names_file", snf, format = "file") |>
+      tt_single(snf, "sample_names_file", format = "file") |>
 
       tt_single(
-        target_output = "sample_names",
         command = qs_read(sample_names_file),
+        target_output = "sample_names",
         deployment = "main",
         iterate = "map"
       ) |>
 
       # Files
-      tt_single(ift, iff, format = "file") |>
+      tt_single(iff, ift, format = "file") |>
 
       tt_single(
-        target_output = to,
         command = qs_read(ifs),
+        target_output = to,
         deployment = "main",
         iterate = "map"
       ),

@@ -5,9 +5,9 @@
 #' upstream targets into a single aggregate object.
 #'
 #' @param tt_input A `tidytargets` object.
-#' @param target_output Character name of the output target.
 #' @param command An unevaluated expression. `{targets}` tracks dependencies from
 #'   global symbols in this expression (including upstream target names).
+#' @param target_output Character name of the output target.
 #' @param user_function_source_path Optional character path to an R script to
 #'   source in the worker before evaluating `command`. `NULL` sources nothing.
 #' @param ... Additional factory arguments such as `format`, `deployment`,
@@ -16,8 +16,8 @@
 #' @export
 tt_merge <- function(
     tt_input,
-    target_output = NULL,
     command = NULL,
+    target_output = NULL,
     user_function_source_path = NULL,
     ...
 ) {
@@ -28,8 +28,8 @@ tt_merge <- function(
 #' @export
 tt_merge.default <- function(
     tt_input,
-    target_output = NULL,
     command = NULL,
+    target_output = NULL,
     user_function_source_path = NULL,
     ...
 ) {
@@ -42,8 +42,8 @@ tt_merge.default <- function(
 #' @export
 tt_merge.tidytargets <- function(
     tt_input,
-    target_output = NULL,
     command = NULL,
+    target_output = NULL,
     user_function_source_path = NULL,
     ...
 ) {
@@ -63,9 +63,9 @@ tt_merge.tidytargets <- function(
 
     tar_append(
         fx = tt_factory |> quote(),
+        command = wrap_quote(command),
         target_output = target_output,
         script = target_script,
-        command = wrap_quote(command),
         ...
     )
 

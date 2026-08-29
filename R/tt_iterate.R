@@ -5,10 +5,10 @@
 #' targets, as well as a custom user function to be applied.
 #'
 #' @param tt_input A `tidytargets` object.
-#' @param target_output Character name of the output target.
 #' @param command An unevaluated expression. `{targets}` tracks dependencies from
 #'   global symbols in this expression (including upstream target names). Mapped
 #'   targets referenced here also set the iteration pattern.
+#' @param target_output Character name of the output target.
 #' @param user_function_source_path Optional character path to an R script that
 #'   should be sourced in the worker before evaluating `command`. `NULL`
 #'   sources nothing.
@@ -18,8 +18,8 @@
 #' @export
 tt_iterate <- function(
     tt_input,
-    target_output = NULL,
     command = NULL,
+    target_output = NULL,
     user_function_source_path = NULL,
     ...
 ) {
@@ -30,8 +30,8 @@ tt_iterate <- function(
 #' @export
 tt_iterate.default <- function(
     tt_input,
-    target_output = NULL,
     command = NULL,
+    target_output = NULL,
     user_function_source_path = NULL,
     ...
 ) {
@@ -44,8 +44,8 @@ tt_iterate.default <- function(
 #' @export
 tt_iterate.tidytargets <- function(
     tt_input,
-    target_output = NULL,
     command = NULL,
+    target_output = NULL,
     user_function_source_path = NULL,
     ...
 ) {
@@ -65,9 +65,9 @@ tt_iterate.tidytargets <- function(
 
     tar_append(
       fx = tt_factory |> quote(),
+      command = wrap_quote(command),
       target_output = target_output,
       script = target_script,
-      command = wrap_quote(command),
       other_arguments_to_map = command_targets(command, tt_input, "map"),
       ...
     )

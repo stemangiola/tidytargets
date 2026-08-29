@@ -115,8 +115,8 @@ This command add an operation on a whole target (not iterative/grouped)
 ```{r single}
 pipe <- pipe |>
   tt_single(
-    target_output = "n_samples",
-    command = length(sample_names)
+    command = length(sample_names),
+    target_output = "n_samples"
   )
 ```
 
@@ -133,8 +133,8 @@ Map a function over every input. Write `command` as you would in `tar_target()`.
 ```{r iterate-read}
 pipe <- pipe |>
   tt_iterate(
-    target_output = "data",
-    command = input_list * 2
+    command = input_list * 2,
+    target_output = "data"
   )
 ```
 
@@ -147,8 +147,8 @@ A second iterate maps over the result of the first:
 ```{r iterate-length}
 pipe <- pipe |>
   tt_iterate(
-    target_output = "n",
-    command = length(data)
+    command = length(data),
+    target_output = "n"
   )
 ```
 
@@ -177,8 +177,8 @@ Collect every branch of an iterated target into one object.
 ```{r merge}
 pipe <- pipe |>
   tt_merge(
-    target_output = "n_total",
-    command = sum(unlist(n))
+    command = sum(unlist(n)),
+    target_output = "n_total"
   )
 ```
 
@@ -227,8 +227,8 @@ show_targets_script(pipe)
 ```{r source-path, eval = FALSE}
 pipe |>
   tt_iterate(
-    target_output = "transformed",
     command = my_transform(data),
+    target_output = "transformed",
     user_function_source_path = "helpers.R"
   )
 ```
