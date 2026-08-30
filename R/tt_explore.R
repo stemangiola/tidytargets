@@ -57,7 +57,7 @@ tt_explore.tidytargets <- function(tt_input, target_output, index = 1L) {
 
   target_output <- as_explore_target_name(substitute(target_output))
 
-  target_names <- setdiff(names(tt_input), c("initialisation", ".metadata"))
+  target_names <- names(tt_input$targets)
   if (!target_output %in% target_names) {
     stop(
       glue(
@@ -160,7 +160,7 @@ read_output_instance <- function(tt_input, target_output, index) {
   }
 
   value <- targets::tar_read_raw(target_output, store = store)
-  iterate <- tt_input[[target_output]]$iterate
+  iterate <- tt_input$targets[[target_output]]$iterate
   if (identical(iterate, "map") && is.list(value) && !is.object(value) &&
       length(value) > 0L) {
     n <- length(value)

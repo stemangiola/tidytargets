@@ -1,6 +1,25 @@
 library(testthat)
 library(tidytargets)
 
+test_that("new_tidytargets and append_step keep class and separate slots", {
+  pipe <- tidytargets:::new_tidytargets(list(store = "s"))
+  expect_s3_class(pipe, "tidytargets")
+  expect_equal(names(pipe), c("initialisation", "metadata", "targets"))
+  expect_equal(names(pipe$targets), character())
+  expect_equal(pipe$metadata, list())
+
+  pipe <- tidytargets:::append_step(
+    pipe,
+    "fit",
+    list(command = quote(1), iterate = "none")
+  )
+  expect_s3_class(pipe, "tidytargets")
+  expect_equal(names(pipe), c("initialisation", "metadata", "targets"))
+  expect_equal(names(pipe$targets), "fit")
+  expect_equal(pipe$targets$fit$iterate, "none")
+  expect_equal(pipe$initialisation$store, "s")
+})
+
 test_that("package_of_object is empty for NULL and plain lists of NULLs", {
   expect_equal(tidytargets:::package_of_object(NULL), character())
   expect_equal(tidytargets:::package_of_object(list(NULL, NULL)), character())

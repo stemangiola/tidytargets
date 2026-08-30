@@ -18,11 +18,11 @@
 #' stores records which pipelines were built and which were then run. After
 #' the expression, if any store is still waiting, one message is printed.
 #'
-#' Grammar constructors schedule the notice through `add_class()` when they
-#' restore the `tidytargets` class. [tt_evaluate()] clears the store in the
-#' generic, before method dispatch, so a subclass that supplies its own
-#' `tt_evaluate` method cannot forget and leave a stale "ready" notice after
-#' a run.
+#' Grammar constructors schedule the notice through `new_tidytargets()` and
+#' `append_step()` when they build or extend the object. [tt_evaluate()]
+#' clears the store in the generic, before method dispatch, so a subclass
+#' that supplies its own `tt_evaluate` method cannot forget and leave a stale
+#' "ready" notice after a run.
 #'
 #' The two objects below are session state, not helpers, which is why they
 #' sit at the top of this file: every function here reads or writes them,
@@ -68,9 +68,9 @@ pipeline_ready_message <- function() {
 
 #' Whether `store` can be an environment name in `pipeline_notice`.
 #'
-#' `add_class()` reads `obj$initialisation$store`, which is `NULL` on a
-#' hand-built object. `pipeline_notice[[NULL]]` would error, and the notice
-#' must not break a pipeline.
+#' `new_tidytargets()` / `append_step()` read `obj$initialisation$store`,
+#' which is `NULL` on a hand-built object. `pipeline_notice[[NULL]]` would
+#' error, and the notice must not break a pipeline.
 #'
 #' @param store Candidate store path.
 #'

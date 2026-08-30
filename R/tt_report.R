@@ -24,7 +24,6 @@ tt_report.default <- function(tt_input, target_output = NULL, rmd_path = NULL, p
 
 #' @rdname tt_report
 #' @importFrom glue glue
-#' @importFrom purrr set_names
 #' @export
 tt_report.tidytargets <- function(tt_input, target_output = NULL, rmd_path = NULL, params = list(), ...) {
     
@@ -49,15 +48,12 @@ tt_report.tidytargets <- function(tt_input, target_output = NULL, rmd_path = NUL
       ...
     )
     
-    # Add pipeline step
-    tt_input |>
-      c(
-        as.list(environment())[-1] |> 
-          c(list(iterate = "single")) |> 
-          list() |> 
-          set_names(target_output) 
-      ) |>
-      add_class("tidytargets")
+    append_step(
+      tt_input,
+      target_output,
+      as.list(environment())[-1] |>
+        c(list(iterate = "single"))
+    )
     
     
   }

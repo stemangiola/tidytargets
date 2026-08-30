@@ -65,10 +65,10 @@ HPC nodes will need to have installed.}
 file-tracking target is registered as \verb{\{target_output\}_file}.}
 }
 \value{
-A \code{tidytargets} S3 object containing the initialisation arguments in
-\verb{$initialisation} and an empty metadata store (see \code{tt_metadata()}), ready
-to be extended with pipeline step functions. The graph is not run until
-you print it or call \code{\link[=tt_evaluate]{tt_evaluate()}}.
+A \code{tidytargets} S3 object with \verb{$initialisation} (constructor
+arguments), \verb{$metadata} (see \code{\link[=tt_metadata]{tt_metadata()}}), and \verb{$targets} (named
+step records), ready to be extended with pipeline step functions. The
+graph is not run until you print it or call \code{\link[=tt_evaluate]{tt_evaluate()}}.
 }
 \description{
 Sets up and writes a \code{targets} pipeline script. Saves configuration (and

@@ -53,7 +53,6 @@ tt_iterate.default <- function(
 
 #' @rdname tt_iterate
 #' @importFrom glue glue
-#' @importFrom purrr set_names
 #' @export
 tt_iterate.tidytargets <- function(
     tt_input,
@@ -78,7 +77,7 @@ tt_iterate.tidytargets <- function(
 
     mapped <- mapped_names_in_command(command, tt_input, "map")
     sizes <- vapply(mapped, function(n) {
-      n_units <- tt_input[[n]]$n_units
+      n_units <- tt_input$targets[[n]]$n_units
       if (is.null(n_units)) NA_integer_ else as.integer(n_units)[[1L]]
     }, integer(1), USE.NAMES = TRUE)
     spec <- process_pattern(sizes, pattern)
@@ -98,15 +97,12 @@ tt_iterate.tidytargets <- function(
     )
   
       
-    # Add pipeline step
-    tt_input |>
-      c(
-        as.list(environment())[-1] |> 
-          c(list(iterate = "map", n_units = n_units)) |> 
-          list() |> 
-          set_names(target_output) 
-      ) |>
-      add_class("tidytargets")
+    append_step(
+      tt_input,
+      target_output,
+      as.list(environment())[-1] |>
+        c(list(iterate = "map", n_units = n_units))
+    )
     
     
   }
@@ -190,7 +186,7 @@ process_pattern <- function(sizes, pattern = c("map", "cross")) {
 #' Uses [targets::tar_deps_raw()] so `$column` and similar extractors are
 #' not treated as dependencies (`formula_df$formula` depends on
 #' `formula_df`, not a target named `formula`). Then keeps names that are
-#' already steps in `tt_input` whose `$iterate` is in `value`.
+#' already steps in `tt_input$targets` whose `$iterate` is in `value`.
 #'
 #' `tt_iterate()` uses this with `value = "map"` to find mapped stems in the
 #' command (from `tt_data_list()`, a mapped `tt_initialise()` input, or a
@@ -207,10 +203,10 @@ mapped_names_in_command <- function(command, tt_input, value) {
   if (!is.language(command)) return(character())
 
   vars <- targets::tar_deps_raw(command)
-  vars <- vars[vars %in% names(tt_input)]
+  vars <- vars[vars %in% names(tt_input$targets)]
 
   Filter(
-    function(v) isTRUE(tt_input[[v]]$iterate %in% value),
+    function(v) isTRUE(tt_input$targets[[v]]$iterate %in% value),
     vars
   )
 }
