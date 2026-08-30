@@ -33,8 +33,9 @@ analogue of passing a named list to \code{\link[=tt_initialise]{tt_initialise()}
 elements.
 
 When a later \code{\link[=tt_iterate]{tt_iterate()}} command mentions more than one mapped target,
-\code{{targets}} \code{map()} is used if those lists have the same length and
-\code{cross()} if they do not. Length-1 lists do not decide the pattern.
+\code{{targets}} \code{map()} is used by default. Length-1 lists are omitted from
+\code{map()} and do not decide whether sizes match. Different lengths error;
+pass \code{pattern = "cross"} for a product of branches.
 
 Typical use is a parameter grid split into rows, e.g.
 \code{tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))}

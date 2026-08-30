@@ -3,12 +3,11 @@
 
 ## tidytargets 0.0.7
 
-* `tt_iterate()` chooses `{targets}` `map()` or `cross()` when a command
+* `tt_iterate()` uses `{targets}` `map()` by default when a command
   mentions more than one mapped input (`tt_data_list()`, mapped
-  `tt_initialise()` inputs, or a previous iterate). Equal lengths use
-  `map()`; different lengths use `cross()`. Length-1 lists are ignored so
-  they do not decide the pattern. Pass `pattern = "map"` or `"cross"` to
-  force a pattern. The chosen pattern is messaged.
+  `tt_initialise()` inputs, or a previous iterate). Length-1 lists are
+  omitted from `map()` and ignored when checking equal sizes. Unequal
+  sizes error; pass `pattern = "cross"` for a product of branches.
 * `tt_single()` is renamed `tt_single()`. It no longer takes `iterate`
   or `n_units`. `tt_data_list()` and mapped `tt_initialise()` inputs register
   list units themselves rather than through `tt_single()`.

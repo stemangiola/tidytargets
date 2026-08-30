@@ -19,85 +19,71 @@ test_that("attached_packages is names only and omits default R packages", {
   expect_false(any(grepl("^package:", pkgs)))
 })
 
-test_that("infer_iteration_strategy chooses map/cross, names, and n_units from sizes", {
+test_that("infer_iteration_strategy maps equal sizes and errors when they differ", {
   suppressMessages({
-  equal_map <- tidytargets:::infer_iteration_strategy(c(methods = 2L, samples = 2L), "auto")
-  expect_equal(equal_map$pattern_type, "map")
-  expect_equal(equal_map$pattern_names, c("methods", "samples"))
-  expect_equal(equal_map$n_units, 2L)
-  expect_true(equal_map$equal)
+    equal_map <- tidytargets:::infer_iteration_strategy(c(methods = 2L, samples = 2L))
+    expect_equal(equal_map$pattern_type, "map")
+    expect_equal(equal_map$pattern_names, c("methods", "samples"))
+    expect_equal(equal_map$n_units, 2L)
 
-  auto_const <- tidytargets:::infer_iteration_strategy(
-    c(const = 1L, methods = 2L, samples = 2L),
-    "auto"
-  )
-  expect_equal(auto_const$pattern_type, "map")
-  expect_equal(auto_const$pattern_names, c("methods", "samples"))
-  expect_equal(auto_const$n_units, 2L)
+    auto_const <- tidytargets:::infer_iteration_strategy(
+      c(const = 1L, methods = 2L, samples = 2L)
+    )
+    expect_equal(auto_const$pattern_type, "map")
+    expect_equal(auto_const$pattern_names, c("methods", "samples"))
+    expect_equal(auto_const$n_units, 2L)
 
-  auto_cross <- tidytargets:::infer_iteration_strategy(c(methods = 2L, samples = 3L), "auto")
-  expect_equal(auto_cross$pattern_type, "cross")
-  expect_equal(auto_cross$pattern_names, c("methods", "samples"))
-  expect_equal(auto_cross$n_units, 6L)
-  expect_false(auto_cross$equal)
+    force_cross <- tidytargets:::infer_iteration_strategy(
+      c(const = 1L, methods = 2L, samples = 3L),
+      "cross"
+    )
+    expect_equal(force_cross$pattern_type, "cross")
+    expect_equal(force_cross$pattern_names, c("const", "methods", "samples"))
+    expect_equal(force_cross$n_units, 6L)
 
-  force_map <- tidytargets:::infer_iteration_strategy(c(methods = 2L, samples = 3L), "map")
-  expect_equal(force_map$pattern_type, "map")
-  expect_equal(force_map$pattern_names, c("methods", "samples"))
+    one <- tidytargets:::infer_iteration_strategy(c(methods = 2L), "cross")
+    expect_equal(one$pattern_type, "map")
 
-  force_cross <- tidytargets:::infer_iteration_strategy(
-    c(const = 1L, methods = 2L, samples = 3L),
-    "cross"
-  )
-  expect_equal(force_cross$pattern_type, "cross")
-  expect_equal(force_cross$pattern_names, c("const", "methods", "samples"))
-  expect_equal(force_cross$n_units, 6L)
+    all_one <- tidytargets:::infer_iteration_strategy(c(a = 1L, b = 1L))
+    expect_equal(all_one$pattern_type, "map")
+    expect_equal(all_one$pattern_names, c("a", "b"))
+    expect_equal(all_one$n_units, 1L)
 
-  one <- tidytargets:::infer_iteration_strategy(c(methods = 2L), "cross")
-  expect_equal(one$pattern_type, "map")
+    missing <- tidytargets:::infer_iteration_strategy(c(a = 2L, e = NA_integer_))
+    expect_equal(missing$pattern_type, "map")
 
-  all_one <- tidytargets:::infer_iteration_strategy(c(a = 1L, b = 1L), "auto")
-  expect_equal(all_one$pattern_type, "map")
-  expect_equal(all_one$pattern_names, c("a", "b"))
-  expect_equal(all_one$n_units, 1L)
+    empty <- tidytargets:::infer_iteration_strategy(setNames(integer(), character()))
+    expect_equal(empty$pattern_type, "map")
 
-  missing <- tidytargets:::infer_iteration_strategy(c(a = 2L, e = NA_integer_), "auto")
-  expect_true(missing$equal)
-  expect_equal(missing$pattern_type, "map")
-
-  empty <- tidytargets:::infer_iteration_strategy(setNames(integer(), character()), "auto")
-  expect_true(empty$equal)
-  expect_equal(empty$pattern_type, "map")
-
-  two_const <- tidytargets:::infer_iteration_strategy(
-    c(const = 1L, extra = 1L, methods = 4L, samples = 4L),
-    "auto"
-  )
-  expect_true(two_const$equal)
-  expect_equal(two_const$pattern_type, "map")
-  expect_equal(two_const$pattern_names, c("methods", "samples"))
-
-  two_const_cross <- tidytargets:::infer_iteration_strategy(
-    c(const = 1L, extra = 1L, methods = 4L, other = 5L),
-    "auto"
-  )
-  expect_false(two_const_cross$equal)
-  expect_equal(two_const_cross$pattern_type, "cross")
-  expect_equal(
-    two_const_cross$pattern_names,
-    c("const", "extra", "methods", "other")
-  )
+    two_const <- tidytargets:::infer_iteration_strategy(
+      c(const = 1L, extra = 1L, methods = 4L, samples = 4L)
+    )
+    expect_equal(two_const$pattern_type, "map")
+    expect_equal(two_const$pattern_names, c("methods", "samples"))
   })
+
+  expect_error(
+    tidytargets:::infer_iteration_strategy(c(methods = 2L, samples = 3L)),
+    'use pattern = "cross"',
+    fixed = TRUE
+  )
+  expect_error(
+    tidytargets:::infer_iteration_strategy(
+      c(const = 1L, extra = 1L, methods = 4L, other = 5L)
+    ),
+    'use pattern = "cross"',
+    fixed = TRUE
+  )
 })
 
 test_that("infer_iteration_strategy messages mapped sizes when there are two or more inputs", {
   expect_message(
-    tidytargets:::infer_iteration_strategy(c(methods = 2L, samples = 2L), "auto"),
+    tidytargets:::infer_iteration_strategy(c(methods = 2L, samples = 2L)),
     "mapped sizes methods: 2, samples: 2; using map()",
     fixed = TRUE
   )
   expect_silent(
-    tidytargets:::infer_iteration_strategy(c(methods = 2L), "auto")
+    tidytargets:::infer_iteration_strategy(c(methods = 2L))
   )
 })
 

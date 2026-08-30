@@ -558,7 +558,7 @@ test_that("tt_data snapshots a session object as a single stem target", {
   )
 })
 
-test_that("tt_iterate maps equal-size lists and crosses different sizes", {
+test_that("tt_iterate maps equal-size lists and errors on different sizes", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -599,8 +599,14 @@ test_that("tt_iterate maps equal-size lists and crosses different sizes", {
     tt_data_list(methods <- list(a = 10, b = 20)) |>
     tt_data_list(samples <- list(x = 1, y = 2, z = 3))
 
+  expect_error(
+    tt_iterate(pipe_cross, out <- methods + samples),
+    'use pattern = "cross"',
+    fixed = TRUE
+  )
+
   expect_message(
-    pipe_cross <- pipe_cross |> tt_iterate(out <- methods + samples),
+    pipe_cross <- pipe_cross |> tt_iterate(out <- methods + samples, pattern = "cross"),
     "using cross()",
     fixed = TRUE
   )
@@ -629,7 +635,7 @@ test_that("tt_iterate maps equal-size lists and crosses different sizes", {
   )
 })
 
-test_that("tt_iterate pattern forces map or cross", {
+test_that("tt_iterate pattern = cross is explicit; map errors on unequal sizes", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -652,16 +658,16 @@ test_that("tt_iterate pattern forces map or cross", {
 
   pipe_map <- tt_initialise(store = file.path(tmp, "store-map")) |>
     tt_data_list(methods <- list(a = 10, b = 20)) |>
-    tt_data_list(samples <- list(x = 1, y = 2, z = 3)) |>
-    tt_iterate(out <- methods + samples, pattern = "map")
+    tt_data_list(samples <- list(x = 1, y = 2, z = 3))
 
-  expect_match(
-    paste(readLines(paste0(pipe_map$initialisation$store, ".R")), collapse = "\n"),
-    'pattern_type = "map"'
+  expect_error(
+    tt_iterate(pipe_map, out <- methods + samples, pattern = "map"),
+    'use pattern = "cross"',
+    fixed = TRUE
   )
 })
 
-test_that("tt_iterate drops length-1 mapped inputs from an auto map() pattern", {
+test_that("tt_iterate drops length-1 mapped inputs from a map() pattern", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -683,7 +689,7 @@ test_that("tt_iterate drops length-1 mapped inputs from an auto map() pattern", 
   expect_equal(pipe$out$n_units, 3L)
 })
 
-test_that("tt_iterate auto with three lists ignores size-1 when the others match", {
+test_that("tt_iterate map with three lists ignores size-1 when the others match", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -714,8 +720,13 @@ test_that("tt_iterate auto with three lists ignores size-1 when the others match
     tt_data_list(methods <- list(a = 10, b = 20)) |>
     tt_data_list(samples <- list(x = 1, y = 2, z = 3))
 
+  expect_error(
+    tt_iterate(pipe_cross, out <- const + methods + samples),
+    'use pattern = "cross"',
+    fixed = TRUE
+  )
   expect_message(
-    pipe_cross <- pipe_cross |> tt_iterate(out <- const + methods + samples),
+    pipe_cross <- pipe_cross |> tt_iterate(out <- const + methods + samples, pattern = "cross"),
     "using cross()",
     fixed = TRUE
   )

@@ -98,8 +98,9 @@ tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
 #' elements.
 #'
 #' When a later [tt_iterate()] command mentions more than one mapped target,
-#' `{targets}` `map()` is used if those lists have the same length and
-#' `cross()` if they do not. Length-1 lists do not decide the pattern.
+#' `{targets}` `map()` is used by default. Length-1 lists are omitted from
+#' `map()` and do not decide whether sizes match. Different lengths error;
+#' pass `pattern = "cross"` for a product of branches.
 #'
 #' Typical use is a parameter grid split into rows, e.g.
 #' `tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))`

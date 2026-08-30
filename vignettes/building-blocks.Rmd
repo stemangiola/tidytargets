@@ -146,7 +146,7 @@ pipe <- pipe |>
 show_targets_script(pipe)
 ```
 
-With two mapped inputs, `tt_iterate()` uses `map()` when they have the same length and `cross()` when they do not (`pattern = "auto"`). Length-1 lists do not decide the pattern. Pass `pattern = "map"` or `"cross"` to force a pattern.
+With two mapped inputs, `tt_iterate()` uses `map()` when they have the same length. Length-1 lists are omitted from `map()` and do not decide whether sizes match. Different lengths error; pass `pattern = "cross"` for a product of branches.
 
 ## `tt_evaluate()`
 
