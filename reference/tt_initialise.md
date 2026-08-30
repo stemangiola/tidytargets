@@ -97,7 +97,9 @@ tt_initialise(
   attached in the session
   ([`.packages()`](https://rdrr.io/r/base/zpackages.html)), as names
   only — not objects in the global environment. Pass a character vector
-  to override. `"qs2"` is always included.
+  to override. `"qs2"` is always included. The names written to workers
+  are messaged so you can see what HPC nodes will need to have
+  installed.
 
 - target_output:
 
