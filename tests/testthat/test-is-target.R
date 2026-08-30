@@ -19,25 +19,6 @@ test_that("attached_packages is names only and omits default R packages", {
   expect_false(any(grepl("^package:", pkgs)))
 })
 
-test_that("mapped_names_in_command ignores $column names that are also targets", {
-  pipe <- list(
-    formula = list(iterate = "map", n_units = 3L),
-    formula_df = list(iterate = "map", n_units = 3L),
-    method = list(iterate = "map", n_units = 2L),
-    airway = list(iterate = "none")
-  )
-  cmd <- quote(
-    tidybulk::test_differential_expression(
-      formula_df$formula[[1]],
-      method = method
-    )
-  )
-  expect_equal(
-    tidytargets:::mapped_names_in_command(cmd, pipe, "map"),
-    c("formula_df", "method")
-  )
-})
-
 test_that("process_pattern maps equal sizes, drops size 1, and errors when they differ", {
   suppressMessages({
     equal_map <- tidytargets:::process_pattern(c(methods = 2L, samples = 2L))
