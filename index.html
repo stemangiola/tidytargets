@@ -159,32 +159,20 @@
 </table>
 </div>
 <div class="section level2">
-<h2 id="carrying-extra-information">Carrying extra information<a class="anchor" aria-label="anchor" href="#carrying-extra-information"></a>
-</h2>
-<p>A <code>tidytargets</code> object has three slots: <code>$initialisation</code> (the arguments given to <code><a href="reference/tt_initialise.html">tt_initialise()</a></code>), <code>$metadata</code> (free-form extras, also reachable through <code><a href="reference/tt_metadata.html">tt_metadata()</a></code>), and <code>$targets</code> (one named record per target you added). Metadata is for information that is not part of the graph — an API endpoint, a dataset identifier, a provenance note.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pipeline</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tt_initialise.html">tt_initialise</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/tt_metadata.html">tt_metadata</a></span><span class="op">(</span>api_url <span class="op">=</span> <span class="st">"https://api.example.org"</span>, api_version <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="reference/tt_metadata.html">tt_metadata</a></span><span class="op">(</span><span class="va">pipeline</span><span class="op">)</span><span class="op">$</span><span class="va">api_url</span></span>
-<span><span class="co">#&gt; [1] "https://api.example.org"</span></span></code></pre></div>
-<p>Metadata is merged on each call, and passing <code>NULL</code> removes an entry. It travels with the object through every grammar step but is not written to the targets script, so workers cannot see it; values a target needs must appear in <code>command</code>. Because it lives in <code>$metadata</code> rather than among the steps, it imposes no restriction on your <code>target_output</code> names.</p>
-</div>
-<div class="section level2">
 <h2 id="deployment">Deployment<a class="anchor" aria-label="anchor" href="#deployment"></a>
 </h2>
 <p>Pass any controller that <code>targets::tar_option_set(controller = )</code> accepts. tidytargets does not import a backend.</p>
 <div class="section level3">
 <h3 id="local-parallel-computing">Local parallel computing<a class="anchor" aria-label="anchor" href="#local-parallel-computing"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">computing_resources</span> <span class="op">&lt;-</span> <span class="fu">crew</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew/reference/crew_controller_local.html" class="external-link">crew_controller_local</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <p>Pass this to <code>tt_initialise(computing_resources = ...)</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="slurm">SLURM<a class="anchor" aria-label="anchor" href="#slurm"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">computing_resources</span> <span class="op">&lt;-</span> <span class="fu">crew.cluster</span><span class="fu">::</span><span class="fu"><a href="https://wlandau.github.io/crew.cluster/reference/crew_controller_slurm.html" class="external-link">crew_controller_slurm</a></span><span class="op">(</span></span>
 <span>  workers <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  tasks_max <span class="op">=</span> <span class="fl">1</span>,</span>

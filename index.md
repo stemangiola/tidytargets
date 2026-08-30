@@ -100,25 +100,6 @@ steps that mention it are mapped over each element.
 | [`tt_explore()`](https://stemangiola.github.io/tidytargets/reference/tt_explore.md) | Return one stored instance of a named target |
 | [`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md) | Get or set free-form metadata on the pipeline object |
 
-## Carrying extra information
-
-A `tidytargets` object has three slots: `$initialisation` (the arguments
-given to
-[`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)),
-`$metadata` (free-form extras, also reachable through
-[`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)),
-and `$targets` (one named record per target you added). Metadata is for
-information that is not part of the graph — an API endpoint, a dataset
-identifier, a provenance note.
-
-`pipeline`` ``<-`` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``)`` ``|>`` `` `[`tt_metadata`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)`(``api_url ``=`` ``"https://api.example.org"``, api_version ``=`` ``2``)`` `` `[`tt_metadata`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)`(``pipeline``)``$``api_url`` ``#> [1] "https://api.example.org"`
-
-Metadata is merged on each call, and passing `NULL` removes an entry. It
-travels with the object through every grammar step but is not written to
-the targets script, so workers cannot see it; values a target needs must
-appear in `command`. Because it lives in `$metadata` rather than among
-the steps, it imposes no restriction on your `target_output` names.
-
 ## Deployment
 
 Pass any controller that `targets::tar_option_set(controller = )`
