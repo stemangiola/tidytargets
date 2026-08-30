@@ -74,15 +74,12 @@ tt_iterate.tidytargets <- function(
     # Append source if any
     write_source(user_function_source_path, target_script)
 
-    # Choose map vs cross from mapped sizes
     mapped <- mapped_names_in_command(command, tt_input, "map")
-    pattern <- match.arg(pattern)
-
     sizes <- vapply(mapped, function(n) {
       n_units <- tt_input[[n]]$n_units
       if (is.null(n_units)) NA_integer_ else as.integer(n_units)[[1L]]
     }, integer(1), USE.NAMES = TRUE)
-    spec <- infer_iteration_strategy(sizes, pattern)
+    spec <- process_pattern(sizes, pattern)
     pattern_type <- spec$pattern_type
     pattern_names <- spec$pattern_names
     n_units <- spec$n_units
@@ -113,33 +110,29 @@ tt_iterate.tidytargets <- function(
   }
 
 
-#' Infer map() vs cross() from mapped branch counts
+#' Process map/cross from mapped branch counts
 #'
-#' `"map"` pairs equal-length inputs and omits size-1 names so
-#' `{targets}` `map()` is not given unequal lengths. Size 1 does not
-#' decide whether sizes match. Unequal sizes error; pass `"cross"` for
-#' a product of branches. A single mapped input is always `map()`. With
-#' two or more mapped inputs, the sizes and chosen pattern are messaged.
+#' Applies `pattern`: errors if `map` lengths differ (ignoring size 1),
+#' omits size-1 names from `map()`, records `n_units`, and messages when
+#' there are two or more mapped inputs.
 #'
-#' @param sizes Named integer vector of `$n_units` for mapped inputs, in
-#'   command order. Missing sizes are `NA`.
+#' @param sizes Named integer vector of `$n_units` for mapped inputs.
+#'   Missing sizes are `NA`.
 #' @param pattern `"map"` or `"cross"`.
 #' @return A list with `pattern_type`, `pattern_names`, and `n_units`.
 #' @noRd
-infer_iteration_strategy <- function(sizes, pattern = c("map", "cross")) {
+process_pattern <- function(sizes, pattern = c("map", "cross")) {
   pattern <- match.arg(pattern)
   mapped <- names(sizes)
   if (is.null(mapped)) mapped <- character()
 
   # Size 1 must not decide whether lengths match; missing sizes are ignored.
   varying <- unname(sizes[!is.na(sizes) & sizes > 1L])
-  equal <- length(varying) <= 1L || length(unique(varying)) == 1L
-
   # cross() needs two or more names; a single mapped input is always map().
   use_cross <- identical(pattern, "cross") && length(mapped) >= 2L
   pattern_type <- if (use_cross) "cross" else "map"
 
-  if (identical(pattern_type, "map") && !equal) {
+  if (!use_cross && length(unique(varying)) > 1L) {
     size_txt <- paste(sprintf("%s: %s", names(sizes), sizes), collapse = ", ")
     stop(
       "tidytargets says: mapped sizes ", size_txt,
@@ -148,19 +141,14 @@ infer_iteration_strategy <- function(sizes, pattern = c("map", "cross")) {
     )
   }
 
-  # Names that go into map()/cross() in the target script.
+  # {targets} map() requires equal lengths. Length-1 lists are constants, so
+  # they stay in the command but not in the pattern. cross() keeps them.
   pattern_names <- mapped
-  # {targets} map() requires every patterned input to have the same length.
-  # A length-1 list is a constant reused on every branch, so map() omits
-  # those names: they stay in the command as ordinary dependencies.
-  # cross() keeps size-1 names: a 1 x n product is valid.
   if (!use_cross) {
     varying_names <- mapped[!is.na(sizes) & sizes > 1L]
-    # If every mapped input is size 1 (or unknown), keep the full set.
     if (length(varying_names) > 0L) pattern_names <- unname(varying_names)
   }
 
-  # Cross is the product of sizes; map is the shared length (or 1).
   known <- unname(sizes[!is.na(sizes)])
   n_units <- if (length(known) == 0L) {
     NA_integer_
