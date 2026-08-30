@@ -20,53 +20,41 @@ vignette("building-blocks", package = "tidytargets")
 
 ## A minimal pipeline
 
-`tt_initialise()` can start a pipeline with no inputs. Pass a named list (or file paths) to register mapped units, or call it with only `store` / `computing_resources` and bring objects in with `tt_data()`. Write `name <- expr` to name the target from the assignment, the same way you would write a `tar_target()` command; `{targets}` tracks upstream names in that expression. `target_output = "name"` still works. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
+`tt_initialise()` starts a pipeline (store and optional `computing_resources`). Bring session objects in with `tt_data()` (one target) or `tt_data_list()` (mapped units). Write `name <- expr` to name the target from the assignment, the same way you would write a `tar_target()` command; `{targets}` tracks upstream names in that expression. `target_output = "name"` still works. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
 
 ``` r
 library(tidytargets)
 
-files <- c(
-  sample_a = "a.rds",
-  sample_b = "b.rds"
+inputs <- list(
+  sample_a = 1:3,
+  sample_b = 4:6
 )
-saveRDS(1:3, files[["sample_a"]])
-saveRDS(4:6, files[["sample_b"]])
 
-files |>
-  tt_initialise(store = "_targets") |>
-  tt_iterate(data <- readRDS(input_list)) |>
-  tt_iterate(summaries <- summary(data)) |>
+tt_initialise() |>
+  tt_data_list(inputs) |>
+  tt_iterate(summaries <- summary(inputs)) |>
   tt_evaluate()
 ```
 ```
-#> + input_list_file dispatched
-#> ✔ input_list_file completed [0ms, 97 B]
-#> + sample_names_file dispatched
-#> ✔ sample_names_file completed [0ms, 64 B]
-#> + input_list dispatched
-#> ✔ input_list completed [1ms, 97 B]
-#> + sample_names dispatched
-#> ✔ sample_names completed [0ms, 64 B]
-#> + data declared [2 branches]
-#> ✔ data completed [0ms, 201 B]
+#> + inputs_file dispatched
+#> ✔ inputs_file completed [0ms, 187 B]
+#> + inputs dispatched
+#> ✔ inputs completed [0ms, 187 B]
 #> + summaries declared [2 branches]
-#> ✔ summaries completed [1ms, 324 B]
-#> ✔ ended pipeline [106ms, 8 completed, 0 skipped]
+#> ✔ summaries completed [1ms, 392 B]
+#> ✔ ended pipeline [86ms, 4 completed, 0 skipped]
 
 targets::tar_read(summaries, store = "_targets")
-#> $summaries_77df95261040f9e1
+#> $summaries_6e3ea80794aeb114
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 #>     1.0     1.5     2.0     2.0     2.5     3.0
 #>
-#> $summaries_71c6d136bc334ef4
+#> $summaries_629826fd23b4f282
 #>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 #>     4.0     4.5     5.0     5.0     5.5     6.0
 ```
 
-`tt_evaluate()` also returns the `targets::tar_meta()` table. When you pass mapped inputs, `tt_initialise()` registers two mapped targets:
-
-- `input_list` — the named input vector or list (override with `target_output`)
-- `sample_names` — the names of that vector or list
+`tt_evaluate()` also returns the `targets::tar_meta()` table. `tt_data_list()` registers the named list as a mapped target (`inputs` here); later `tt_iterate()` steps that mention it are mapped over each element.
 
 ## Grammar
 
@@ -88,8 +76,7 @@ targets::tar_read(summaries, store = "_targets")
 A `tidytargets` object is a named list: `$initialisation` holds the arguments given to `tt_initialise()`, and every other element is a target you added. Alongside those sits a free-form metadata store, reachable only through `tt_metadata()`, for information that is not part of the graph — an API endpoint, a dataset identifier, a provenance note.
 
 ``` r
-pipeline <- files |>
-  tt_initialise(store = "_targets") |>
+pipeline <- tt_initialise() |>
   tt_metadata(api_url = "https://api.example.org", api_version = 2)
 
 tt_metadata(pipeline)$api_url

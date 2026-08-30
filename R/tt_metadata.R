@@ -21,8 +21,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' pipeline <- files |>
-#'   tt_initialise(store = "store") |>
+#' pipeline <- tt_initialise() |>
 #'   tt_metadata(api_url = "https://api.example.org", api_version = 2)
 #'
 #' pipeline |> tt_metadata()

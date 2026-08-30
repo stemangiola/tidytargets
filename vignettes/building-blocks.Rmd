@@ -50,7 +50,7 @@ This vignette walks through every building block and prints the targets script a
 
 ## Toy inputs
 
-`tt_initialise()` can be called with no inputs (script header and store only). A named list of in-memory objects, one element per unit of iteration (e.g. sample), or a named vector of file paths, registers mapped targets. `tt_data()` adds a session object later without splitting it.
+`tt_initialise()` can be called with no inputs (script header and store only). A named list of in-memory objects, one element per unit of iteration (e.g. sample), registers mapped targets. `tt_data()` adds a session object later without splitting it; `tt_data_list()` adds a list as mapped units.
 
 ```{r inputs}
 inputs <- list(
