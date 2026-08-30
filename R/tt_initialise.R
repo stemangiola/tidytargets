@@ -222,3 +222,35 @@ tt_initialise <- function(tt_input = NULL,
     )) |>
     add_class("tidytargets")
 }
+
+
+#' Infer the package that defines a controller-like object
+#'
+#' Used so the generated pipeline can `library()` the backend that produced
+#' `computing_resources` without tidytargets depending on that backend.
+#'
+#' @param x A controller, controller group, or a plain list of those objects.
+#' @return A character vector of package names (possibly empty).
+#' @noRd
+package_of_object <- function(x) {
+  if (is.null(x)) return(character())
+
+  # Recurse into a plain list of controllers, but not S3/S4/R6 objects
+  if (is.list(x) && !is.object(x)) {
+    return(unique(unlist(lapply(x, package_of_object), use.names = FALSE)))
+  }
+
+  pkgs <- character()
+
+  pkg_attr <- attr(class(x), "package")
+  if (!is.null(pkg_attr) && !pkg_attr %in% c(".GlobalEnv", "base")) {
+    pkgs <- c(pkgs, pkg_attr)
+  }
+
+  if (is.function(x$initialize)) {
+    pkg <- utils::packageName(environment(x$initialize))
+    if (!is.null(pkg)) pkgs <- c(pkgs, pkg)
+  }
+
+  unique(pkgs)
+}
