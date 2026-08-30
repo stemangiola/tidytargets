@@ -13,16 +13,16 @@
 - [`tidytargets`](https://stemangiola.github.io/tidytargets/reference/tidytargets-package.md)
   [`tidytargets-package`](https://stemangiola.github.io/tidytargets/reference/tidytargets-package.md)
   : tidytargets: Tidy Pipe-Friendly Grammar for Targets Pipelines
+- [`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md)
+  : Add a Session Object as a Pipeline Target
+- [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)
+  : Add a List of Units as a Mapped Pipeline Target
 - [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)
   : Execute the tidytargets Pipeline
 - [`tt_explore()`](https://stemangiola.github.io/tidytargets/reference/tt_explore.md)
   : Return One Instance of a Pipeline Target
 - [`tt_factory()`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)
   : Internal Factory for Iterating Targets
-- [`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md)
-  : Import a Session Object as a Pipeline Target
-- [`tt_import_list()`](https://stemangiola.github.io/tidytargets/reference/tt_import_list.md)
-  : Import a List of Units as a Mapped Pipeline Target
 - [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)
   : Initialise a tidytargets Pipeline
 - [`tt_internal_report()`](https://stemangiola.github.io/tidytargets/reference/tt_internal_report.md)

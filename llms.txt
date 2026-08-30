@@ -48,7 +48,7 @@ is in the vignette:
 can start a pipeline with no inputs. Pass a named list (or file paths)
 to register mapped units, or call it with only `store` /
 `computing_resources` and bring objects in with
-[`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md).
+[`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md).
 Write `name <- expr` to name the target from the assignment, the same
 way you would write a `tar_target()` command;
 [targets](https://docs.ropensci.org/targets/) tracks upstream names in
@@ -97,8 +97,8 @@ registers two mapped targets:
 | Function | Role |
 |----|----|
 | [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md) | Start a pipeline: store, optional mapped inputs |
-| [`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md) | Snapshot a session object onto the store as one target |
-| [`tt_import_list()`](https://stemangiola.github.io/tidytargets/reference/tt_import_list.md) | Snapshot a list onto the store as mapped units |
+| [`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md) | Snapshot a session object onto the store as one target |
+| [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md) | Snapshot a list onto the store as mapped units |
 | [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md) | Map a function over inputs |
 | [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md) | Add one non-iterated target |
 | [`tt_merge()`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md) | Combine iterated results into one object |
@@ -157,16 +157,16 @@ Pass this to `tt_initialise(computing_resources = ...)`.
 - [`tidytargets`](https://stemangiola.github.io/tidytargets/reference/tidytargets-package.md)
   [`tidytargets-package`](https://stemangiola.github.io/tidytargets/reference/tidytargets-package.md)
   : tidytargets: Tidy Pipe-Friendly Grammar for Targets Pipelines
+- [`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md)
+  : Add a Session Object as a Pipeline Target
+- [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)
+  : Add a List of Units as a Mapped Pipeline Target
 - [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)
   : Execute the tidytargets Pipeline
 - [`tt_explore()`](https://stemangiola.github.io/tidytargets/reference/tt_explore.md)
   : Return One Instance of a Pipeline Target
 - [`tt_factory()`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)
   : Internal Factory for Iterating Targets
-- [`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md)
-  : Import a Session Object as a Pipeline Target
-- [`tt_import_list()`](https://stemangiola.github.io/tidytargets/reference/tt_import_list.md)
-  : Import a List of Units as a Mapped Pipeline Target
 - [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)
   : Initialise a tidytargets Pipeline
 - [`tt_internal_report()`](https://stemangiola.github.io/tidytargets/reference/tt_internal_report.md)

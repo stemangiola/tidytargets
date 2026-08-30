@@ -3,7 +3,7 @@
 Sets up and writes a `targets` pipeline script. Saves configuration (and
 optional mapped inputs) to disk, then returns a `tidytargets` object
 that downstream grammar functions (e.g.
-[`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md),
+[`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md),
 [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md),
 [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md),
 [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md))
@@ -27,7 +27,7 @@ tt_initialise(
   update = "thorough",
   garbage_collection = 0,
   workspace_on_error = FALSE,
-  packages = "tidytargets",
+  packages = attached_packages(),
   target_output = "input_list"
 )
 ```
@@ -40,7 +40,7 @@ tt_initialise(
   in-memory objects, one element per unit of iteration (e.g. sample). If
   names are not set, integer indices are used. `NULL` (the default)
   writes only the script header; add objects later with
-  [`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md)
+  [`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md)
   or pass a list here to map over.
 
 - store:
@@ -92,8 +92,12 @@ tt_initialise(
 
 - packages:
 
-  Character vector of R packages loaded on workers. Defaults to
-  `"tidytargets"`.
+  Character vector of R packages loaded on workers, written to
+  `tar_option_set(packages = )`. The default is packages currently
+  attached in the session
+  ([`.packages()`](https://rdrr.io/r/base/zpackages.html)), as names
+  only — not objects in the global environment. Pass a character vector
+  to override. `"qs2"` is always included.
 
 - target_output:
 

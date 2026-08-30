@@ -6,11 +6,11 @@ to execute all queued steps. Returns the `tar_meta()` table.
 
 If a target fails with an S4 method-dispatch error on a `list`
 (typically because a list was brought in with
-[`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md)
+[`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md)
 instead of
-[`tt_import_list()`](https://stemangiola.github.io/tidytargets/reference/tt_import_list.md)),
+[`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)),
 the error is rethrown with a hint to use
-[`tt_import_list()`](https://stemangiola.github.io/tidytargets/reference/tt_import_list.md).
+[`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md).
 
 The generic records that this store has been run before dispatching, so
 a subclass `tt_evaluate` method cannot leave the interactive "pipeline
