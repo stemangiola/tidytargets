@@ -1,4 +1,4 @@
-#' Import a Session Object as a Pipeline Target
+#' Add a Session Object as a Pipeline Target
 #'
 #' @description
 #' Snapshots an object from the current R session onto the pipeline store and
@@ -9,15 +9,15 @@
 #' The value is written to disk immediately (`qs_save()`). `{targets}` then
 #' tracks that file and reads it back when the target runs, so later
 #' `tt_single()` / `tt_iterate()` commands can use `target_output` as a
-#' dependency. A local variable mentioned only in `command` is not imported;
-#' use this function for that.
+#' dependency. A local variable mentioned only in `command` is not brought
+#' in; use this function for that.
 #'
 #' If `target_output` is omitted, the name of `x` is used
-#' (`tt_import(pipeline, airway)` registers `"airway"`), or the left-hand
-#' side of an assignment (`tt_import(pipeline, airway <- se)`).
+#' (`tt_data(pipeline, airway)` registers `"airway"`), or the left-hand
+#' side of an assignment (`tt_data(pipeline, airway <- se)`).
 #'
 #' For a list of units to map over (for example each row of a parameter grid),
-#' use [tt_import_list()] instead.
+#' use [tt_data_list()] instead.
 #'
 #' @param tt_input A `tidytargets` object from `tt_initialise()`.
 #' @param x Object in the current session to snapshot into the store.
@@ -28,23 +28,23 @@
 #' @examples
 #' \dontrun{
 #' pipeline <- tt_initialise(store = "store") |>
-#'   tt_import(airway, target_output = "airway")
+#'   tt_data(airway, target_output = "airway")
 #' }
-#' @name tt_import
+#' @name tt_data
 #' @export
-tt_import <- function(tt_input, x, target_output = NULL) {
-  UseMethod("tt_import")
+tt_data <- function(tt_input, x, target_output = NULL) {
+  UseMethod("tt_data")
 }
 
-#' @rdname tt_import
+#' @rdname tt_data
 #' @export
-tt_import.default <- function(tt_input, x, target_output = NULL) {
+tt_data.default <- function(tt_input, x, target_output = NULL) {
   stop_if_not_tidytargets()
 }
 
-#' @rdname tt_import
+#' @rdname tt_data
 #' @export
-tt_import.tidytargets <- function(tt_input, x, target_output = NULL) {
+tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
   command <- substitute(x)
   resolved <- parse_command(command, target_output)
   command <- resolved$command
@@ -52,7 +52,7 @@ tt_import.tidytargets <- function(tt_input, x, target_output = NULL) {
   rm(resolved)
 
   store <- tt_input$initialisation$store
-  qs_path <- file.path(store, paste0(target_output, "_import.qs"))
+  qs_path <- file.path(store, paste0(target_output, "_data.qs"))
   qs2::qs_save(eval(command, parent.frame()), qs_path)
   file_target <- paste0(target_output, "_file")
 
@@ -74,22 +74,22 @@ tt_import.tidytargets <- function(tt_input, x, target_output = NULL) {
   ))
 }
 
-#' Import a List of Units as a Mapped Pipeline Target
+#' Add a List of Units as a Mapped Pipeline Target
 #'
 #' @description
 #' Snapshots a list from the current R session onto the store and registers it
-#' as a **mapped** target, one iteration unit per element. This is the import
+#' as a **mapped** target, one iteration unit per element. This is the mapped
 #' analogue of passing a named list to [tt_initialise()]: later
 #' [tt_iterate()] steps that mention `target_output` are mapped over the
 #' elements.
 #'
 #' Typical use is a parameter grid split into rows, e.g.
-#' `tt_import_list(settings <- grid |> split(seq_len(nrow(grid))))`
+#' `tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))`
 #' or `dplyr::group_split()`. Unnamed lists are named with integer indices,
 #' the same way [tt_initialise()] names unnamed inputs.
 #'
 #' If `target_output` is omitted, the name of `x` is used, or the left-hand
-#' side of an assignment (`tt_import_list(settings <- rows)`). An inline
+#' side of an assignment (`tt_data_list(settings <- rows)`). An inline
 #' expression such as `grid |> group_split(row_number())` is not a name, so
 #' name it with `<-` or pass `target_output`.
 #'
@@ -105,24 +105,24 @@ tt_import.tidytargets <- function(tt_input, x, target_output = NULL) {
 #' \dontrun{
 #' grid <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
 #' pipeline <- tt_initialise(store = "store") |>
-#'   tt_import_list(settings <- grid |> split(seq_len(nrow(grid))))
+#'   tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))
 #' }
-#' @name tt_import_list
+#' @name tt_data_list
 #' @export
-tt_import_list <- function(tt_input, x, target_output = NULL) {
-  UseMethod("tt_import_list")
+tt_data_list <- function(tt_input, x, target_output = NULL) {
+  UseMethod("tt_data_list")
 }
 
-#' @rdname tt_import_list
+#' @rdname tt_data_list
 #' @export
-tt_import_list.default <- function(tt_input, x, target_output = NULL) {
+tt_data_list.default <- function(tt_input, x, target_output = NULL) {
   stop_if_not_tidytargets()
 }
 
-#' @rdname tt_import_list
+#' @rdname tt_data_list
 #' @importFrom purrr set_names
 #' @export
-tt_import_list.tidytargets <- function(tt_input, x, target_output = NULL) {
+tt_data_list.tidytargets <- function(tt_input, x, target_output = NULL) {
   command <- substitute(x)
   resolved <- parse_command(command, target_output)
   command <- resolved$command
@@ -133,7 +133,7 @@ tt_import_list.tidytargets <- function(tt_input, x, target_output = NULL) {
 
   if (!is.list(x)) {
     stop(
-      "tidytargets says: tt_import_list() expects a list, ",
+      "tidytargets says: tt_data_list() expects a list, ",
       "e.g. grid |> split(seq_len(nrow(grid))).",
       call. = FALSE
     )
@@ -146,7 +146,7 @@ tt_import_list.tidytargets <- function(tt_input, x, target_output = NULL) {
   }
 
   store <- tt_input$initialisation$store
-  qs_path <- file.path(store, paste0(target_output, "_import.qs"))
+  qs_path <- file.path(store, paste0(target_output, "_data.qs"))
   qs2::qs_save(x, qs_path)
   file_target <- paste0(target_output, "_file")
 

@@ -3,7 +3,7 @@
 #' @description
 #' Sets up and writes a `targets` pipeline script. Saves configuration (and
 #' optional mapped inputs) to disk, then returns a `tidytargets` object that
-#' downstream grammar functions (e.g. `tt_import()`, `tt_iterate()`,
+#' downstream grammar functions (e.g. `tt_data()`, `tt_iterate()`,
 #' `tt_single()`, `tt_evaluate()`) can extend before the pipeline is executed
 #' with `tt_evaluate()`. The graph is not run until you print the object or
 #' call [tt_evaluate()]. Assigning it does not; an interactive session then
@@ -13,7 +13,7 @@
 #' @param tt_input Named vector of inputs, typically file paths, or a named
 #'   list of in-memory objects, one element per unit of iteration (e.g. sample).
 #'   If names are not set, integer indices are used. `NULL` (the default)
-#'   writes only the script header; add objects later with [tt_import()] or
+#'   writes only the script header; add objects later with [tt_data()] or
 #'   pass a list here to map over.
 #' @param store Directory path where pipeline files and targets store are written.
 #'   `NULL` (the default) writes to `./tidytargets-<HASH>` in the working

@@ -1,6 +1,6 @@
 Package: tidytargets
 Title: Tidy Pipe-Friendly Grammar for R Targets Pipelines
-Version: 0.0.5
+Version: 0.0.6
 Authors@R: c(
     person("Stefano", "Mangiola", email = "mangiolastefano@gmail.com",
            role = c("aut", "cre")),

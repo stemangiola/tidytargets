@@ -1,6 +1,16 @@
 # tidytargets NEWS
 
 
+## tidytargets 0.0.6
+
+* `tt_import()` and `tt_import_list()` are renamed `tt_data()` and
+  `tt_data_list()`.
+* `tt_initialise()` snapshots currently attached packages (names from
+  `.packages()`, not `.GlobalEnv` objects) onto `tar_option_set(packages = )`
+  when `packages` is omitted. Local functions and other session objects stay
+  out of the pipeline unless you bring them in with `tt_data()` or set
+  `user_function_source_path`.
+
 ## tidytargets 0.0.5
 
 * Version numbering corrected to pre-alpha `0.0.x` (this release was
@@ -9,24 +19,19 @@
   `tt_import_list()` accept `name <- expr` to set the target name from the
   assignment (`tt_iterate(fit <- lm(y ~ x))`). `target_output = "fit"` still
   works. `=` inside the call is argument matching, not assignment.
-* `tt_initialise()` snapshots currently attached packages (names from
-  `.packages()`, not `.GlobalEnv` objects) onto `tar_option_set(packages = )`
-  when `packages` is omitted. Local functions and other session objects stay
-  out of the pipeline unless you `tt_import()` them or set
-  `user_function_source_path`.
 
 ## tidytargets 0.4.0
 
 * `tt_iterate()`, `tt_single()`, `tt_merge()`, and `tt_factory()` take
   `command` before `target_output`.
 * `tt_initialise()` no longer requires mapped inputs. `tt_initialise()` alone
-  writes the script header; add session objects with `tt_import()`.
-* `tt_import()` snapshots a session object onto the store as a single
+  writes the script header; add session objects with `tt_data()`.
+* `tt_data()` snapshots a session object onto the store as a single
   (non-mapped) target, so local values can be used as pipeline dependencies.
-* `tt_import_list()` snapshots a list as mapped iteration units, for example
+* `tt_data_list()` snapshots a list as mapped iteration units, for example
   each row of a parameter grid.
 * When `tar_make()` fails with an S4 dispatch error on a `list`,
-  `tt_evaluate()` adds a hint to use `tt_import_list()` for list inputs that
+  `tt_evaluate()` adds a hint to use `tt_data_list()` for list inputs that
   should be iterated.
 * `tt_explore()` returns one stored instance of a named target (one branch
   of a mapped target, without loading the rest) and messages a short heading

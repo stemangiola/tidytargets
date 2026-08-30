@@ -20,7 +20,7 @@ vignette("building-blocks", package = "tidytargets")
 
 ## A minimal pipeline
 
-`tt_initialise()` can start a pipeline with no inputs. Pass a named list (or file paths) to register mapped units, or call it with only `store` / `computing_resources` and bring objects in with `tt_import()`. Write `name <- expr` to name the target from the assignment, the same way you would write a `tar_target()` command; `{targets}` tracks upstream names in that expression. `target_output = "name"` still works. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
+`tt_initialise()` can start a pipeline with no inputs. Pass a named list (or file paths) to register mapped units, or call it with only `store` / `computing_resources` and bring objects in with `tt_data()`. Write `name <- expr` to name the target from the assignment, the same way you would write a `tar_target()` command; `{targets}` tracks upstream names in that expression. `target_output = "name"` still works. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
 
 ``` r
 library(tidytargets)
@@ -73,8 +73,8 @@ targets::tar_read(summaries, store = "_targets")
 | Function | Role |
 | --- | --- |
 | `tt_initialise()` | Start a pipeline: store, optional mapped inputs |
-| `tt_import()` | Snapshot a session object onto the store as one target |
-| `tt_import_list()` | Snapshot a list onto the store as mapped units |
+| `tt_data()` | Snapshot a session object onto the store as one target |
+| `tt_data_list()` | Snapshot a list onto the store as mapped units |
 | `tt_iterate()` | Map a function over inputs |
 | `tt_single()` | Add one non-iterated target |
 | `tt_merge()` | Combine iterated results into one object |

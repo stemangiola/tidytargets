@@ -74,7 +74,7 @@ test_that("tt_initialise works with no mapped input", {
   expect_true(file.exists(paste0(store, ".R")))
 
   extra <- 10:12
-  pipe <- pipe |> tt_import(extra)
+  pipe <- pipe |> tt_data(extra)
   tt_evaluate(pipe)
   expect_equal(
     targets::tar_read(extra, store = pipe$initialisation$store),
@@ -186,8 +186,8 @@ test_that("grammar steps error on non-tidytargets input", {
   expect_error(tt_evaluate("not a pipeline"), "tidytargets object")
   expect_error(tt_metadata("not a pipeline"), "tidytargets object")
   expect_error(tt_explore("not a pipeline", "data"), "tidytargets object")
-  expect_error(tt_import("not a pipeline", 1, target_output = "x"), "tidytargets object")
-  expect_error(tt_import_list("not a pipeline", list(1), target_output = "x"), "tidytargets object")
+  expect_error(tt_data("not a pipeline", 1, target_output = "x"), "tidytargets object")
+  expect_error(tt_data_list("not a pipeline", list(1), target_output = "x"), "tidytargets object")
 })
 
 test_that("grammar steps require a target_output name", {
@@ -258,20 +258,20 @@ test_that("<- and target_output must name the same target", {
   )
 })
 
-test_that("tt_import_list names the target from <-", {
+test_that("tt_data_list names the target from <-", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
   on.exit(setwd(old), add = TRUE)
 
   pipe <- tt_initialise(store = file.path(tmp, "store")) |>
-    tt_import_list(method_grid <- list(a = 1, b = 2))
+    tt_data_list(method_grid <- list(a = 1, b = 2))
 
   expect_true("method_grid" %in% names(pipe))
   expect_equal(pipe$method_grid$iterate, "map")
   expect_false(exists("method_grid", inherits = FALSE))
   expect_equal(
-    names(qs2::qs_read(file.path(pipe$initialisation$store, "method_grid_import.qs"))),
+    names(qs2::qs_read(file.path(pipe$initialisation$store, "method_grid_data.qs"))),
     c("a", "b")
   )
 })
@@ -459,7 +459,7 @@ test_that("tt_evaluate appends the import_list hint to tar_make list-dispatch er
       target_output = "oops"
     )
 
-  expect_error(tt_evaluate(pipe), "tt_import_list")
+  expect_error(tt_evaluate(pipe), "tt_data_list")
 })
 
 test_that("tt_explore returns one mapped instance and one stem target", {
@@ -519,7 +519,7 @@ test_that("tt_explore returns one mapped instance and one stem target", {
   expect_equal(input, 1:3)
 })
 
-test_that("tt_import snapshots a session object as a single stem target", {
+test_that("tt_data snapshots a session object as a single stem target", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -529,14 +529,14 @@ test_that("tt_import snapshots a session object as a single stem target", {
   store <- file.path(tmp, "store")
   pipe <- list(sample_a = 1:3) |>
     tt_initialise(store = store) |>
-    tt_import(airway, target_output = "airway")
+    tt_data(airway, target_output = "airway")
 
   expect_s3_class(pipe, "tidytargets")
   expect_true("airway" %in% names(pipe))
   expect_true("airway_file" %in% names(pipe))
   expect_equal(pipe$airway$iterate, "none")
-  expect_true(file.exists(file.path(store, "airway_import.qs")))
-  expect_equal(qs2::qs_read(file.path(store, "airway_import.qs")), airway)
+  expect_true(file.exists(file.path(store, "airway_data.qs")))
+  expect_equal(qs2::qs_read(file.path(store, "airway_data.qs")), airway)
 
   pipe <- pipe |>
     tt_single(command = length(airway), target_output = "n_assays")
@@ -554,7 +554,7 @@ test_that("tt_import snapshots a session object as a single stem target", {
   )
 })
 
-test_that("tt_import defaults target_output to the object name", {
+test_that("tt_data defaults target_output to the object name", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -563,13 +563,13 @@ test_that("tt_import defaults target_output to the object name", {
   extra <- 10:12
   pipe <- list(sample_a = 1:3) |>
     tt_initialise(store = file.path(tmp, "store")) |>
-    tt_import(extra)
+    tt_data(extra)
 
   expect_true("extra" %in% names(pipe))
   expect_equal(pipe$extra$iterate, "none")
 })
 
-test_that("tt_import_list snapshots a list as mapped units", {
+test_that("tt_data_list snapshots a list as mapped units", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -578,7 +578,7 @@ test_that("tt_import_list snapshots a list as mapped units", {
   grid <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
   store <- file.path(tmp, "store")
   pipe <- tt_initialise(store = store) |>
-    tt_import_list(
+    tt_data_list(
       grid |> split(seq_len(nrow(grid))),
       target_output = "settings"
     )
@@ -586,7 +586,7 @@ test_that("tt_import_list snapshots a list as mapped units", {
   expect_s3_class(pipe, "tidytargets")
   expect_true("settings" %in% names(pipe))
   expect_equal(pipe$settings$iterate, "map")
-  saved <- qs2::qs_read(file.path(store, "settings_import.qs"))
+  saved <- qs2::qs_read(file.path(store, "settings_data.qs"))
   expect_equal(names(saved), c("1", "2", "3", "4"))
 
   pipe <- pipe |>
@@ -601,7 +601,7 @@ test_that("tt_import_list snapshots a list as mapped units", {
   expect_equal(unname(unlist(values)), grid$alpha)
 })
 
-test_that("tt_import_list defaults target_output to the object name", {
+test_that("tt_data_list defaults target_output to the object name", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -609,22 +609,22 @@ test_that("tt_import_list defaults target_output to the object name", {
 
   rows <- list(a = 1:2, b = 3:4)
   pipe <- tt_initialise(store = file.path(tmp, "store")) |>
-    tt_import_list(rows)
+    tt_data_list(rows)
 
   expect_true("rows" %in% names(pipe))
   expect_equal(pipe$rows$iterate, "map")
 })
 
-test_that("tt_import_list rejects a non-list and an unnamed expression", {
+test_that("tt_data_list rejects a non-list and an unnamed expression", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
   on.exit(setwd(old), add = TRUE)
 
   pipe <- tt_initialise(store = file.path(tmp, "store"))
-  expect_error(tt_import_list(pipe, 1:3, target_output = "x"), "expects a list")
+  expect_error(tt_data_list(pipe, 1:3, target_output = "x"), "expects a list")
   expect_error(
-    tt_import_list(pipe, list(1, 2)),
+    tt_data_list(pipe, list(1, 2)),
     "target_output"
   )
 })

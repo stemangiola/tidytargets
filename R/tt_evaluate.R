@@ -6,9 +6,9 @@
 #' all queued steps. Returns the `tar_meta()` table.
 #'
 #' If a target fails with an S4 method-dispatch error on a `list` (typically
-#' because a list was brought in with [tt_import()] instead of
-#' [tt_import_list()]), the error is rethrown with a hint to use
-#' `tt_import_list()`.
+#' because a list was brought in with [tt_data()] instead of
+#' [tt_data_list()]), the error is rethrown with a hint to use
+#' `tt_data_list()`.
 #'
 #' The generic records that this store has been run before dispatching, so a
 #' subclass `tt_evaluate` method cannot leave the interactive "pipeline is
@@ -61,7 +61,7 @@ tt_evaluate.tidytargets = function(tt_input) {
     error = function(e) {
 
       # Capture the error message and check if it's an S4 dispatch error on a list
-      # It is likely due to a list being imported with tt_import() instead of tt_import_list()
+      # It is likely due to a list being imported with tt_data() instead of tt_data_list()
       msg <- conditionMessage(e)
       if (
         grepl("unable to find an inherited method", msg, fixed = TRUE) &&
@@ -69,7 +69,7 @@ tt_evaluate.tidytargets = function(tt_input) {
       ) {
         stop(
           msg, "\n",
-          "tidytargets says: did you remember to use tt_import_list for your list inputs you want to iterate on?",
+          "tidytargets says: did you remember to use tt_data_list for your list inputs you want to iterate on?",
           call. = FALSE
         )
       }
