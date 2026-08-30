@@ -11,6 +11,7 @@ tt_iterate(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
+  pattern = c("auto", "map", "cross"),
   ...
 )
 
@@ -19,6 +20,7 @@ tt_iterate(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
+  pattern = c("auto", "map", "cross"),
   ...
 )
 
@@ -27,6 +29,7 @@ tt_iterate(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
+  pattern = c("auto", "map", "cross"),
   ...
 )
 }
@@ -46,6 +49,13 @@ assignment; use \verb{<-}.}
 \item{user_function_source_path}{Optional character path to an R script that
 should be sourced in the worker before evaluating \code{command}. \code{NULL}
 sources nothing.}
+
+\item{pattern}{\code{"auto"} (the default) chooses \code{{targets}} \code{map()} vs
+\code{cross()} from the lengths of mapped inputs referenced in \code{command}.
+Equal sizes (ignoring length-1 lists) use \code{map()} and omit length-1
+names from the pattern; different sizes use \code{cross()}. \code{"map"} or
+\code{"cross"} force a pattern. With two or more mapped inputs, the
+chosen pattern is messaged.}
 
 \item{...}{Additional factory arguments such as \code{format}, \code{deployment},
 or \code{packages}.}

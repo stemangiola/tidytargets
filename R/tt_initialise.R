@@ -152,36 +152,73 @@ tt_initialise <- function(tt_input = NULL,
 
   if (!has_input) return(pipe)
 
+  n_in <- length(tt_input)
+  target_script <- paste0(store, ".R")
+
+  tar_append(
+    fx = quote(tt_factory),
+    command = wrap_quote(sample_names_qs),
+    target_output = "sample_names_file",
+    script = target_script,
+    format = "file"
+  )
+  pipe <- pipe |>
+    c(stats::setNames(
+      list(list(command = sample_names_qs, iterate = "none")),
+      "sample_names_file"
+    )) |>
+    add_class("tidytargets")
+
+  tar_append(
+    fx = quote(tt_factory),
+    command = wrap_quote(quote(qs_read(sample_names_file))),
+    target_output = "sample_names",
+    script = target_script,
+    deployment = "main"
+  )
+  pipe <- pipe |>
+    c(stats::setNames(
+      list(list(
+        command = quote(qs_read(sample_names_file)),
+        iterate = "map",
+        n_units = n_in
+      )),
+      "sample_names"
+    )) |>
+    add_class("tidytargets")
+
   input_file_target <- paste0(target_output, "_file")
+  input_read <- substitute(qs_read(ifs), list(ifs = as.name(input_file_target)))
 
-  eval(substitute(
-    pipe |>
+  tar_append(
+    fx = quote(tt_factory),
+    command = wrap_quote(input_qs),
+    target_output = input_file_target,
+    script = target_script,
+    format = "file"
+  )
+  pipe <- pipe |>
+    c(stats::setNames(
+      list(list(command = input_qs, iterate = "none")),
+      input_file_target
+    )) |>
+    add_class("tidytargets")
 
-      # Sample names
-      tt_single(snf, "sample_names_file", format = "file") |>
-
-      tt_single(
-        command = qs_read(sample_names_file),
-        target_output = "sample_names",
-        deployment = "main",
-        iterate = "map"
-      ) |>
-
-      # Files
-      tt_single(iff, ift, format = "file") |>
-
-      tt_single(
-        command = qs_read(ifs),
-        target_output = to,
-        deployment = "main",
-        iterate = "map"
-      ),
-    list(
-      ift = input_file_target,
-      to = target_output,
-      ifs = as.name(input_file_target),
-      snf = sample_names_qs,
-      iff = input_qs
-    )
-  ))
+  tar_append(
+    fx = quote(tt_factory),
+    command = wrap_quote(input_read),
+    target_output = target_output,
+    script = target_script,
+    deployment = "main"
+  )
+  pipe |>
+    c(stats::setNames(
+      list(list(
+        command = input_read,
+        iterate = "map",
+        n_units = n_in
+      )),
+      target_output
+    )) |>
+    add_class("tidytargets")
 }

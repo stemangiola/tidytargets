@@ -35,9 +35,6 @@ tt_report.tidytargets <- function(tt_input, target_output = NULL, rmd_path = NUL
     # Target script
     target_script = glue("{tt_input$initialisation$store}.R")
     
-    # Delete line with target in case the user execute the command, without calling tt_initialise
-    target_output |>  delete_lines_with_word(target_script)
-    
     external_dir <- file.path(tt_input$initialisation$store, "external")
     dir.create(external_dir, showWarnings = FALSE, recursive = TRUE)
     external_dir <- normalizePath(external_dir)

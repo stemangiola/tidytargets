@@ -54,24 +54,38 @@ tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
   store <- tt_input$initialisation$store
   qs_path <- file.path(store, paste0(target_output, "_data.qs"))
   qs2::qs_save(eval(command, parent.frame()), qs_path)
-  file_target <- paste0(target_output, "_file")
 
-  eval(substitute(
-    tt_input |>
-      tt_single(qp, ft, format = "file") |>
-      tt_single(
-        command = qs_read(fts),
-        target_output = to,
-        deployment = "main",
-        iterate = "none"
-      ),
-    list(
-      ft = file_target,
-      qp = qs_path,
-      to = target_output,
-      fts = as.name(file_target)
-    )
-  ))
+  file_target <- paste0(target_output, "_file")
+  target_script <- paste0(store, ".R")
+  read_cmd <- substitute(qs_read(fts), list(fts = as.name(file_target)))
+
+  tar_append(
+    fx = quote(tt_factory),
+    command = wrap_quote(qs_path),
+    target_output = file_target,
+    script = target_script,
+    format = "file"
+  )
+  tt_input <- tt_input |>
+    c(stats::setNames(
+      list(list(command = qs_path, iterate = "none")),
+      file_target
+    )) |>
+    add_class("tidytargets")
+
+  tar_append(
+    fx = quote(tt_factory),
+    command = wrap_quote(read_cmd),
+    target_output = target_output,
+    script = target_script,
+    deployment = "main"
+  )
+  tt_input |>
+    c(stats::setNames(
+      list(list(command = read_cmd, iterate = "none")),
+      target_output
+    )) |>
+    add_class("tidytargets")
 }
 
 #' Add a List of Units as a Mapped Pipeline Target
@@ -82,6 +96,10 @@ tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
 #' analogue of passing a named list to [tt_initialise()]: later
 #' [tt_iterate()] steps that mention `target_output` are mapped over the
 #' elements.
+#'
+#' When a later [tt_iterate()] command mentions more than one mapped target,
+#' `{targets}` `map()` is used if those lists have the same length and
+#' `cross()` if they do not. Length-1 lists do not decide the pattern.
 #'
 #' Typical use is a parameter grid split into rows, e.g.
 #' `tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))`
@@ -148,22 +166,40 @@ tt_data_list.tidytargets <- function(tt_input, x, target_output = NULL) {
   store <- tt_input$initialisation$store
   qs_path <- file.path(store, paste0(target_output, "_data.qs"))
   qs2::qs_save(x, qs_path)
-  file_target <- paste0(target_output, "_file")
 
-  eval(substitute(
-    tt_input |>
-      tt_single(qp, ft, format = "file") |>
-      tt_single(
-        command = qs_read(fts),
-        target_output = to,
-        deployment = "main",
-        iterate = "map"
-      ),
-    list(
-      ft = file_target,
-      qp = qs_path,
-      to = target_output,
-      fts = as.name(file_target)
-    )
-  ))
+  file_target <- paste0(target_output, "_file")
+  target_script <- paste0(store, ".R")
+  read_cmd <- substitute(qs_read(fts), list(fts = as.name(file_target)))
+
+  tar_append(
+    fx = quote(tt_factory),
+    command = wrap_quote(qs_path),
+    target_output = file_target,
+    script = target_script,
+    format = "file"
+  )
+  tt_input <- tt_input |>
+    c(stats::setNames(
+      list(list(command = qs_path, iterate = "none")),
+      file_target
+    )) |>
+    add_class("tidytargets")
+
+  tar_append(
+    fx = quote(tt_factory),
+    command = wrap_quote(read_cmd),
+    target_output = target_output,
+    script = target_script,
+    deployment = "main"
+  )
+  tt_input |>
+    c(stats::setNames(
+      list(list(
+        command = read_cmd,
+        iterate = "map",
+        n_units = length(x)
+      )),
+      target_output
+    )) |>
+    add_class("tidytargets")
 }

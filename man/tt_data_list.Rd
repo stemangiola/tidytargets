@@ -32,6 +32,10 @@ analogue of passing a named list to \code{\link[=tt_initialise]{tt_initialise()}
 \code{\link[=tt_iterate]{tt_iterate()}} steps that mention \code{target_output} are mapped over the
 elements.
 
+When a later \code{\link[=tt_iterate]{tt_iterate()}} command mentions more than one mapped target,
+\code{{targets}} \code{map()} is used if those lists have the same length and
+\code{cross()} if they do not. Length-1 lists do not decide the pattern.
+
 Typical use is a parameter grid split into rows, e.g.
 \code{tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))}
 or \code{dplyr::group_split()}. Unnamed lists are named with integer indices,

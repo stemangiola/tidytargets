@@ -3,7 +3,7 @@ add_class <- function(obj, class_name) {
   class(obj) <- c(class_name, class(obj))
   # Grammar constructors return through here after `c()` drops the class.
   # Scheduling at this single restore point covers initialise, iterate,
-  # single, merge, and report without each having to remember the notice.
+  # summarise, merge, and report without each having to remember the notice.
   if (identical(class_name, "tidytargets")) {
     schedule_pipeline_ready_notice(obj$initialisation$store)
   }
@@ -93,6 +93,10 @@ tar_append = function(fx, script = targets::tar_config_get("script"), ...){
     # and the target names will be lost, so those object will be evaluated and 
     # triggered because they do not exist in the environment
     quote_name_classes()
+
+  if (!is.null(additional_args$target_output)) {
+    delete_lines_with_word(additional_args$target_output, script)
+  }
   
   arguments_to_pass  = c(fx)
   
@@ -210,34 +214,26 @@ wrap_quote <- function(expr) {
   as.call(list(as.name("quote"), expr))
 }
 
-#' Names of pipeline targets referenced in a command expression
-#'
-#' @param command A language object (or something that is not, in which case
-#'   nothing is returned).
-#' @param tt_input A `tidytargets` object.
-#' @param value Character vector of `iterate` modes to match.
-#' @return A character vector of target names.
-#' @noRd
-command_targets <- function(command, tt_input, value) {
-  if (!is.language(command)) return(character())
 
-  vars <- all.vars(command)
-  vars <- vars[vars %in% names(tt_input)]
 
-  Filter(
-    function(v) isTRUE(tt_input[[v]]$iterate %in% value),
-    vars
-  )
-}
-
-build_pattern = function(other_arguments_to_map = c()){
+build_pattern = function(other_arguments_to_map = c(), pattern_type = "map"){
 
   if(other_arguments_to_map |> length() == 0) return(NULL)
 
-  as.call(c(as.name("map"), other_arguments_to_map |> lapply(as.name)))
+  fn <- if (identical(pattern_type, "cross")) as.name("cross") else as.name("map")
+  as.call(c(fn, other_arguments_to_map |> lapply(as.name)))
 
 }
 
+#' Append source("path") to the target script
+#'
+#' Workers need functions that live in a user script, not in the pipeline
+#' object. This writes `source(<path>)` into `{store}.R` so that file is
+#' loaded before later targets run. `NULL` is a no-op (nothing to source).
+#'
+#' @param user_function_source_path Character path to an R script, or `NULL`.
+#' @param target_script Path to the `{targets}` script (`{store}.R`).
+#' @noRd
 write_source = function(user_function_source_path, target_script){
   if(user_function_source_path |> is.null() |> not())
     

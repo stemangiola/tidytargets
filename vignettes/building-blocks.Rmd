@@ -44,7 +44,7 @@ This vignette walks through every building block and prints the targets script a
 | `tt_report()` | Render a Quarto / R Markdown report |
 | `tt_evaluate()` | Close the script and run `tar_make()` |
 | `tt_explore()` | Return one stored instance of a named target |
-| `tt_factory()` | Internal factory used by iterate / single / merge |
+| `tt_factory()` | Internal factory used by iterate / summarise / merge |
 
 `tt_factory()` is not meant to be called directly. `tt_single()`, `tt_iterate()`, and `tt_merge()` all append `target_list <- target_list |> target_append(tt_factory(...))` to the script.
 
@@ -109,18 +109,18 @@ show_targets_script(pipe)
 
 ## `tt_single()`
 
-This command add an operation on a whole target (not iterative/grouped)
+This command adds an operation on a whole target (not iterative/grouped).
 
-```{r single}
+```{r summarise}
 pipe <- pipe |>
   tt_single(n_samples <- length(sample_names))
 ```
 
-```{r single-script, comment = ""}
+```{r summarise-script, comment = ""}
 show_targets_script(pipe)
 ```
 
-`tt_initialise()` itself uses `tt_single()` for the `*_file` targets (`format = "file"`).
+Mapped lists from `tt_initialise()` and `tt_data_list()` are registered as stem list targets (no `map()` in the script) and marked as units for later `tt_iterate()`. File-tracking targets are stems too.
 
 ## `tt_iterate()`
 
@@ -145,6 +145,8 @@ pipe <- pipe |>
 ```{r iterate-length-script, comment = ""}
 show_targets_script(pipe)
 ```
+
+With two mapped inputs, `tt_iterate()` uses `map()` when they have the same length and `cross()` when they do not (`pattern = "auto"`). Length-1 lists do not decide the pattern. Pass `pattern = "map"` or `"cross"` to force a pattern.
 
 ## `tt_evaluate()`
 

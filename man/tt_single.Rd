@@ -4,14 +4,13 @@
 \alias{tt_single}
 \alias{tt_single.default}
 \alias{tt_single.tidytargets}
-\title{Add a Single (Non-Iterated) Step to the tidytargets Pipeline}
+\title{Add a Summarising (Non-Iterated) Step to the tidytargets Pipeline}
 \usage{
 tt_single(
   tt_input,
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
-  iterate = "none",
   ...
 )
 
@@ -20,7 +19,6 @@ tt_single(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
-  iterate = "none",
   ...
 )
 
@@ -29,7 +27,6 @@ tt_single(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
-  iterate = "none",
   ...
 )
 }
@@ -48,13 +45,12 @@ assignment; use \verb{<-}.}
 \item{user_function_source_path}{Optional character path to an R script to
 source in the worker before evaluating \code{command}. \code{NULL} sources nothing.}
 
-\item{iterate}{Iteration mode string stored on the pipeline object. \code{"none"}
-disables iteration; \code{"map"} marks the result as mapped for later steps.}
-
 \item{...}{Additional factory arguments such as \code{format}, \code{deployment},
 or \code{packages}.}
 }
 \description{
-Appends a single, non-parallelised targets step to the tidytargets pipeline script.
-Use \code{tt_iterate()} instead when the step should be mapped over all samples.
+Appends one non-iterated targets step: a whole object in, a single object
+out. Use \code{\link[=tt_iterate]{tt_iterate()}} when the step should be mapped or crossed over
+units. Use \code{\link[=tt_data_list]{tt_data_list()}} (not this function) to bring in a list of
+units.
 }
