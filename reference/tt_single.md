@@ -1,9 +1,11 @@
-# Add a Single (Non-Iterated) Step to the tidytargets Pipeline
+# Add a Summarising (Non-Iterated) Step to the tidytargets Pipeline
 
-Appends a single, non-parallelised targets step to the tidytargets
-pipeline script. Use
+Appends one non-iterated targets step: a whole object in, a single
+object out. Use
 [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)
-instead when the step should be mapped over all samples.
+when the step should be mapped or crossed over units. Use
+[`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)
+(not this function) to bring in a list of units.
 
 ## Usage
 
@@ -13,7 +15,6 @@ tt_single(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
-  iterate = "none",
   ...
 )
 
@@ -23,7 +24,6 @@ tt_single(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
-  iterate = "none",
   ...
 )
 
@@ -33,7 +33,6 @@ tt_single(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
-  iterate = "none",
   ...
 )
 ```
@@ -61,11 +60,6 @@ tt_single(
 
   Optional character path to an R script to source in the worker before
   evaluating `command`. `NULL` sources nothing.
-
-- iterate:
-
-  Iteration mode string stored on the pipeline object. `"none"` disables
-  iteration; `"map"` marks the result as mapped for later steps.
 
 - ...:
 

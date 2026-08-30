@@ -11,13 +11,13 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/stemangiola/tidytargets/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/stemangiola/tidytargets/blob/fix-gh-actions/DESCRIPTION)
 
 Mangiola S, Si J, Shen M (2026). *tidytargets: Tidy Pipe-Friendly
-Grammar for R Targets Pipelines*. R package version 0.0.6,
+Grammar for R Targets Pipelines*. R package version 0.0.7,
 <https://stemangiola.github.io/tidytargets/>.
 
 @Manual{, title = {tidytargets: Tidy Pipe-Friendly Grammar for R Targets
 Pipelines}, author = {Stefano Mangiola and Jiayi Si and Mengyuan Shen},
-year = {2026}, note = {R package version 0.0.6}, url =
+year = {2026}, note = {R package version 0.0.7}, url =
 {https://stemangiola.github.io/tidytargets/}, }

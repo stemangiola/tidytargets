@@ -10,6 +10,7 @@ tt_factory(
   command,
   target_output,
   other_arguments_to_map = c(),
+  pattern_type = "map",
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
   format = targets::tar_option_get("format"),
@@ -30,7 +31,13 @@ tt_factory(
 
 - other_arguments_to_map:
 
-  Character vector of target names that should be mapped over.
+  Character vector of target names that should be mapped or crossed
+  over.
+
+- pattern_type:
+
+  `"map"` (one branch per tuple) or `"cross"` (one branch per
+  combination).
 
 - packages:
 

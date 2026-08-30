@@ -13,6 +13,7 @@ tt_iterate(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
+  pattern = c("map", "cross"),
   ...
 )
 
@@ -22,6 +23,7 @@ tt_iterate(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
+  pattern = c("map", "cross"),
   ...
 )
 
@@ -31,6 +33,7 @@ tt_iterate(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
+  pattern = c("map", "cross"),
   ...
 )
 ```
@@ -46,9 +49,10 @@ tt_iterate(
   An unevaluated expression. Write `name <- expr` to name the target
   from the assignment (`tt_iterate(fit <- lm(y ~ x))`). `{targets}`
   tracks dependencies from global symbols in the command (the right-hand
-  side if you used `<-`). Mapped targets referenced here also set the
-  iteration pattern. `=` inside the call is argument matching, not
-  assignment; use `<-`.
+  side if you used `<-`), using the same static analysis as `{targets}`
+  (`$column` is not a dependency). Mapped targets referenced here also
+  set the iteration pattern. `=` inside the call is argument matching,
+  not assignment; use `<-`.
 
 - target_output:
 
@@ -59,6 +63,14 @@ tt_iterate(
 
   Optional character path to an R script that should be sourced in the
   worker before evaluating `command`. `NULL` sources nothing.
+
+- pattern:
+
+  `"map"` (the default) or `"cross"`. `"map"` pairs mapped inputs of
+  equal length and omits length-1 names from the pattern. Unequal sizes
+  (ignoring length-1 lists) error; pass `"cross"` for a product of
+  branches. With two or more mapped inputs, the chosen pattern is
+  messaged; `cross()` names the targets being crossed.
 
 - ...:
 

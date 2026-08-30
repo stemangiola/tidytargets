@@ -11,7 +11,7 @@ targets, as well as a custom user function to be applied."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@ targets, as well as a custom user function to be applied."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Add HPC step to pipeline</h1>
-      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/main/R/tt_iterate.R" class="external-link"><code>R/tt_iterate.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/fix-gh-actions/R/tt_iterate.R" class="external-link"><code>R/tt_iterate.R</code></a></small>
       <div class="d-none name"><code>tt_iterate.Rd</code></div>
     </div>
 
@@ -54,6 +54,7 @@ targets, as well as a custom user function to be applied.</p>
 <span>  command <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user_function_source_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  pattern <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"map"</span>, <span class="st">"cross"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -63,6 +64,7 @@ targets, as well as a custom user function to be applied.</p>
 <span>  command <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user_function_source_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  pattern <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"map"</span>, <span class="st">"cross"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -72,6 +74,7 @@ targets, as well as a custom user function to be applied.</p>
 <span>  command <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  target_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  user_function_source_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  pattern <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"map"</span>, <span class="st">"cross"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -88,7 +91,8 @@ targets, as well as a custom user function to be applied.</p>
 <dd><p>An unevaluated expression. Write <code>name &lt;- expr</code> to name the
 target from the assignment (<code>tt_iterate(fit &lt;- lm(y ~ x))</code>). <code>{targets}</code>
 tracks dependencies from global symbols in the command (the right-hand
-side if you used <code>&lt;-</code>). Mapped targets referenced here also set the
+side if you used <code>&lt;-</code>), using the same static analysis as <code>{targets}</code>
+(<code>$column</code> is not a dependency). Mapped targets referenced here also set the
 iteration pattern. <code>=</code> inside the call is argument matching, not
 assignment; use <code>&lt;-</code>.</p></dd>
 
@@ -102,6 +106,15 @@ assignment; use <code>&lt;-</code>.</p></dd>
 <dd><p>Optional character path to an R script that
 should be sourced in the worker before evaluating <code>command</code>. <code>NULL</code>
 sources nothing.</p></dd>
+
+
+<dt id="arg-pattern">pattern<a class="anchor" aria-label="anchor" href="#arg-pattern"></a></dt>
+<dd><p><code>"map"</code> (the default) or <code>"cross"</code>. <code>"map"</code> pairs
+mapped inputs of equal length and omits length-1 names from the
+pattern. Unequal sizes (ignoring length-1 lists) error; pass
+<code>"cross"</code> for a product of branches. With two or more mapped
+inputs, the chosen pattern is messaged; <code>cross()</code> names the
+targets being crossed.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

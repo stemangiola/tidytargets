@@ -36,4 +36,4 @@
 - [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md)
   : Add a Report Step to the tidytargets Pipeline
 - [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)
-  : Add a Single (Non-Iterated) Step to the tidytargets Pipeline
+  : Add a Summarising (Non-Iterated) Step to the tidytargets Pipeline

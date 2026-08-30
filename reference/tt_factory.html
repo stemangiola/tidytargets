@@ -9,7 +9,7 @@ tidytargets pipeline. Not intended to be called by end users directly."></head><
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,7 @@ tidytargets pipeline. Not intended to be called by end users directly."></head><
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Internal Factory for Iterating Targets</h1>
-      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/main/R/tt_factory.R" class="external-link"><code>R/tt_factory.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/fix-gh-actions/R/tt_factory.R" class="external-link"><code>R/tt_factory.R</code></a></small>
       <div class="d-none name"><code>tt_factory.Rd</code></div>
     </div>
 
@@ -50,6 +50,7 @@ tidytargets pipeline. Not intended to be called by end users directly.</p>
 <span>  <span class="va">command</span>,</span>
 <span>  <span class="va">target_output</span>,</span>
 <span>  other_arguments_to_map <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  pattern_type <span class="op">=</span> <span class="st">"map"</span>,</span>
 <span>  packages <span class="op">=</span> <span class="fu">targets</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/targets/reference/tar_option_get.html" class="external-link">tar_option_get</a></span><span class="op">(</span><span class="st">"packages"</span><span class="op">)</span>,</span>
 <span>  deployment <span class="op">=</span> <span class="fu">targets</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/targets/reference/tar_option_get.html" class="external-link">tar_option_get</a></span><span class="op">(</span><span class="st">"deployment"</span><span class="op">)</span>,</span>
 <span>  format <span class="op">=</span> <span class="fu">targets</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/targets/reference/tar_option_get.html" class="external-link">tar_option_get</a></span><span class="op">(</span><span class="st">"format"</span><span class="op">)</span>,</span>
@@ -72,7 +73,12 @@ tidytargets pipeline. Not intended to be called by end users directly.</p>
 
 <dt id="arg-other-arguments-to-map">other_arguments_to_map<a class="anchor" aria-label="anchor" href="#arg-other-arguments-to-map"></a></dt>
 <dd><p>Character vector of target names that should
-be mapped over.</p></dd>
+be mapped or crossed over.</p></dd>
+
+
+<dt id="arg-pattern-type">pattern_type<a class="anchor" aria-label="anchor" href="#arg-pattern-type"></a></dt>
+<dd><p><code>"map"</code> (one branch per tuple) or <code>"cross"</code> (one branch
+per combination).</p></dd>
 
 
 <dt id="arg-packages">packages<a class="anchor" aria-label="anchor" href="#arg-packages"></a></dt>

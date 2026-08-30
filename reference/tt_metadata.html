@@ -25,7 +25,7 @@ them in the command expression of tt_iterate() or tt_single()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ them in the command expression of tt_iterate() or tt_single()."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Get or Set Free-Form Metadata on a tidytargets Object</h1>
-      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/main/R/tt_metadata.R" class="external-link"><code>R/tt_metadata.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/fix-gh-actions/R/tt_metadata.R" class="external-link"><code>R/tt_metadata.R</code></a></small>
       <div class="d-none name"><code>tt_metadata.Rd</code></div>
     </div>
 
@@ -107,8 +107,7 @@ passed to <code>target_output</code>.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">pipeline</span> <span class="op">&lt;-</span> <span class="va">files</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="tt_initialise.html">tt_initialise</a></span><span class="op">(</span>store <span class="op">=</span> <span class="st">"store"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="va">pipeline</span> <span class="op">&lt;-</span> <span class="fu"><a href="tt_initialise.html">tt_initialise</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">tt_metadata</span><span class="op">(</span>api_url <span class="op">=</span> <span class="st">"https://api.example.org"</span>, api_version <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">pipeline</span> <span class="op">|&gt;</span> <span class="fu">tt_metadata</span><span class="op">(</span><span class="op">)</span></span></span>
