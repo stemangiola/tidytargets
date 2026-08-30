@@ -11,7 +11,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/stemangiola/tidytargets/blob/change-internal-data-structure/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/stemangiola/tidytargets/blob/main/DESCRIPTION)
 
 Mangiola S, Si J, Shen M (2026). *tidytargets: Tidy Pipe-Friendly
 Grammar for R Targets Pipelines*. R package version 0.0.8,
