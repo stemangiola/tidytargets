@@ -19,7 +19,8 @@ tt_import_list(tt_input, x, target_output = NULL)
 \code{dplyr::group_split()}). Each element becomes one mapped unit.}
 
 \item{target_output}{Character name of the mapped target. \code{NULL} (the
-default) uses the symbol supplied as \code{x}.}
+default) uses the symbol supplied as \code{x}, or the left-hand side of
+\code{x <- value}.}
 }
 \value{
 The updated \code{tidytargets} object.
@@ -32,21 +33,19 @@ analogue of passing a named list to \code{\link[=tt_initialise]{tt_initialise()}
 elements.
 
 Typical use is a parameter grid split into rows, e.g.
-\code{tt_import_list(pipeline, grid |> split(seq_len(nrow(grid))), target_output = "settings")}
+\code{tt_import_list(settings <- grid |> split(seq_len(nrow(grid))))}
 or \code{dplyr::group_split()}. Unnamed lists are named with integer indices,
 the same way \code{\link[=tt_initialise]{tt_initialise()}} names unnamed inputs.
 
-If \code{target_output} is omitted, the name of \code{x} is used. An inline
+If \code{target_output} is omitted, the name of \code{x} is used, or the left-hand
+side of an assignment (\code{tt_import_list(settings <- rows)}). An inline
 expression such as \code{grid |> group_split(row_number())} is not a name, so
-\code{target_output} must be supplied.
+name it with \verb{<-} or pass \code{target_output}.
 }
 \examples{
 \dontrun{
 grid <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
 pipeline <- tt_initialise(store = "store") |>
-  tt_import_list(
-    grid |> split(seq_len(nrow(grid))),
-    target_output = "settings"
-  )
+  tt_import_list(settings <- grid |> split(seq_len(nrow(grid))))
 }
 }

@@ -5,9 +5,13 @@
 #' upstream targets into a single aggregate object.
 #'
 #' @param tt_input A `tidytargets` object.
-#' @param command An unevaluated expression. `{targets}` tracks dependencies from
-#'   global symbols in this expression (including upstream target names).
-#' @param target_output Character name of the output target.
+#' @param command An unevaluated expression. Write `name <- expr` to name the
+#'   target from the assignment (`tt_merge(total <- sum(unlist(n)))`).
+#'   `{targets}` tracks dependencies from global symbols in the command (the
+#'   right-hand side if you used `<-`). `=` inside the call is argument
+#'   matching, not assignment; use `<-`.
+#' @param target_output Character name of the output target. Optional if
+#'   `command` is `name <- expr`.
 #' @param user_function_source_path Optional character path to an R script to
 #'   source in the worker before evaluating `command`. `NULL` sources nothing.
 #' @param ... Additional factory arguments such as `format`, `deployment`,
@@ -49,8 +53,10 @@ tt_merge.tidytargets <- function(
 ) {
     
     command <- substitute(command)
-
-    require_target_output(target_output)
+    resolved <- parse_command(command, target_output)
+    command <- resolved$command
+    target_output <- resolved$target_output
+    rm(resolved)
     
     # Target script
     target_script = glue("{tt_input$initialisation$store}.R")

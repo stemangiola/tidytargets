@@ -18,7 +18,7 @@ tt_import(tt_input, x, target_output = NULL)
 \item{x}{Object in the current session to snapshot into the store.}
 
 \item{target_output}{Character name of the target. \code{NULL} (the default) uses
-the symbol supplied as \code{x}.}
+the symbol supplied as \code{x}, or the left-hand side of \code{x <- value}.}
 }
 \value{
 The updated \code{tidytargets} object.
@@ -36,7 +36,8 @@ dependency. A local variable mentioned only in \code{command} is not imported;
 use this function for that.
 
 If \code{target_output} is omitted, the name of \code{x} is used
-(\code{tt_import(pipeline, airway)} registers \code{"airway"}).
+(\code{tt_import(pipeline, airway)} registers \code{"airway"}), or the left-hand
+side of an assignment (\code{tt_import(pipeline, airway <- se)}).
 
 For a list of units to map over (for example each row of a parameter grid),
 use \code{\link[=tt_import_list]{tt_import_list()}} instead.

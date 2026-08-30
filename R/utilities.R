@@ -17,17 +17,6 @@ stop_if_not_tidytargets <- function() {
   )
 }
 
-require_target_output <- function(target_output) {
-  if (length(target_output) != 1L || !is.character(target_output) ||
-      is.na(target_output) || !nzchar(target_output)) {
-    stop(
-      "tidytargets says: please supply target_output as a string, ",
-      "e.g. target_output = \"fit\".",
-      call. = FALSE
-    )
-  }
-}
-
 # Negation
 not = function(is){	!is }
 

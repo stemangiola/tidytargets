@@ -5,10 +5,14 @@
 #' targets, as well as a custom user function to be applied.
 #'
 #' @param tt_input A `tidytargets` object.
-#' @param command An unevaluated expression. `{targets}` tracks dependencies from
-#'   global symbols in this expression (including upstream target names). Mapped
-#'   targets referenced here also set the iteration pattern.
-#' @param target_output Character name of the output target.
+#' @param command An unevaluated expression. Write `name <- expr` to name the
+#'   target from the assignment (`tt_iterate(fit <- lm(y ~ x))`). `{targets}`
+#'   tracks dependencies from global symbols in the command (the right-hand
+#'   side if you used `<-`). Mapped targets referenced here also set the
+#'   iteration pattern. `=` inside the call is argument matching, not
+#'   assignment; use `<-`.
+#' @param target_output Character name of the output target. Optional if
+#'   `command` is `name <- expr`.
 #' @param user_function_source_path Optional character path to an R script that
 #'   should be sourced in the worker before evaluating `command`. `NULL`
 #'   sources nothing.
@@ -51,8 +55,10 @@ tt_iterate.tidytargets <- function(
 ) {
     
     command <- substitute(command)
-
-    require_target_output(target_output)
+    resolved <- parse_command(command, target_output)
+    command <- resolved$command
+    target_output <- resolved$target_output
+    rm(resolved)
     
     # Target script
     target_script = glue("{tt_input$initialisation$store}.R")

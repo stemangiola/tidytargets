@@ -84,7 +84,7 @@ Write a local object onto the store as a single target. Unlike `tt_initialise()`
 ```{r import}
 extra <- list(label = "demo")
 pipe <- pipe |>
-  tt_import(extra, target_output = "extra")
+  tt_import(extra)
 ```
 
 ```{r import-script, comment = ""}
@@ -93,15 +93,12 @@ show_targets_script(pipe)
 
 ## `tt_import_list()`
 
-Same snapshot, but each list element is a mapped unit. Use this for a parameter grid split into rows (`split()`, or `dplyr::group_split()`). Because the value is an expression, not a name, `target_output` is required.
+Same snapshot, but each list element is a mapped unit. Use this for a parameter grid split into rows (`split()`, or `dplyr::group_split()`). Name an inline expression with `<-`, or pass `target_output`.
 
 ```{r import-list}
 grid <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
 pipe <- pipe |>
-  tt_import_list(
-    grid |> split(seq_len(nrow(grid))),
-    target_output = "settings"
-  )
+  tt_import_list(settings <- grid |> split(seq_len(nrow(grid))))
 ```
 
 ```{r import-list-script, comment = ""}
@@ -114,10 +111,7 @@ This command add an operation on a whole target (not iterative/grouped)
 
 ```{r single}
 pipe <- pipe |>
-  tt_single(
-    command = length(sample_names),
-    target_output = "n_samples"
-  )
+  tt_single(n_samples <- length(sample_names))
 ```
 
 ```{r single-script, comment = ""}
@@ -128,14 +122,11 @@ show_targets_script(pipe)
 
 ## `tt_iterate()`
 
-Map a function over every input. Write `command` as you would in `tar_target()`.
+Map a function over every input. Write `name <- expr` as you would a `tar_target()` command (`target_output = "name"` still works).
 
 ```{r iterate-read}
 pipe <- pipe |>
-  tt_iterate(
-    command = input_list * 2,
-    target_output = "data"
-  )
+  tt_iterate(data <- input_list * 2)
 ```
 
 ```{r iterate-read-script, comment = ""}
@@ -146,10 +137,7 @@ A second iterate maps over the result of the first:
 
 ```{r iterate-length}
 pipe <- pipe |>
-  tt_iterate(
-    command = length(data),
-    target_output = "n"
-  )
+  tt_iterate(n <- length(data))
 ```
 
 ```{r iterate-length-script, comment = ""}
@@ -176,10 +164,7 @@ Collect every branch of an iterated target into one object.
 
 ```{r merge}
 pipe <- pipe |>
-  tt_merge(
-    command = sum(unlist(n)),
-    target_output = "n_total"
-  )
+  tt_merge(n_total <- sum(unlist(n)))
 ```
 
 ```{r merge-script, comment = ""}
@@ -227,8 +212,7 @@ show_targets_script(pipe)
 ```{r source-path, eval = FALSE}
 pipe |>
   tt_iterate(
-    command = my_transform(data),
-    target_output = "transformed",
+    transformed <- my_transform(data),
     user_function_source_path = "helpers.R"
   )
 ```

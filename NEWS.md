@@ -1,6 +1,15 @@
 # tidytargets NEWS
 
 
+## tidytargets 0.0.5
+
+* Version numbering corrected to pre-alpha `0.0.x` (this release was
+  previously labelled `0.4.0`).
+* `tt_iterate()`, `tt_single()`, `tt_merge()`, `tt_import()`, and
+  `tt_import_list()` accept `name <- expr` to set the target name from the
+  assignment (`tt_iterate(fit <- lm(y ~ x))`). `target_output = "fit"` still
+  works. `=` inside the call is argument matching, not assignment.
+
 ## tidytargets 0.4.0
 
 * `tt_iterate()`, `tt_single()`, `tt_merge()`, and `tt_factory()` take

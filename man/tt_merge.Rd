@@ -33,10 +33,14 @@ tt_merge(
 \arguments{
 \item{tt_input}{A \code{tidytargets} object.}
 
-\item{command}{An unevaluated expression. \code{{targets}} tracks dependencies from
-global symbols in this expression (including upstream target names).}
+\item{command}{An unevaluated expression. Write \code{name <- expr} to name the
+target from the assignment (\code{tt_merge(total <- sum(unlist(n)))}).
+\code{{targets}} tracks dependencies from global symbols in the command (the
+right-hand side if you used \verb{<-}). \code{=} inside the call is argument
+matching, not assignment; use \verb{<-}.}
 
-\item{target_output}{Character name of the output target.}
+\item{target_output}{Character name of the output target. Optional if
+\code{command} is \code{name <- expr}.}
 
 \item{user_function_source_path}{Optional character path to an R script to
 source in the worker before evaluating \code{command}. \code{NULL} sources nothing.}

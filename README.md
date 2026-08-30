@@ -20,7 +20,7 @@ vignette("building-blocks", package = "tidytargets")
 
 ## A minimal pipeline
 
-`tt_initialise()` can start a pipeline with no inputs. Pass a named list (or file paths) to register mapped units, or call it with only `store` / `computing_resources` and bring objects in with `tt_import()`. Pass a `command` expression the same way you would to `tar_target()`; `{targets}` tracks upstream names in that expression. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
+`tt_initialise()` can start a pipeline with no inputs. Pass a named list (or file paths) to register mapped units, or call it with only `store` / `computing_resources` and bring objects in with `tt_import()`. Write `name <- expr` to name the target from the assignment, the same way you would write a `tar_target()` command; `{targets}` tracks upstream names in that expression. `target_output = "name"` still works. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
 
 ``` r
 library(tidytargets)
@@ -34,14 +34,8 @@ saveRDS(4:6, files[["sample_b"]])
 
 files |>
   tt_initialise(store = "_targets") |>
-  tt_iterate(
-    command = readRDS(input_list),
-    target_output = "data"
-  ) |>
-  tt_iterate(
-    command = summary(data),
-    target_output = "summaries"
-  ) |>
+  tt_iterate(data <- readRDS(input_list)) |>
+  tt_iterate(summaries <- summary(data)) |>
   tt_evaluate()
 ```
 ```

@@ -202,6 +202,80 @@ test_that("grammar steps require a target_output name", {
   expect_error(tt_merge(pipe, command = 1), "target_output")
 })
 
+test_that("<- names the target and peels the command", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  files <- c(sample_a = file.path(tmp, "a.rds"))
+  saveRDS(1:3, files[[1]])
+
+  store <- file.path(tmp, "store")
+  hpc <- files |>
+    tt_initialise(store = store) |>
+    tt_iterate(data <- readRDS(input_list)) |>
+    tt_single(n_inputs <- length(sample_names)) |>
+    tt_merge(n_total <- sum(unlist(n_inputs)))
+
+  expect_true("data" %in% names(hpc))
+  expect_equal(hpc$data$iterate, "map")
+  expect_equal(hpc$data$command, quote(readRDS(input_list)))
+  expect_true("n_inputs" %in% names(hpc))
+  expect_equal(hpc$n_inputs$iterate, "none")
+  expect_equal(hpc$n_inputs$command, quote(length(sample_names)))
+  expect_true("n_total" %in% names(hpc))
+  expect_equal(hpc$n_total$command, quote(sum(unlist(n_inputs))))
+
+  script <- readLines(paste0(store, ".R"))
+  expect_true(any(grepl("target_output = \"data\"", script)))
+  expect_true(any(grepl("quote\\(readRDS\\(input_list\\)\\)", script)))
+  expect_false(any(grepl("data <- readRDS", script)))
+  expect_true(any(grepl("other_arguments_to_map = \"input_list\"", script)))
+
+  tt_evaluate(hpc)
+  expect_equal(
+    unname(targets::tar_read(data, store = store)[[1]]),
+    1:3
+  )
+})
+
+test_that("<- and target_output must name the same target", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  pipe <- tt_initialise(store = file.path(tmp, "store"))
+  expect_no_error(tt_iterate(pipe, data <- 1, target_output = "data"))
+  expect_error(
+    tt_iterate(pipe, data <- 1, target_output = "other"),
+    "different targets"
+  )
+  expect_error(
+    tidytargets:::peel_assignment(quote(`<-`(foo$bar, 1))),
+    "left-hand side"
+  )
+})
+
+test_that("tt_import_list names the target from <-", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  pipe <- tt_initialise(store = file.path(tmp, "store")) |>
+    tt_import_list(method_grid <- list(a = 1, b = 2))
+
+  expect_true("method_grid" %in% names(pipe))
+  expect_equal(pipe$method_grid$iterate, "map")
+  expect_false(exists("method_grid", inherits = FALSE))
+  expect_equal(
+    names(qs2::qs_read(file.path(pipe$initialisation$store, "method_grid_import.qs"))),
+    c("a", "b")
+  )
+})
+
 test_that("tt_metadata reads, writes and survives pipeline steps", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)

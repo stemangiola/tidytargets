@@ -33,11 +33,15 @@ tt_iterate(
 \arguments{
 \item{tt_input}{A \code{tidytargets} object.}
 
-\item{command}{An unevaluated expression. \code{{targets}} tracks dependencies from
-global symbols in this expression (including upstream target names). Mapped
-targets referenced here also set the iteration pattern.}
+\item{command}{An unevaluated expression. Write \code{name <- expr} to name the
+target from the assignment (\code{tt_iterate(fit <- lm(y ~ x))}). \code{{targets}}
+tracks dependencies from global symbols in the command (the right-hand
+side if you used \verb{<-}). Mapped targets referenced here also set the
+iteration pattern. \code{=} inside the call is argument matching, not
+assignment; use \verb{<-}.}
 
-\item{target_output}{Character name of the output target.}
+\item{target_output}{Character name of the output target. Optional if
+\code{command} is \code{name <- expr}.}
 
 \item{user_function_source_path}{Optional character path to an R script that
 should be sourced in the worker before evaluating \code{command}. \code{NULL}
