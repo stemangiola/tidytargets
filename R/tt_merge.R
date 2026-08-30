@@ -61,9 +61,6 @@ tt_merge.tidytargets <- function(
     # Target script
     target_script = glue("{tt_input$initialisation$store}.R")
     
-    # Delete line with target in case the user execute the command, without calling tt_initialise
-    target_output |>  delete_lines_with_word(target_script)
-    
     # Append source if any
     write_source(user_function_source_path, target_script)
 

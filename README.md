@@ -75,7 +75,7 @@ targets::tar_read(summaries, store = "_targets")
 | `tt_initialise()` | Start a pipeline: store, optional mapped inputs |
 | `tt_data()` | Snapshot a session object onto the store as one target |
 | `tt_data_list()` | Snapshot a list onto the store as mapped units |
-| `tt_iterate()` | Map a function over inputs |
+| `tt_iterate()` | Map or cross a function over mapped inputs |
 | `tt_single()` | Add one non-iterated target |
 | `tt_merge()` | Combine iterated results into one object |
 | `tt_report()` | Render a Quarto / R Markdown report |

@@ -11,6 +11,7 @@ tt_iterate(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
+  pattern = c("map", "cross"),
   ...
 )
 
@@ -19,6 +20,7 @@ tt_iterate(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
+  pattern = c("map", "cross"),
   ...
 )
 
@@ -27,6 +29,7 @@ tt_iterate(
   command = NULL,
   target_output = NULL,
   user_function_source_path = NULL,
+  pattern = c("map", "cross"),
   ...
 )
 }
@@ -36,7 +39,8 @@ tt_iterate(
 \item{command}{An unevaluated expression. Write \code{name <- expr} to name the
 target from the assignment (\code{tt_iterate(fit <- lm(y ~ x))}). \code{{targets}}
 tracks dependencies from global symbols in the command (the right-hand
-side if you used \verb{<-}). Mapped targets referenced here also set the
+side if you used \verb{<-}), using the same static analysis as \code{{targets}}
+(\verb{$column} is not a dependency). Mapped targets referenced here also set the
 iteration pattern. \code{=} inside the call is argument matching, not
 assignment; use \verb{<-}.}
 
@@ -46,6 +50,13 @@ assignment; use \verb{<-}.}
 \item{user_function_source_path}{Optional character path to an R script that
 should be sourced in the worker before evaluating \code{command}. \code{NULL}
 sources nothing.}
+
+\item{pattern}{\code{"map"} (the default) or \code{"cross"}. \code{"map"} pairs
+mapped inputs of equal length and omits length-1 names from the
+pattern. Unequal sizes (ignoring length-1 lists) error; pass
+\code{"cross"} for a product of branches. With two or more mapped
+inputs, the chosen pattern is messaged; \code{cross()} names the
+targets being crossed.}
 
 \item{...}{Additional factory arguments such as \code{format}, \code{deployment},
 or \code{packages}.}

@@ -8,6 +8,7 @@ tt_factory(
   command,
   target_output,
   other_arguments_to_map = c(),
+  pattern_type = "map",
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
   format = targets::tar_option_get("format"),
@@ -21,7 +22,10 @@ tt_factory(
 \item{target_output}{Character name of the output target.}
 
 \item{other_arguments_to_map}{Character vector of target names that should
-be mapped over.}
+be mapped or crossed over.}
+
+\item{pattern_type}{\code{"map"} (one branch per tuple) or \code{"cross"} (one branch
+per combination).}
 
 \item{packages}{Character vector of R packages to load in the worker.}
 

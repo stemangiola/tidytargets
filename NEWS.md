@@ -1,6 +1,17 @@
 # tidytargets NEWS
 
 
+## tidytargets 0.0.7
+
+* `tt_iterate()` uses `{targets}` `map()` by default when a command
+  mentions more than one mapped input (`tt_data_list()`, mapped
+  `tt_initialise()` inputs, or a previous iterate). Length-1 lists are
+  omitted from `map()` and ignored when checking equal sizes. Unequal
+  sizes error; pass `pattern = "cross"` for a product of branches.
+* `tt_single()` is renamed `tt_single()`. It no longer takes `iterate`
+  or `n_units`. `tt_data_list()` and mapped `tt_initialise()` inputs register
+  list units themselves rather than through `tt_single()`.
+
 ## tidytargets 0.0.6
 
 * `tt_import()` and `tt_import_list()` are renamed `tt_data()` and

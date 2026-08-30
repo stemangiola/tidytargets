@@ -1,8 +1,10 @@
-#' Add a Single (Non-Iterated) Step to the tidytargets Pipeline
+#' Add a Summarising (Non-Iterated) Step to the tidytargets Pipeline
 #'
 #' @description
-#' Appends a single, non-parallelised targets step to the tidytargets pipeline script.
-#' Use `tt_iterate()` instead when the step should be mapped over all samples.
+#' Appends one non-iterated targets step: a whole object in, a single object
+#' out. Use [tt_iterate()] when the step should be mapped or crossed over
+#' units. Use [tt_data_list()] (not this function) to bring in a list of
+#' units.
 #'
 #' @param tt_input A `tidytargets` object.
 #' @param command An unevaluated expression. Write `name <- expr` to name the
@@ -14,8 +16,6 @@
 #'   `command` is `name <- expr`.
 #' @param user_function_source_path Optional character path to an R script to
 #'   source in the worker before evaluating `command`. `NULL` sources nothing.
-#' @param iterate Iteration mode string stored on the pipeline object. `"none"`
-#'   disables iteration; `"map"` marks the result as mapped for later steps.
 #' @param ... Additional factory arguments such as `format`, `deployment`,
 #'   or `packages`.
 #'
@@ -25,7 +25,6 @@ tt_single <- function(
     command = NULL,
     target_output = NULL,
     user_function_source_path = NULL,
-    iterate = "none",
     ...
 ) {
   UseMethod("tt_single")
@@ -38,58 +37,40 @@ tt_single.default <- function(
     command = NULL,
     target_output = NULL,
     user_function_source_path = NULL,
-    iterate = "none",
     ...
 ) {
   stop_if_not_tidytargets()
 }
 
 #' @rdname tt_single
-#' @importFrom glue glue
-#' @importFrom purrr set_names
 #' @export
 tt_single.tidytargets <- function(
     tt_input,
     command = NULL,
     target_output = NULL,
     user_function_source_path = NULL,
-    iterate = "none",
     ...
 ) {
-    
-    command <- substitute(command)
-    resolved <- parse_command(command, target_output)
-    command <- resolved$command
-    target_output <- resolved$target_output
-    rm(resolved)
-    
-    # Target script
-    target_script = glue("{tt_input$initialisation$store}.R")
-    
-    # Delete line with target in case the user execute the command, without calling tt_initialise
-    target_output |>  delete_lines_with_word(target_script)
-    
-    # Append source if any
-    write_source(user_function_source_path, target_script)
-    
-    
-    tar_append(
-      fx = tt_factory |> quote(),
-      command = wrap_quote(command),
-      target_output = target_output,
-      script = target_script,
-      ...
-    )
-    
-    # Add pipeline step
-    tt_input |>
-      c(
-        as.list(environment())[-1] |> 
-          c(list(iterate = iterate)) |> 
-          list() |> 
-          set_names(target_output)
-      ) |>
-      add_class("tidytargets")
-    
-    
-  }
+  command <- substitute(command)
+  resolved <- parse_command(command, target_output)
+  command <- resolved$command
+  target_output <- resolved$target_output
+
+  target_script <- paste0(tt_input$initialisation$store, ".R")
+  write_source(user_function_source_path, target_script)
+
+  tar_append(
+    fx = quote(tt_factory),
+    command = wrap_quote(command),
+    target_output = target_output,
+    script = target_script,
+    ...
+  )
+
+  tt_input |>
+    c(stats::setNames(
+      list(list(command = command, iterate = "none")),
+      target_output
+    )) |>
+    add_class("tidytargets")
+}
