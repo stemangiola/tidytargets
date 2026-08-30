@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@
 <div class="section level2">
 <h2 id="a-minimal-pipeline">A minimal pipeline<a class="anchor" aria-label="anchor" href="#a-minimal-pipeline"></a>
 </h2>
-<p><code><a href="reference/tt_initialise.html">tt_initialise()</a></code> can start a pipeline with no inputs. Pass a named list (or file paths) to register mapped units, or call it with only <code>store</code> / <code>computing_resources</code> and bring objects in with <code><a href="reference/tt_import.html">tt_import()</a></code>. Pass a <code>command</code> expression the same way you would to <code>tar_target()</code>; <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> tracks upstream names in that expression. With no <code>computing_resources</code>, the pipeline runs sequentially. With no <code>store</code>, a unique <code>./tidytargets-&lt;HASH&gt;</code> directory is created and printed.</p>
+<p><code><a href="reference/tt_initialise.html">tt_initialise()</a></code> can start a pipeline with no inputs. Pass a named list (or file paths) to register mapped units, or call it with only <code>store</code> / <code>computing_resources</code> and bring objects in with <code><a href="reference/tt_import.html">tt_import()</a></code>. Write <code>name &lt;- expr</code> to name the target from the assignment, the same way you would write a <code>tar_target()</code> command; <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> tracks upstream names in that expression. <code>target_output = "name"</code> still works. With no <code>computing_resources</code>, the pipeline runs sequentially. With no <code>store</code>, a unique <code>./tidytargets-&lt;HASH&gt;</code> directory is created and printed.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stemangiola.github.io/tidytargets/">tidytargets</a></span><span class="op">)</span></span>
 <span></span>
@@ -83,14 +83,8 @@
 <span></span>
 <span><span class="va">files</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_initialise.html">tt_initialise</a></span><span class="op">(</span>store <span class="op">=</span> <span class="st">"_targets"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/tt_iterate.html">tt_iterate</a></span><span class="op">(</span></span>
-<span>    command <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">input_list</span><span class="op">)</span>,</span>
-<span>    target_output <span class="op">=</span> <span class="st">"data"</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/tt_iterate.html">tt_iterate</a></span><span class="op">(</span></span>
-<span>    command <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>,</span>
-<span>    target_output <span class="op">=</span> <span class="st">"summaries"</span></span>
-<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/tt_iterate.html">tt_iterate</a></span><span class="op">(</span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="va">input_list</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/tt_iterate.html">tt_iterate</a></span><span class="op">(</span><span class="va">summaries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_evaluate.html">tt_evaluate</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; + input_list_file dispatched</span></span>
 <span><span class="co">#&gt; ✔ input_list_file completed [0ms, 97 B]</span></span>

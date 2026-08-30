@@ -41,12 +41,16 @@ tt_merge(
 
 - command:
 
-  An unevaluated expression. `{targets}` tracks dependencies from global
-  symbols in this expression (including upstream target names).
+  An unevaluated expression. Write `name <- expr` to name the target
+  from the assignment (`tt_merge(total <- sum(unlist(n)))`). `{targets}`
+  tracks dependencies from global symbols in the command (the right-hand
+  side if you used `<-`). `=` inside the call is argument matching, not
+  assignment; use `<-`.
 
 - target_output:
 
-  Character name of the output target.
+  Character name of the output target. Optional if `command` is
+  `name <- expr`.
 
 - user_function_source_path:
 

@@ -43,13 +43,17 @@ tt_iterate(
 
 - command:
 
-  An unevaluated expression. `{targets}` tracks dependencies from global
-  symbols in this expression (including upstream target names). Mapped
-  targets referenced here also set the iteration pattern.
+  An unevaluated expression. Write `name <- expr` to name the target
+  from the assignment (`tt_iterate(fit <- lm(y ~ x))`). `{targets}`
+  tracks dependencies from global symbols in the command (the right-hand
+  side if you used `<-`). Mapped targets referenced here also set the
+  iteration pattern. `=` inside the call is argument matching, not
+  assignment; use `<-`.
 
 - target_output:
 
-  Character name of the output target.
+  Character name of the output target. Optional if `command` is
+  `name <- expr`.
 
 - user_function_source_path:
 

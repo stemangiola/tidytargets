@@ -15,7 +15,8 @@ commands can use `target_output` as a dependency. A local variable
 mentioned only in `command` is not imported; use this function for that.
 
 If `target_output` is omitted, the name of `x` is used
-(`tt_import(pipeline, airway)` registers `"airway"`).
+(`tt_import(pipeline, airway)` registers `"airway"`), or the left-hand
+side of an assignment (`tt_import(pipeline, airway <- se)`).
 
 For a list of units to map over (for example each row of a parameter
 grid), use
@@ -48,7 +49,7 @@ tt_import(tt_input, x, target_output = NULL)
 - target_output:
 
   Character name of the target. `NULL` (the default) uses the symbol
-  supplied as `x`.
+  supplied as `x`, or the left-hand side of `x <- value`.
 
 ## Value
 

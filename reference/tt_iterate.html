@@ -11,7 +11,7 @@ targets, as well as a custom user function to be applied."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,13 +85,17 @@ targets, as well as a custom user function to be applied.</p>
 
 
 <dt id="arg-command">command<a class="anchor" aria-label="anchor" href="#arg-command"></a></dt>
-<dd><p>An unevaluated expression. <code>{targets}</code> tracks dependencies from
-global symbols in this expression (including upstream target names). Mapped
-targets referenced here also set the iteration pattern.</p></dd>
+<dd><p>An unevaluated expression. Write <code>name &lt;- expr</code> to name the
+target from the assignment (<code>tt_iterate(fit &lt;- lm(y ~ x))</code>). <code>{targets}</code>
+tracks dependencies from global symbols in the command (the right-hand
+side if you used <code>&lt;-</code>). Mapped targets referenced here also set the
+iteration pattern. <code>=</code> inside the call is argument matching, not
+assignment; use <code>&lt;-</code>.</p></dd>
 
 
 <dt id="arg-target-output">target_output<a class="anchor" aria-label="anchor" href="#arg-target-output"></a></dt>
-<dd><p>Character name of the output target.</p></dd>
+<dd><p>Character name of the output target. Optional if
+<code>command</code> is <code>name &lt;- expr</code>.</p></dd>
 
 
 <dt id="arg-user-function-source-path">user_function_source_path<a class="anchor" aria-label="anchor" href="#arg-user-function-source-path"></a></dt>

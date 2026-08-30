@@ -9,16 +9,16 @@ later
 steps that mention `target_output` are mapped over the elements.
 
 Typical use is a parameter grid split into rows, e.g.
-`tt_import_list(pipeline, grid |> split(seq_len(nrow(grid))), target_output = "settings")`
-or
+`tt_import_list(settings <- grid |> split(seq_len(nrow(grid))))` or
 [`dplyr::group_split()`](https://dplyr.tidyverse.org/reference/group_split.html).
 Unnamed lists are named with integer indices, the same way
 [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)
 names unnamed inputs.
 
-If `target_output` is omitted, the name of `x` is used. An inline
+If `target_output` is omitted, the name of `x` is used, or the left-hand
+side of an assignment (`tt_import_list(settings <- rows)`). An inline
 expression such as `grid |> group_split(row_number())` is not a name, so
-`target_output` must be supplied.
+name it with `<-` or pass `target_output`.
 
 ## Usage
 
@@ -48,7 +48,7 @@ tt_import_list(tt_input, x, target_output = NULL)
 - target_output:
 
   Character name of the mapped target. `NULL` (the default) uses the
-  symbol supplied as `x`.
+  symbol supplied as `x`, or the left-hand side of `x <- value`.
 
 ## Value
 
@@ -60,9 +60,6 @@ The updated `tidytargets` object.
 if (FALSE) { # \dontrun{
 grid <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
 pipeline <- tt_initialise(store = "store") |>
-  tt_import_list(
-    grid |> split(seq_len(nrow(grid))),
-    target_output = "settings"
-  )
+  tt_import_list(settings <- grid |> split(seq_len(nrow(grid))))
 } # }
 ```

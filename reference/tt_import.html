@@ -9,7 +9,8 @@ tt_single() / tt_iterate() commands can use target_output as a
 dependency. A local variable mentioned only in command is not imported;
 use this function for that.
 If target_output is omitted, the name of x is used
-(tt_import(pipeline, airway) registers "airway").
+(tt_import(pipeline, airway) registers "airway"), or the left-hand
+side of an assignment (tt_import(pipeline, airway &amp;lt;- se)).
 For a list of units to map over (for example each row of a parameter grid),
 use tt_import_list() instead.'><meta property="og:description" content='Snapshots an object from the current R session onto the pipeline store and
 registers it as a single (non-mapped) target. Unlike tt_initialise(), the
@@ -21,7 +22,8 @@ tt_single() / tt_iterate() commands can use target_output as a
 dependency. A local variable mentioned only in command is not imported;
 use this function for that.
 If target_output is omitted, the name of x is used
-(tt_import(pipeline, airway) registers "airway").
+(tt_import(pipeline, airway) registers "airway"), or the left-hand
+side of an assignment (tt_import(pipeline, airway &amp;lt;- se)).
 For a list of units to map over (for example each row of a parameter grid),
 use tt_import_list() instead.'></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -31,7 +33,7 @@ use tt_import_list() instead.'></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +74,8 @@ tracks that file and reads it back when the target runs, so later
 dependency. A local variable mentioned only in <code>command</code> is not imported;
 use this function for that.</p>
 <p>If <code>target_output</code> is omitted, the name of <code>x</code> is used
-(<code>tt_import(pipeline, airway)</code> registers <code>"airway"</code>).</p>
+(<code>tt_import(pipeline, airway)</code> registers <code>"airway"</code>), or the left-hand
+side of an assignment (<code>tt_import(pipeline, airway &lt;- se)</code>).</p>
 <p>For a list of units to map over (for example each row of a parameter grid),
 use <code><a href="tt_import_list.html">tt_import_list()</a></code> instead.</p>
     </div>
@@ -102,7 +105,7 @@ use <code><a href="tt_import_list.html">tt_import_list()</a></code> instead.</p>
 
 <dt id="arg-target-output">target_output<a class="anchor" aria-label="anchor" href="#arg-target-output"></a></dt>
 <dd><p>Character name of the target. <code>NULL</code> (the default) uses
-the symbol supplied as <code>x</code>.</p></dd>
+the symbol supplied as <code>x</code>, or the left-hand side of <code>x &lt;- value</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

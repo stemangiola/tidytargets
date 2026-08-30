@@ -14,10 +14,10 @@ Source:
 [`DESCRIPTION`](https://github.com/stemangiola/tidytargets/blob/main/DESCRIPTION)
 
 Mangiola S, Si J, Shen M (2026). *tidytargets: Tidy Pipe-Friendly
-Grammar for R Targets Pipelines*. R package version 0.4.0,
+Grammar for R Targets Pipelines*. R package version 0.0.5,
 <https://stemangiola.github.io/tidytargets/>.
 
 @Manual{, title = {tidytargets: Tidy Pipe-Friendly Grammar for R Targets
 Pipelines}, author = {Stefano Mangiola and Jiayi Si and Mengyuan Shen},
-year = {2026}, note = {R package version 0.4.0}, url =
+year = {2026}, note = {R package version 0.0.5}, url =
 {https://stemangiola.github.io/tidytargets/}, }

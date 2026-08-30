@@ -49,13 +49,14 @@ can start a pipeline with no inputs. Pass a named list (or file paths)
 to register mapped units, or call it with only `store` /
 `computing_resources` and bring objects in with
 [`tt_import()`](https://stemangiola.github.io/tidytargets/reference/tt_import.md).
-Pass a `command` expression the same way you would to `tar_target()`;
+Write `name <- expr` to name the target from the assignment, the same
+way you would write a `tar_target()` command;
 [targets](https://docs.ropensci.org/targets/) tracks upstream names in
-that expression. With no `computing_resources`, the pipeline runs
-sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory
-is created and printed.
+that expression. `target_output = "name"` still works. With no
+`computing_resources`, the pipeline runs sequentially. With no `store`,
+a unique `./tidytargets-<HASH>` directory is created and printed.
 
-[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` ``files`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(`` `` sample_a ``=`` ``"a.rds"``,`` `` sample_b ``=`` ``"b.rds"`` ``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``1``:``3``, ``files``[[``"sample_a"``]``]``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``4``:``6``, ``files``[[``"sample_b"``]``]``)`` `` ``files`` ``|>`` `` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``store ``=`` ``"_targets"``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` command ``=`` `[`readRDS`](https://rdrr.io/r/base/readRDS.html)`(``input_list``)``,`` `` target_output ``=`` ``"data"`` `` ``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(`` `` command ``=`` `[`summary`](https://rdrr.io/r/base/summary.html)`(``data``)``,`` `` target_output ``=`` ``"summaries"`` `` ``)`` ``|>`` `` `[`tt_evaluate`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)`(``)`
+[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` ``files`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(`` `` sample_a ``=`` ``"a.rds"``,`` `` sample_b ``=`` ``"b.rds"`` ``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``1``:``3``, ``files``[[``"sample_a"``]``]``)`` `[`saveRDS`](https://rdrr.io/r/base/readRDS.html)`(``4``:``6``, ``files``[[``"sample_b"``]``]``)`` `` ``files`` ``|>`` `` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``store ``=`` ``"_targets"``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``data`` ``<-`` `[`readRDS`](https://rdrr.io/r/base/readRDS.html)`(``input_list``)``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``summaries`` ``<-`` `[`summary`](https://rdrr.io/r/base/summary.html)`(``data``)``)`` ``|>`` `` `[`tt_evaluate`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)`(``)`
 
     #> + input_list_file dispatched
     #> ✔ input_list_file completed [0ms, 97 B]
