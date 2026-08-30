@@ -607,7 +607,7 @@ test_that("tt_iterate maps equal-size lists and errors on different sizes", {
 
   expect_message(
     pipe_cross <- pipe_cross |> tt_iterate(out <- methods + samples, pattern = "cross"),
-    "using cross()",
+    "crossing methods, samples",
     fixed = TRUE
   )
   expect_match(
@@ -647,7 +647,7 @@ test_that("tt_iterate pattern = cross is explicit; map errors on unequal sizes",
 
   expect_message(
     pipe <- pipe |> tt_iterate(out <- methods + samples, pattern = "cross"),
-    "using cross()",
+    "crossing methods, samples",
     fixed = TRUE
   )
   expect_match(
@@ -727,7 +727,7 @@ test_that("tt_iterate map with three lists ignores size-1 when the others match"
   )
   expect_message(
     pipe_cross <- pipe_cross |> tt_iterate(out <- const + methods + samples, pattern = "cross"),
-    "using cross()",
+    "crossing const, methods, samples",
     fixed = TRUE
   )
   script_cross <- paste(

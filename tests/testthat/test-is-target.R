@@ -55,6 +55,11 @@ test_that("process_pattern messages mapped sizes when there are two or more inpu
     "mapped sizes methods: 2, samples: 2; using map()",
     fixed = TRUE
   )
+  expect_message(
+    tidytargets:::process_pattern(c(methods = 2L, samples = 3L), "cross"),
+    "crossing methods, samples (methods: 2, samples: 3)",
+    fixed = TRUE
+  )
   expect_silent(
     tidytargets:::process_pattern(c(methods = 2L))
   )

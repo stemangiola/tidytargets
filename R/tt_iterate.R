@@ -20,7 +20,8 @@
 #'   mapped inputs of equal length and omits length-1 names from the
 #'   pattern. Unequal sizes (ignoring length-1 lists) error; pass
 #'   `"cross"` for a product of branches. With two or more mapped
-#'   inputs, the chosen pattern is messaged.
+#'   inputs, the chosen pattern is messaged; `cross()` names the
+#'   targets being crossed.
 #' @param ... Additional factory arguments such as `format`, `deployment`,
 #'   or `packages`.
 #'
@@ -114,7 +115,8 @@ tt_iterate.tidytargets <- function(
 #'
 #' Applies `pattern`: errors if `map` lengths differ (ignoring size 1),
 #' omits size-1 names from `map()`, records `n_units`, and messages when
-#' there are two or more mapped inputs.
+#' there are two or more mapped inputs. `cross()` also names the targets
+#' being crossed.
 #'
 #' @param sizes Named integer vector of `$n_units` for mapped inputs.
 #'   Missing sizes are `NA`.
@@ -159,11 +161,18 @@ process_pattern <- function(sizes, pattern = c("map", "cross")) {
     if (length(shared) == 0L) known[[1L]] else shared[[1L]]
   }
 
-  if (length(mapped) >= 2L) {
+  if (use_cross) {
     size_txt <- paste(sprintf("%s: %s", names(sizes), sizes), collapse = ", ")
     message(
-      "tidytargets says: mapped sizes ", size_txt, "; using ",
-      pattern_type, "()",
+      "tidytargets says: crossing ",
+      paste(pattern_names, collapse = ", "),
+      " (", size_txt, ")",
+      sep = ""
+    )
+  } else if (length(mapped) >= 2L) {
+    size_txt <- paste(sprintf("%s: %s", names(sizes), sizes), collapse = ", ")
+    message(
+      "tidytargets says: mapped sizes ", size_txt, "; using map()",
       sep = ""
     )
   }

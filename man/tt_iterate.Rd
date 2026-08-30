@@ -54,7 +54,8 @@ sources nothing.}
 mapped inputs of equal length and omits length-1 names from the
 pattern. Unequal sizes (ignoring length-1 lists) error; pass
 \code{"cross"} for a product of branches. With two or more mapped
-inputs, the chosen pattern is messaged.}
+inputs, the chosen pattern is messaged; \code{cross()} names the
+targets being crossed.}
 
 \item{...}{Additional factory arguments such as \code{format}, \code{deployment},
 or \code{packages}.}
