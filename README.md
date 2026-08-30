@@ -71,20 +71,6 @@ targets::tar_read(summaries, store = "_targets")
 | `tt_explore()` | Return one stored instance of a named target |
 | `tt_metadata()` | Get or set free-form metadata on the pipeline object |
 
-## Carrying extra information
-
-A `tidytargets` object has three slots: `$initialisation` (the arguments given to `tt_initialise()`), `$metadata` (free-form extras, also reachable through `tt_metadata()`), and `$targets` (one named record per target you added). Metadata is for information that is not part of the graph — an API endpoint, a dataset identifier, a provenance note.
-
-``` r
-pipeline <- tt_initialise() |>
-  tt_metadata(api_url = "https://api.example.org", api_version = 2)
-
-tt_metadata(pipeline)$api_url
-#> [1] "https://api.example.org"
-```
-
-Metadata is merged on each call, and passing `NULL` removes an entry. It travels with the object through every grammar step but is not written to the targets script, so workers cannot see it; values a target needs must appear in `command`. Because it lives in `$metadata` rather than among the steps, it imposes no restriction on your `target_output` names.
-
 ## Deployment
 
 Pass any controller that `targets::tar_option_set(controller = )` accepts. tidytargets does not import a backend.
