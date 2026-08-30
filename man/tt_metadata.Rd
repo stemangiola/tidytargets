@@ -36,10 +36,8 @@ script and is not available to workers. To pass values to workers, include
 them in the \code{command} expression of \code{tt_iterate()} or \code{tt_single()}.
 }
 \details{
-The store is held under a dot-prefixed element of the object. \code{targets}
-rejects target names beginning with a dot, so the store can never be shadowed
-by a target the user adds, and metadata places no restriction on the names
-passed to \code{target_output}.
+Metadata lives in \verb{$metadata}, separate from \verb{$targets}, so a target may
+use any name including \code{"metadata"} without colliding with the store.
 }
 \examples{
 \dontrun{

@@ -28,10 +28,8 @@
 #' tt_metadata(pipeline)$api_url
 #' }
 #' @details
-#' The store is held under a dot-prefixed element of the object. `targets`
-#' rejects target names beginning with a dot, so the store can never be shadowed
-#' by a target the user adds, and metadata places no restriction on the names
-#' passed to `target_output`.
+#' Metadata lives in `$metadata`, separate from `$targets`, so a target may
+#' use any name including `"metadata"` without colliding with the store.
 #' @name tt_metadata
 #' @export
 tt_metadata <- function(tt_input, ...) {
@@ -48,7 +46,7 @@ tt_metadata.default <- function(tt_input, ...) {
 #' @export
 tt_metadata.tidytargets <- function(tt_input, ...) {
 
-  current <- tt_input$.metadata
+  current <- tt_input$metadata
   if (is.null(current)) current <- list()
 
   updates <- list(...)
@@ -69,7 +67,7 @@ tt_metadata.tidytargets <- function(tt_input, ...) {
   # Assigning NULL drops the entry, which is the documented way to remove one
   for (entry in names(updates)) current[[entry]] <- updates[[entry]]
 
-  tt_input$.metadata <- current
+  tt_input$metadata <- current
 
   tt_input
 }

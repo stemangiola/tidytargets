@@ -67,10 +67,9 @@ tt_single.tidytargets <- function(
     ...
   )
 
-  tt_input |>
-    c(stats::setNames(
-      list(list(command = command, iterate = "none")),
-      target_output
-    )) |>
-    add_class("tidytargets")
+  append_step(
+    tt_input,
+    target_output,
+    list(command = command, iterate = "none")
+  )
 }

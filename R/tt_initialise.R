@@ -1,3 +1,31 @@
+#' Construct a tidytargets pipeline object
+#'
+#' Three slots, not a flat list of targets: `$initialisation` holds constructor
+#' arguments, `$metadata` the free-form store, `$targets` the named step
+#' records. Grammar verbs grow `$targets` with `append_step()` so `c()` never
+#' strips the class.
+#'
+#' @param initialisation Named list of [tt_initialise()] arguments.
+#' @param metadata Named list of free-form metadata.
+#' @param targets Named list of step records, one per target.
+#' @return A `tidytargets` object.
+#' @noRd
+new_tidytargets <- function(initialisation = list(),
+                            metadata = list(),
+                            targets = list()) {
+  if (length(targets) == 0L) {
+    targets <- stats::setNames(list(), character())
+  }
+  obj <- list(
+    initialisation = initialisation,
+    metadata = metadata,
+    targets = targets
+  )
+  class(obj) <- c("tidytargets", "list")
+  schedule_pipeline_ready_notice(initialisation$store)
+  obj
+}
+
 #' Initialise a tidytargets Pipeline
 #'
 #' @description
@@ -44,10 +72,10 @@
 #' @param target_output Character name of the mapped input target. Default:
 #'   `"input_list"`. Ignored when `tt_input` is `NULL`. A companion
 #'   file-tracking target is registered as `{target_output}_file`.
-#' @return A `tidytargets` S3 object containing the initialisation arguments in
-#'   `$initialisation` and an empty metadata store (see `tt_metadata()`), ready
-#'   to be extended with pipeline step functions. The graph is not run until
-#'   you print it or call [tt_evaluate()].
+#' @return A `tidytargets` S3 object with `$initialisation` (constructor
+#'   arguments), `$metadata` (see [tt_metadata()]), and `$targets` (named
+#'   step records), ready to be extended with pipeline step functions. The
+#'   graph is not run until you print it or call [tt_evaluate()].
 #'
 #' @importFrom glue glue
 #' @importFrom qs2 qs_save qs_read
@@ -146,9 +174,7 @@ tt_initialise <- function(tt_input = NULL,
     tar_script_append2(script = glue("{store}.R"), append = FALSE)
 
   
-  pipe <-
-    list(initialisation = args_list, .metadata = list() ) |>
-    add_class("tidytargets")
+  pipe <- new_tidytargets(args_list)
 
   if (!has_input) return(pipe)
 
@@ -162,12 +188,11 @@ tt_initialise <- function(tt_input = NULL,
     script = target_script,
     format = "file"
   )
-  pipe <- pipe |>
-    c(stats::setNames(
-      list(list(command = sample_names_qs, iterate = "none")),
-      "sample_names_file"
-    )) |>
-    add_class("tidytargets")
+  pipe <- append_step(
+    pipe,
+    "sample_names_file",
+    list(command = sample_names_qs, iterate = "none")
+  )
 
   tar_append(
     fx = quote(tt_factory),
@@ -176,16 +201,15 @@ tt_initialise <- function(tt_input = NULL,
     script = target_script,
     deployment = "main"
   )
-  pipe <- pipe |>
-    c(stats::setNames(
-      list(list(
-        command = quote(qs_read(sample_names_file)),
-        iterate = "map",
-        n_units = n_in
-      )),
-      "sample_names"
-    )) |>
-    add_class("tidytargets")
+  pipe <- append_step(
+    pipe,
+    "sample_names",
+    list(
+      command = quote(qs_read(sample_names_file)),
+      iterate = "map",
+      n_units = n_in
+    )
+  )
 
   input_file_target <- paste0(target_output, "_file")
   input_read <- substitute(qs_read(ifs), list(ifs = as.name(input_file_target)))
@@ -197,12 +221,11 @@ tt_initialise <- function(tt_input = NULL,
     script = target_script,
     format = "file"
   )
-  pipe <- pipe |>
-    c(stats::setNames(
-      list(list(command = input_qs, iterate = "none")),
-      input_file_target
-    )) |>
-    add_class("tidytargets")
+  pipe <- append_step(
+    pipe,
+    input_file_target,
+    list(command = input_qs, iterate = "none")
+  )
 
   tar_append(
     fx = quote(tt_factory),
@@ -211,16 +234,15 @@ tt_initialise <- function(tt_input = NULL,
     script = target_script,
     deployment = "main"
   )
-  pipe |>
-    c(stats::setNames(
-      list(list(
-        command = input_read,
-        iterate = "map",
-        n_units = n_in
-      )),
-      target_output
-    )) |>
-    add_class("tidytargets")
+  append_step(
+    pipe,
+    target_output,
+    list(
+      command = input_read,
+      iterate = "map",
+      n_units = n_in
+    )
+  )
 }
 
 

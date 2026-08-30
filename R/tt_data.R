@@ -66,12 +66,11 @@ tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
     script = target_script,
     format = "file"
   )
-  tt_input <- tt_input |>
-    c(stats::setNames(
-      list(list(command = qs_path, iterate = "none")),
-      file_target
-    )) |>
-    add_class("tidytargets")
+  tt_input <- append_step(
+    tt_input,
+    file_target,
+    list(command = qs_path, iterate = "none")
+  )
 
   tar_append(
     fx = quote(tt_factory),
@@ -80,12 +79,11 @@ tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
     script = target_script,
     deployment = "main"
   )
-  tt_input |>
-    c(stats::setNames(
-      list(list(command = read_cmd, iterate = "none")),
-      target_output
-    )) |>
-    add_class("tidytargets")
+  append_step(
+    tt_input,
+    target_output,
+    list(command = read_cmd, iterate = "none")
+  )
 }
 
 #' Add a List of Units as a Mapped Pipeline Target
@@ -179,12 +177,11 @@ tt_data_list.tidytargets <- function(tt_input, x, target_output = NULL) {
     script = target_script,
     format = "file"
   )
-  tt_input <- tt_input |>
-    c(stats::setNames(
-      list(list(command = qs_path, iterate = "none")),
-      file_target
-    )) |>
-    add_class("tidytargets")
+  tt_input <- append_step(
+    tt_input,
+    file_target,
+    list(command = qs_path, iterate = "none")
+  )
 
   tar_append(
     fx = quote(tt_factory),
@@ -193,14 +190,13 @@ tt_data_list.tidytargets <- function(tt_input, x, target_output = NULL) {
     script = target_script,
     deployment = "main"
   )
-  tt_input |>
-    c(stats::setNames(
-      list(list(
-        command = read_cmd,
-        iterate = "map",
-        n_units = length(x)
-      )),
-      target_output
-    )) |>
-    add_class("tidytargets")
+  append_step(
+    tt_input,
+    target_output,
+    list(
+      command = read_cmd,
+      iterate = "map",
+      n_units = length(x)
+    )
+  )
 }

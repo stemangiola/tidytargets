@@ -19,16 +19,17 @@ test_that("tt_initialise returns a tidytargets object with input targets", {
     tt_initialise(store = store)
 
   expect_s3_class(hpc, "tidytargets")
+  expect_equal(names(hpc), c("initialisation", "metadata", "targets"))
   expect_equal(
     hpc$initialisation$store,
     normalizePath(store, winslash = "/", mustWork = TRUE)
   )
   expect_true(file.exists(paste0(hpc$initialisation$store, ".R")))
-  expect_true("input_list" %in% names(hpc))
-  expect_true("sample_names" %in% names(hpc))
-  expect_equal(hpc$input_list$iterate, "map")
-  expect_equal(hpc$input_list$n_units, 2L)
-  expect_equal(hpc$sample_names$iterate, "map")
+  expect_true("input_list" %in% names(hpc$targets))
+  expect_true("sample_names" %in% names(hpc$targets))
+  expect_equal(hpc$targets$input_list$iterate, "map")
+  expect_equal(hpc$targets$input_list$n_units, 2L)
+  expect_equal(hpc$targets$sample_names$iterate, "map")
   expect_null(hpc$initialisation$computing_resources)
 
   script <- readLines(paste0(store, ".R"))
@@ -71,8 +72,8 @@ test_that("tt_initialise works with no mapped input", {
   pipe <- tt_initialise(store = store)
 
   expect_s3_class(pipe, "tidytargets")
-  expect_false("input_list" %in% names(pipe))
-  expect_false("sample_names" %in% names(pipe))
+  expect_false("input_list" %in% names(pipe$targets))
+  expect_false("sample_names" %in% names(pipe$targets))
   expect_false(file.exists(file.path(store, "input_file.qs")))
   expect_false(file.exists(file.path(store, "sample_names.qs")))
   expect_true(file.exists(paste0(store, ".R")))
@@ -103,9 +104,9 @@ test_that("tt_initialise accepts a named list of objects", {
     normalizePath(store, winslash = "/", mustWork = TRUE)
   )
   expect_true(file.exists(paste0(hpc$initialisation$store, ".R")))
-  expect_true("input_list" %in% names(hpc))
-  expect_true("sample_names" %in% names(hpc))
-  expect_equal(hpc$input_list$iterate, "map")
+  expect_true("input_list" %in% names(hpc$targets))
+  expect_true("sample_names" %in% names(hpc$targets))
+  expect_equal(hpc$targets$input_list$iterate, "map")
   expect_equal(
     qs2::qs_read(file.path(hpc$initialisation$store, "sample_names.qs")),
     c("sample_a", "sample_b")
@@ -139,10 +140,10 @@ test_that("tt_initialise target_output names the mapped input target", {
   hpc <- inputs |>
     tt_initialise(store = file.path(tmp, "store"), target_output = "samples")
 
-  expect_true("samples" %in% names(hpc))
-  expect_true("samples_file" %in% names(hpc))
-  expect_false("input_list" %in% names(hpc))
-  expect_equal(hpc$samples$iterate, "map")
+  expect_true("samples" %in% names(hpc$targets))
+  expect_true("samples_file" %in% names(hpc$targets))
+  expect_false("input_list" %in% names(hpc$targets))
+  expect_equal(hpc$targets$samples$iterate, "map")
   expect_equal(hpc$initialisation$target_output, "samples")
 })
 
@@ -169,10 +170,10 @@ test_that("tt_iterate and tt_single chain onto a tidytargets object", {
     )
 
   expect_s3_class(hpc, "tidytargets")
-  expect_true("data" %in% names(hpc))
-  expect_equal(hpc$data$iterate, "map")
-  expect_true("n_inputs" %in% names(hpc))
-  expect_equal(hpc$n_inputs$iterate, "none")
+  expect_true("data" %in% names(hpc$targets))
+  expect_equal(hpc$targets$data$iterate, "map")
+  expect_true("n_inputs" %in% names(hpc$targets))
+  expect_equal(hpc$targets$n_inputs$iterate, "none")
 
   script <- readLines(paste0(store, ".R"))
   expect_true(any(grepl("target_output = \"data\"", script)))
@@ -222,14 +223,14 @@ test_that("<- names the target and peels the command", {
     tt_single(n_inputs <- length(sample_names)) |>
     tt_merge(n_total <- sum(unlist(n_inputs)))
 
-  expect_true("data" %in% names(hpc))
-  expect_equal(hpc$data$iterate, "map")
-  expect_equal(hpc$data$command, quote(readRDS(input_list)))
-  expect_true("n_inputs" %in% names(hpc))
-  expect_equal(hpc$n_inputs$iterate, "none")
-  expect_equal(hpc$n_inputs$command, quote(length(sample_names)))
-  expect_true("n_total" %in% names(hpc))
-  expect_equal(hpc$n_total$command, quote(sum(unlist(n_inputs))))
+  expect_true("data" %in% names(hpc$targets))
+  expect_equal(hpc$targets$data$iterate, "map")
+  expect_equal(hpc$targets$data$command, quote(readRDS(input_list)))
+  expect_true("n_inputs" %in% names(hpc$targets))
+  expect_equal(hpc$targets$n_inputs$iterate, "none")
+  expect_equal(hpc$targets$n_inputs$command, quote(length(sample_names)))
+  expect_true("n_total" %in% names(hpc$targets))
+  expect_equal(hpc$targets$n_total$command, quote(sum(unlist(n_inputs))))
 
   script <- readLines(paste0(store, ".R"))
   expect_true(any(grepl("target_output = \"data\"", script)))
@@ -271,8 +272,8 @@ test_that("tt_data_list names the target from <-", {
   pipe <- tt_initialise(store = file.path(tmp, "store")) |>
     tt_data_list(method_grid <- list(a = 1, b = 2))
 
-  expect_true("method_grid" %in% names(pipe))
-  expect_equal(pipe$method_grid$iterate, "map")
+  expect_true("method_grid" %in% names(pipe$targets))
+  expect_equal(pipe$targets$method_grid$iterate, "map")
   expect_false(exists("method_grid", inherits = FALSE))
   expect_equal(
     names(qs2::qs_read(file.path(pipe$initialisation$store, "method_grid_data.qs"))),
@@ -309,7 +310,7 @@ test_that("tt_metadata reads, writes and survives pipeline steps", {
     )
 
   expect_equal(tt_metadata(hpc)$api_version, 2L)
-  expect_equal(hpc$data$iterate, "map")
+  expect_equal(hpc$targets$data$iterate, "map")
 
   # Existing entries are updated, new ones merged, NULL removes
   hpc <- hpc |> tt_metadata(api_version = 3L, token = "abc")
@@ -335,7 +336,7 @@ test_that("tt_metadata rejects unnamed and duplicated entries", {
   expect_error(hpc |> tt_metadata(a = 1, a = 2), "unique")
 })
 
-test_that("metadata places no restriction on target names", {
+test_that("pipeline slots do not restrict target names", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -348,16 +349,19 @@ test_that("metadata places no restriction on target names", {
     tt_initialise(store = file.path(tmp, "store")) |>
     tt_metadata(api_url = "https://api.example.org")
 
-  # A target may be called "metadata"; the store is dot-prefixed and targets
-  # forbids dot-prefixed target names, so the two cannot collide
+  # A target may share a name with an object slot; steps live in $targets
   hpc <- hpc |>
     tt_iterate(
       command = readRDS(input_list),
       target_output = "metadata"
-    )
+    ) |>
+    tt_single(command = 1L, target_output = "initialisation")
 
-  expect_equal(hpc$metadata$iterate, "map")
+  expect_equal(names(hpc), c("initialisation", "metadata", "targets"))
+  expect_equal(hpc$targets$metadata$iterate, "map")
+  expect_equal(hpc$targets$initialisation$iterate, "none")
   expect_equal(tt_metadata(hpc)$api_url, "https://api.example.org")
+  expect_type(hpc$initialisation$store, "character")
 
   # The target is still resolvable as an upstream dependency
   hpc <- hpc |>
@@ -366,7 +370,7 @@ test_that("metadata places no restriction on target names", {
       target_output = "downstream"
     )
 
-  expect_equal(hpc$downstream$iterate, "map")
+  expect_equal(hpc$targets$downstream$iterate, "map")
 })
 
 test_that("tt_report captures params as command-style symbols", {
@@ -393,8 +397,8 @@ test_that("tt_report captures params as command-style symbols", {
     )
 
   expect_s3_class(hpc, "tidytargets")
-  expect_true("report" %in% names(hpc))
-  expect_equal(hpc$report$iterate, "single")
+  expect_true("report" %in% names(hpc$targets))
+  expect_equal(hpc$targets$report$iterate, "single")
 
   script <- readLines(paste0(store, ".R"))
   expect_true(any(grepl("n_samples = n_samples", script)))
@@ -536,16 +540,16 @@ test_that("tt_data snapshots a session object as a single stem target", {
     tt_data(airway, target_output = "airway")
 
   expect_s3_class(pipe, "tidytargets")
-  expect_true("airway" %in% names(pipe))
-  expect_true("airway_file" %in% names(pipe))
-  expect_equal(pipe$airway$iterate, "none")
+  expect_true("airway" %in% names(pipe$targets))
+  expect_true("airway_file" %in% names(pipe$targets))
+  expect_equal(pipe$targets$airway$iterate, "none")
   expect_true(file.exists(file.path(store, "airway_data.qs")))
   expect_equal(qs2::qs_read(file.path(store, "airway_data.qs")), airway)
 
   pipe <- pipe |>
     tt_single(command = length(airway), target_output = "n_assays")
 
-  expect_equal(pipe$n_assays$iterate, "none")
+  expect_equal(pipe$targets$n_assays$iterate, "none")
 
   tt_evaluate(pipe)
   expect_equal(
@@ -569,8 +573,8 @@ test_that("tt_iterate maps equal-size lists and errors on different sizes", {
     tt_data_list(methods <- list(a = 10, b = 20)) |>
     tt_data_list(samples <- list(x = 1, y = 2))
 
-  expect_equal(pipe$methods$n_units, 2L)
-  expect_equal(pipe$samples$n_units, 2L)
+  expect_equal(pipe$targets$methods$n_units, 2L)
+  expect_equal(pipe$targets$samples$n_units, 2L)
 
   expect_message(
     pipe <- pipe |> tt_iterate(out <- methods + samples),
@@ -586,7 +590,7 @@ test_that("tt_iterate maps equal-size lists and errors on different sizes", {
     'other_arguments_to_map = c("methods", "samples")',
     fixed = TRUE
   )
-  expect_equal(pipe$out$n_units, 2L)
+  expect_equal(pipe$targets$out$n_units, 2L)
 
   tt_evaluate(pipe)
   expect_equal(
@@ -614,7 +618,7 @@ test_that("tt_iterate maps equal-size lists and errors on different sizes", {
     paste(readLines(paste0(store_cross, ".R")), collapse = "\n"),
     'pattern_type = "cross"'
   )
-  expect_equal(pipe_cross$out$n_units, 6L)
+  expect_equal(pipe_cross$targets$out$n_units, 6L)
 
   # tar_make() via callr loads the installed factory, which has no
   # pattern_type. Run in-process so this session's factory can cross().
@@ -654,7 +658,7 @@ test_that("tt_iterate pattern = cross is explicit; map errors on unequal sizes",
     paste(readLines(paste0(pipe$initialisation$store, ".R")), collapse = "\n"),
     'pattern_type = "cross"'
   )
-  expect_equal(pipe$out$n_units, 4L)
+  expect_equal(pipe$targets$out$n_units, 4L)
 
   pipe_map <- tt_initialise(store = file.path(tmp, "store-map")) |>
     tt_data_list(methods <- list(a = 10, b = 20)) |>
@@ -686,7 +690,7 @@ test_that("tt_iterate drops length-1 mapped inputs from a map() pattern", {
   expect_match(script, 'pattern_type = "map"')
   expect_match(script, 'other_arguments_to_map = "samples"')
   expect_false(grepl('other_arguments_to_map = c\\("methods"', script))
-  expect_equal(pipe$out$n_units, 3L)
+  expect_equal(pipe$targets$out$n_units, 3L)
 })
 
 test_that("tt_iterate map with three lists ignores size-1 when the others match", {
@@ -713,7 +717,7 @@ test_that("tt_iterate map with three lists ignores size-1 when the others match"
     fixed = TRUE
   )
   expect_false(grepl("other_arguments_to_map = c\\(\"const\"", script))
-  expect_equal(pipe$out$n_units, 2L)
+  expect_equal(pipe$targets$out$n_units, 2L)
 
   pipe_cross <- tt_initialise(store = file.path(tmp, "store-cross")) |>
     tt_data_list(const <- list(x = 100)) |>
@@ -740,7 +744,7 @@ test_that("tt_iterate map with three lists ignores size-1 when the others match"
     'other_arguments_to_map = c("const", "methods", "samples")',
     fixed = TRUE
   )
-  expect_equal(pipe_cross$out$n_units, 6L)
+  expect_equal(pipe_cross$targets$out$n_units, 6L)
 })
 
 test_that("tt_data defaults target_output to the object name", {
@@ -754,8 +758,8 @@ test_that("tt_data defaults target_output to the object name", {
     tt_initialise(store = file.path(tmp, "store")) |>
     tt_data(extra)
 
-  expect_true("extra" %in% names(pipe))
-  expect_equal(pipe$extra$iterate, "none")
+  expect_true("extra" %in% names(pipe$targets))
+  expect_equal(pipe$targets$extra$iterate, "none")
 })
 
 test_that("tt_data_list snapshots a list as mapped units", {
@@ -773,16 +777,16 @@ test_that("tt_data_list snapshots a list as mapped units", {
     )
 
   expect_s3_class(pipe, "tidytargets")
-  expect_true("settings" %in% names(pipe))
-  expect_equal(pipe$settings$iterate, "map")
-  expect_equal(pipe$settings$n_units, 4L)
+  expect_true("settings" %in% names(pipe$targets))
+  expect_equal(pipe$targets$settings$iterate, "map")
+  expect_equal(pipe$targets$settings$n_units, 4L)
   saved <- qs2::qs_read(file.path(store, "settings_data.qs"))
   expect_equal(names(saved), c("1", "2", "3", "4"))
 
   pipe <- pipe |>
     tt_iterate(command = settings$alpha, target_output = "alpha")
 
-  expect_equal(pipe$alpha$iterate, "map")
+  expect_equal(pipe$targets$alpha$iterate, "map")
   script <- readLines(paste0(store, ".R"))
   expect_true(any(grepl("other_arguments_to_map = \"settings\"", script)))
 
@@ -801,8 +805,8 @@ test_that("tt_data_list defaults target_output to the object name", {
   pipe <- tt_initialise(store = file.path(tmp, "store")) |>
     tt_data_list(rows)
 
-  expect_true("rows" %in% names(pipe))
-  expect_equal(pipe$rows$iterate, "map")
+  expect_true("rows" %in% names(pipe$targets))
+  expect_equal(pipe$targets$rows$iterate, "map")
 })
 
 test_that("tt_data_list rejects a non-list and an unnamed expression", {

@@ -1,13 +1,16 @@
-# Helper function to add class to an object
-add_class <- function(obj, class_name) {
-  class(obj) <- c(class_name, class(obj))
-  # Grammar constructors return through here after `c()` drops the class.
-  # Scheduling at this single restore point covers initialise, iterate,
-  # summarise, merge, and report without each having to remember the notice.
-  if (identical(class_name, "tidytargets")) {
-    schedule_pipeline_ready_notice(obj$initialisation$store)
-  }
-  return(obj)
+
+
+#' Append a named step without dropping the tidytargets class
+#'
+#' @param pipe A `tidytargets` object.
+#' @param name Character target name.
+#' @param step Named list of step fields (`command`, `iterate`, …).
+#' @return The updated `tidytargets` object.
+#' @noRd
+append_step <- function(pipe, name, step) {
+  pipe$targets[[name]] <- step
+  schedule_pipeline_ready_notice(pipe$initialisation$store)
+  pipe
 }
 
 stop_if_not_tidytargets <- function() {

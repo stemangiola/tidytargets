@@ -73,7 +73,7 @@ targets::tar_read(summaries, store = "_targets")
 
 ## Carrying extra information
 
-A `tidytargets` object is a named list: `$initialisation` holds the arguments given to `tt_initialise()`, and every other element is a target you added. Alongside those sits a free-form metadata store, reachable only through `tt_metadata()`, for information that is not part of the graph — an API endpoint, a dataset identifier, a provenance note.
+A `tidytargets` object has three slots: `$initialisation` (the arguments given to `tt_initialise()`), `$metadata` (free-form extras, also reachable through `tt_metadata()`), and `$targets` (one named record per target you added). Metadata is for information that is not part of the graph — an API endpoint, a dataset identifier, a provenance note.
 
 ``` r
 pipeline <- tt_initialise() |>
@@ -83,7 +83,7 @@ tt_metadata(pipeline)$api_url
 #> [1] "https://api.example.org"
 ```
 
-Metadata is merged on each call, and passing `NULL` removes an entry. It travels with the object through every grammar step but is not written to the targets script, so workers cannot see it; values a target needs must appear in `command`. The store is inert with respect to the rest of the grammar and constrains nothing — it imposes no restriction on your `target_output` names.
+Metadata is merged on each call, and passing `NULL` removes an entry. It travels with the object through every grammar step but is not written to the targets script, so workers cannot see it; values a target needs must appear in `command`. Because it lives in `$metadata` rather than among the steps, it imposes no restriction on your `target_output` names.
 
 ## Deployment
 

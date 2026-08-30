@@ -1,6 +1,13 @@
 # tidytargets NEWS
 
 
+## tidytargets 0.0.8
+
+* `tidytargets` objects now have three slots: `$initialisation`, `$metadata`,
+  and `$targets`. Grammar verbs append to `$targets` instead of flattening
+  target names onto the object, so a target may be named `initialisation`
+  or `metadata` without colliding.
+
 ## tidytargets 0.0.7
 
 * `tt_iterate()` uses `{targets}` `map()` by default when a command

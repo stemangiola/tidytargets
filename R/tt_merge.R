@@ -42,7 +42,6 @@ tt_merge.default <- function(
 
 #' @rdname tt_merge
 #' @importFrom glue glue
-#' @importFrom purrr set_names
 #' @export
 tt_merge.tidytargets <- function(
     tt_input,
@@ -72,15 +71,12 @@ tt_merge.tidytargets <- function(
         ...
     )
 
-    # Add pipeline step
-    tt_input |>
-      c(
-        as.list(environment())[-1] |> 
-          c(list(iterate = "single")) |> 
-          list() |> 
-          set_names(target_output) 
-      ) |>
-      add_class("tidytargets")
+    append_step(
+      tt_input,
+      target_output,
+      as.list(environment())[-1] |>
+        c(list(iterate = "single"))
+    )
     
     
   }
