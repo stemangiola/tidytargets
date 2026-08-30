@@ -7,8 +7,9 @@
   `tt_data_list()`.
 * `tt_initialise()` snapshots currently attached packages (names from
   `.packages()`, not `.GlobalEnv` objects) onto `tar_option_set(packages = )`
-  when `packages` is omitted. Local functions and other session objects stay
-  out of the pipeline unless you bring them in with `tt_data()` or set
+  when `packages` is omitted, and messages that list so you can see what
+  workers (including HPC) will load. Local functions and other session objects
+  stay out of the pipeline unless you bring them in with `tt_data()` or set
   `user_function_source_path`.
 
 ## tidytargets 0.0.5

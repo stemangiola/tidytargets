@@ -54,7 +54,10 @@ test_that("tt_initialise defaults store to ./tidytargets-<hash> and messages", {
   expect_true(file.exists(paste0(hpc$initialisation$store, ".R")))
 
   store <- file.path(tmp, "explicit-store")
-  expect_no_message(inputs |> tt_initialise(store = store))
+  expect_message(
+    inputs |> tt_initialise(store = store),
+    "these packages from the session will be loaded on workers"
+  )
 })
 
 test_that("tt_initialise works with no mapped input", {
@@ -645,7 +648,10 @@ test_that("tt_initialise snapshots attached package names, not session objects",
   on.exit(rm("local_blob", envir = .GlobalEnv), add = TRUE)
 
   store <- file.path(tmp, "store")
-  pipe <- tt_initialise(store = store)
+  expect_message(
+    pipe <- tt_initialise(store = store),
+    "glue"
+  )
   script <- paste(readLines(paste0(store, ".R")), collapse = "\n")
 
   expect_true("glue" %in% pipe$initialisation$packages)

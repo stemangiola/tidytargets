@@ -57,7 +57,8 @@ a target errors. Default: \code{FALSE}.}
 \code{tar_option_set(packages = )}. The default is packages currently attached in
 the session (\code{\link[=.packages]{.packages()}}), as names only — not objects in the global
 environment. Pass a character vector to override. \code{"qs2"} is always
-included.}
+included. The names written to workers are messaged so you can see what
+HPC nodes will need to have installed.}
 
 \item{target_output}{Character name of the mapped input target. Default:
 \code{"input_list"}. Ignored when \code{tt_input} is \code{NULL}. A companion

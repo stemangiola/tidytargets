@@ -39,7 +39,8 @@
 #'   `tar_option_set(packages = )`. The default is packages currently attached in
 #'   the session ([`.packages()`]), as names only — not objects in the global
 #'   environment. Pass a character vector to override. `"qs2"` is always
-#'   included.
+#'   included. The names written to workers are messaged so you can see what
+#'   HPC nodes will need to have installed.
 #' @param target_output Character name of the mapped input target. Default:
 #'   `"input_list"`. Ignored when `tt_input` is `NULL`. A companion
 #'   file-tracking target is registered as `{target_output}_file`.
@@ -96,6 +97,11 @@ tt_initialise <- function(tt_input = NULL,
   resources_qs <- file.path(store, "temp_computing_resources.qs")
   computing_resources |> qs_save(resources_qs)
   backend_packages <- package_of_object(computing_resources)
+  worker_packages <- unique(c(packages, "qs2"))
+  message(
+    "tidytargets says: these packages from the session will be loaded on workers: ",
+    paste(worker_packages, collapse = ", ")
+  )
 
   if (has_input) {
     input_qs <- file.path(store, "input_file.qs")
@@ -134,7 +140,7 @@ tt_initialise <- function(tt_input = NULL,
     } |> 
     substitute(env = list(
       d = debug_step, e = error, u = update, g = garbage_collection,
-      w = workspace_on_error, p = unique(c(packages, "qs2")),
+      w = workspace_on_error, p = worker_packages,
       bp = backend_packages, rf = resources_qs
     )) |> 
     tar_script_append2(script = glue("{store}.R"), append = FALSE)
