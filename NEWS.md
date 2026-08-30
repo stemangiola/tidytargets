@@ -9,6 +9,11 @@
   `tt_import_list()` accept `name <- expr` to set the target name from the
   assignment (`tt_iterate(fit <- lm(y ~ x))`). `target_output = "fit"` still
   works. `=` inside the call is argument matching, not assignment.
+* `tt_initialise()` snapshots currently attached packages (names from
+  `.packages()`, not `.GlobalEnv` objects) onto `tar_option_set(packages = )`
+  when `packages` is omitted. Local functions and other session objects stay
+  out of the pipeline unless you `tt_import()` them or set
+  `user_function_source_path`.
 
 ## tidytargets 0.4.0
 

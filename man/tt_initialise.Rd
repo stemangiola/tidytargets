@@ -14,7 +14,7 @@ tt_initialise(
   update = "thorough",
   garbage_collection = 0,
   workspace_on_error = FALSE,
-  packages = "tidytargets",
+  packages = attached_packages(),
   target_output = "input_list"
 )
 }
@@ -53,8 +53,11 @@ collection is triggered during the pipeline run. Default: \code{0} (disabled).}
 \item{workspace_on_error}{Logical; if \code{TRUE}, saves a workspace snapshot when
 a target errors. Default: \code{FALSE}.}
 
-\item{packages}{Character vector of R packages loaded on workers. Defaults to
-\code{"tidytargets"}.}
+\item{packages}{Character vector of R packages loaded on workers, written to
+\code{tar_option_set(packages = )}. The default is packages currently attached in
+the session (\code{\link[=.packages]{.packages()}}), as names only — not objects in the global
+environment. Pass a character vector to override. \code{"qs2"} is always
+included.}
 
 \item{target_output}{Character name of the mapped input target. Default:
 \code{"input_list"}. Ignored when \code{tt_input} is \code{NULL}. A companion

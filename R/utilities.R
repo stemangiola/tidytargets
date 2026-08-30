@@ -20,6 +20,19 @@ stop_if_not_tidytargets <- function() {
 # Negation
 not = function(is){	!is }
 
+#' Names of packages attached in the current session
+#'
+#' Character names only — not loaded namespaces, and not objects in
+#' `.GlobalEnv`. Default packages that ship with R are omitted; workers
+#' already have those.
+#'
+#' @return A character vector that always includes `"tidytargets"`.
+#' @noRd
+attached_packages <- function() {
+  drop <- unique(c("base", getOption("defaultPackages")))
+  unique(c(setdiff(.packages(), drop), "tidytargets"))
+}
+
 #' Infer the package that defines a controller-like object
 #'
 #' Used so the generated pipeline can `library()` the backend that produced

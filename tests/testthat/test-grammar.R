@@ -628,3 +628,92 @@ test_that("tt_import_list rejects a non-list and an unnamed expression", {
     "target_output"
   )
 })
+
+test_that("tt_initialise snapshots attached package names, not session objects", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  was_attached <- "glue" %in% .packages()
+  if (!was_attached) {
+    library(glue)
+    on.exit(detach("package:glue", character.only = TRUE), add = TRUE)
+  }
+
+  assign("local_blob", list(x = 1:100), envir = .GlobalEnv)
+  on.exit(rm("local_blob", envir = .GlobalEnv), add = TRUE)
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store)
+  script <- paste(readLines(paste0(store, ".R")), collapse = "\n")
+
+  expect_true("glue" %in% pipe$initialisation$packages)
+  expect_match(script, '"glue"')
+  expect_false(grepl("local_blob", script))
+})
+
+test_that("tt_initialise packages= overrides the attached snapshot", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  was_attached <- "glue" %in% .packages()
+  if (!was_attached) {
+    library(glue)
+    on.exit(detach("package:glue", character.only = TRUE), add = TRUE)
+  }
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets")
+  script <- paste(readLines(paste0(store, ".R")), collapse = "\n")
+
+  expect_equal(pipe$initialisation$packages, "tidytargets")
+  expect_false(grepl('"glue"', script))
+})
+
+test_that("explicit packages on a target is not overwritten by attached packages", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  was_attached <- "glue" %in% .packages()
+  if (!was_attached) {
+    library(glue)
+    on.exit(detach("package:glue", character.only = TRUE), add = TRUE)
+  }
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets") |>
+    tt_single(n <- 1, packages = "qs2")
+
+  script <- readLines(paste0(store, ".R"))
+  factory_line <- script[grepl("target_output = \"n\"", script)]
+  expect_length(factory_line, 1L)
+  expect_match(factory_line, 'packages = "qs2"')
+  expect_false(grepl("glue", factory_line))
+})
+
+test_that("unqualified functions from attached packages run on workers", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  was_attached <- "glue" %in% .packages()
+  if (!was_attached) {
+    library(glue)
+    on.exit(detach("package:glue", character.only = TRUE), add = TRUE)
+  }
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store) |>
+    tt_single(msg <- glue("hi"))
+  tt_evaluate(pipe)
+  expect_equal(
+    as.character(targets::tar_read(msg, store = pipe$initialisation$store)),
+    "hi"
+  )
+})

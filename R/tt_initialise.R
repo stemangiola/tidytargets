@@ -35,8 +35,11 @@
 #'   collection is triggered during the pipeline run. Default: `0` (disabled).
 #' @param workspace_on_error Logical; if `TRUE`, saves a workspace snapshot when
 #'   a target errors. Default: `FALSE`.
-#' @param packages Character vector of R packages loaded on workers. Defaults to
-#'   `"tidytargets"`.
+#' @param packages Character vector of R packages loaded on workers, written to
+#'   `tar_option_set(packages = )`. The default is packages currently attached in
+#'   the session ([`.packages()`]), as names only — not objects in the global
+#'   environment. Pass a character vector to override. `"qs2"` is always
+#'   included.
 #' @param target_output Character name of the mapped input target. Default:
 #'   `"input_list"`. Ignored when `tt_input` is `NULL`. A companion
 #'   file-tracking target is registered as `{target_output}_file`.
@@ -61,7 +64,7 @@ tt_initialise <- function(tt_input = NULL,
                            update = "thorough",
                            garbage_collection = 0,
                            workspace_on_error = FALSE,
-                           packages = "tidytargets",
+                           packages = attached_packages(),
                            target_output = "input_list"
                           ) {
   

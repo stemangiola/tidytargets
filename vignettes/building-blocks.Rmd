@@ -68,6 +68,8 @@ This writes `{store}.R` and saves configuration. If you passed mapped inputs, it
 
 With no `computing_resources`, the pipeline is sequential. With no `store`, a unique `./tidytargets-<HASH>` directory is created. With no inputs, start from `tt_initialise()` and add objects with `tt_import()`.
 
+Packages currently attached in your session (`.packages()`) are recorded at `tt_initialise()` as names on `tar_option_set(packages = )` so workers can `library()` them. Objects in the global environment are not copied; bring those in with `tt_import()` or `user_function_source_path`. Pass `packages` to override the snapshot. Attach libraries before initialise (or pass `packages`) if a later command needs them.
+
 ```{r initialise}
 pipe <- inputs |>
   tt_initialise()
