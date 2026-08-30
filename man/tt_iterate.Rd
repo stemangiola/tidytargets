@@ -39,7 +39,8 @@ tt_iterate(
 \item{command}{An unevaluated expression. Write \code{name <- expr} to name the
 target from the assignment (\code{tt_iterate(fit <- lm(y ~ x))}). \code{{targets}}
 tracks dependencies from global symbols in the command (the right-hand
-side if you used \verb{<-}). Mapped targets referenced here also set the
+side if you used \verb{<-}), using the same static analysis as \code{{targets}}
+(\verb{$column} is not a dependency). Mapped targets referenced here also set the
 iteration pattern. \code{=} inside the call is argument matching, not
 assignment; use \verb{<-}.}
 

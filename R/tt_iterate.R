@@ -8,7 +8,8 @@
 #' @param command An unevaluated expression. Write `name <- expr` to name the
 #'   target from the assignment (`tt_iterate(fit <- lm(y ~ x))`). `{targets}`
 #'   tracks dependencies from global symbols in the command (the right-hand
-#'   side if you used `<-`). Mapped targets referenced here also set the
+#'   side if you used `<-`), using the same static analysis as `{targets}`
+#'   (`$column` is not a dependency). Mapped targets referenced here also set the
 #'   iteration pattern. `=` inside the call is argument matching, not
 #'   assignment; use `<-`.
 #' @param target_output Character name of the output target. Optional if
@@ -186,8 +187,10 @@ process_pattern <- function(sizes, pattern = c("map", "cross")) {
 
 #' Pipeline steps a command mentions, filtered by iterate mode
 #'
-#' Pulls symbol names out of `command`, keeps those that are already steps
-#' in `tt_input`, then keeps only steps whose `$iterate` is in `value`.
+#' Uses [targets::tar_deps_raw()] so `$column` and similar extractors are
+#' not treated as dependencies (`formula_df$formula` depends on
+#' `formula_df`, not a target named `formula`). Then keeps names that are
+#' already steps in `tt_input` whose `$iterate` is in `value`.
 #'
 #' `tt_iterate()` uses this with `value = "map"` to find mapped stems in the
 #' command (from `tt_data_list()`, a mapped `tt_initialise()` input, or a
@@ -198,12 +201,12 @@ process_pattern <- function(sizes, pattern = c("map", "cross")) {
 #' @param command A language object. Anything else returns `character()`.
 #' @param tt_input A `tidytargets` object.
 #' @param value `$iterate` value(s) to keep, typically `"map"`.
-#' @return Character names of matching steps, in `all.vars()` order.
+#' @return Character names of matching steps, in `{targets}` dependency order.
 #' @noRd
 mapped_names_in_command <- function(command, tt_input, value) {
   if (!is.language(command)) return(character())
 
-  vars <- all.vars(command)
+  vars <- targets::tar_deps_raw(command)
   vars <- vars[vars %in% names(tt_input)]
 
   Filter(
