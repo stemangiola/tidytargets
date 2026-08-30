@@ -46,10 +46,8 @@ writing.
 
 ## Details
 
-The store is held under a dot-prefixed element of the object. `targets`
-rejects target names beginning with a dot, so the store can never be
-shadowed by a target the user adds, and metadata places no restriction
-on the names passed to `target_output`.
+Metadata lives in `$metadata`, separate from `$targets`, so a target may
+use any name including `"metadata"` without colliding with the store.
 
 ## Examples
 

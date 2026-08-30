@@ -25,7 +25,7 @@ them in the command expression of tt_iterate() or tt_single()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ them in the command expression of tt_iterate() or tt_single()."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Get or Set Free-Form Metadata on a tidytargets Object</h1>
-      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/main/R/tt_metadata.R" class="external-link"><code>R/tt_metadata.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/change-internal-data-structure/R/tt_metadata.R" class="external-link"><code>R/tt_metadata.R</code></a></small>
       <div class="d-none name"><code>tt_metadata.Rd</code></div>
     </div>
 
@@ -98,10 +98,8 @@ when writing.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The store is held under a dot-prefixed element of the object. <code>targets</code>
-rejects target names beginning with a dot, so the store can never be shadowed
-by a target the user adds, and metadata places no restriction on the names
-passed to <code>target_output</code>.</p>
+    <p>Metadata lives in <code>$metadata</code>, separate from <code>$targets</code>, so a target may
+use any name including <code>"metadata"</code> without colliding with the store.</p>
     </div>
 
     <div class="section level2">

@@ -21,7 +21,7 @@ nothing."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@ nothing."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Initialise a tidytargets Pipeline</h1>
-      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/main/R/tt_initialise.R" class="external-link"><code>R/tt_initialise.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/change-internal-data-structure/R/tt_initialise.R" class="external-link"><code>R/tt_initialise.R</code></a></small>
       <div class="d-none name"><code>tt_initialise.Rd</code></div>
     </div>
 
@@ -152,10 +152,10 @@ file-tracking target is registered as <code>{target_output}_file</code>.</p></dd
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>tidytargets</code> S3 object containing the initialisation arguments in
-<code>$initialisation</code> and an empty metadata store (see <code><a href="tt_metadata.html">tt_metadata()</a></code>), ready
-to be extended with pipeline step functions. The graph is not run until
-you print it or call <code><a href="tt_evaluate.html">tt_evaluate()</a></code>.</p>
+    <p>A <code>tidytargets</code> S3 object with <code>$initialisation</code> (constructor
+arguments), <code>$metadata</code> (see <code><a href="tt_metadata.html">tt_metadata()</a></code>), and <code>$targets</code> (named
+step records), ready to be extended with pipeline step functions. The
+graph is not run until you print it or call <code><a href="tt_evaluate.html">tt_evaluate()</a></code>.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

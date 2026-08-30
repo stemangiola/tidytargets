@@ -102,23 +102,22 @@ steps that mention it are mapped over each element.
 
 ## Carrying extra information
 
-A `tidytargets` object is a named list: `$initialisation` holds the
-arguments given to
-[`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md),
-and every other element is a target you added. Alongside those sits a
-free-form metadata store, reachable only through
-[`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md),
-for information that is not part of the graph — an API endpoint, a
-dataset identifier, a provenance note.
+A `tidytargets` object has three slots: `$initialisation` (the arguments
+given to
+[`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)),
+`$metadata` (free-form extras, also reachable through
+[`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)),
+and `$targets` (one named record per target you added). Metadata is for
+information that is not part of the graph — an API endpoint, a dataset
+identifier, a provenance note.
 
 `pipeline`` ``<-`` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``)`` ``|>`` `` `[`tt_metadata`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)`(``api_url ``=`` ``"https://api.example.org"``, api_version ``=`` ``2``)`` `` `[`tt_metadata`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)`(``pipeline``)``$``api_url`` ``#> [1] "https://api.example.org"`
 
 Metadata is merged on each call, and passing `NULL` removes an entry. It
 travels with the object through every grammar step but is not written to
 the targets script, so workers cannot see it; values a target needs must
-appear in `command`. The store is inert with respect to the rest of the
-grammar and constrains nothing — it imposes no restriction on your
-`target_output` names.
+appear in `command`. Because it lives in `$metadata` rather than among
+the steps, it imposes no restriction on your `target_output` names.
 
 ## Deployment
 

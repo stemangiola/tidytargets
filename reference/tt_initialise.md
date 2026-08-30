@@ -109,9 +109,9 @@ tt_initialise(
 
 ## Value
 
-A `tidytargets` S3 object containing the initialisation arguments in
-`$initialisation` and an empty metadata store (see
+A `tidytargets` S3 object with `$initialisation` (constructor
+arguments), `$metadata` (see
 [`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)),
-ready to be extended with pipeline step functions. The graph is not run
-until you print it or call
+and `$targets` (named step records), ready to be extended with pipeline
+step functions. The graph is not run until you print it or call
 [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md).
