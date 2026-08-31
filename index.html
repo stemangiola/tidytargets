@@ -104,6 +104,78 @@
 <div class="section level2">
 <h2 id="grammar">Grammar<a class="anchor" aria-label="anchor" href="#grammar"></a>
 </h2>
+<div class="section level3">
+<h3 id="workflow">Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
+</h3>
+<table class="table">
+<thead><tr>
+<th>Function</th>
+<th>Role</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code><a href="reference/tt_initialise.html">tt_initialise()</a></code></td>
+<td>Start a pipeline: store, optional mapped inputs</td>
+</tr>
+<tr>
+<td><code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code></td>
+<td>Write the target list and run <code>tar_make()</code>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
+</h3>
+<table class="table">
+<thead><tr>
+<th>Function</th>
+<th>Role</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code><a href="reference/tt_data.html">tt_data()</a></code></td>
+<td>Snapshot a session object onto the store as one target</td>
+</tr>
+<tr>
+<td><code><a href="reference/tt_data_list.html">tt_data_list()</a></code></td>
+<td>Snapshot a list onto the store as mapped units</td>
+</tr>
+<tr>
+<td><code><a href="reference/tt_merge.html">tt_merge()</a></code></td>
+<td>Combine iterated results into one object</td>
+</tr>
+<tr>
+<td><code><a href="reference/tt_split.html">tt_split()</a></code></td>
+<td>Turn a pipeline list into mapped units</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="commands">Commands<a class="anchor" aria-label="anchor" href="#commands"></a>
+</h3>
+<table class="table">
+<thead><tr>
+<th>Function</th>
+<th>Role</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code><a href="reference/tt_iterate.html">tt_iterate()</a></code></td>
+<td>Map or cross a function over mapped inputs</td>
+</tr>
+<tr>
+<td><code><a href="reference/tt_single.html">tt_single()</a></code></td>
+<td>Add one non-iterated target</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="reporting-and-debug">Reporting and debug<a class="anchor" aria-label="anchor" href="#reporting-and-debug"></a>
+</h3>
 <table class="table">
 <colgroup>
 <col width="50%">
@@ -115,41 +187,8 @@
 </tr></thead>
 <tbody>
 <tr>
-<td><code><a href="reference/tt_initialise.html">tt_initialise()</a></code></td>
-<td>Start a pipeline: store, optional mapped inputs</td>
-</tr>
-<tr>
-<td><code><a href="reference/tt_data.html">tt_data()</a></code></td>
-<td>Snapshot a session object onto the store as one target</td>
-</tr>
-<tr>
-<td><code><a href="reference/tt_data_list.html">tt_data_list()</a></code></td>
-<td>Snapshot a list onto the store as mapped units</td>
-</tr>
-<tr>
-<td><code><a href="reference/tt_iterate.html">tt_iterate()</a></code></td>
-<td>Map or cross a function over mapped inputs</td>
-</tr>
-<tr>
-<td><code><a href="reference/tt_single.html">tt_single()</a></code></td>
-<td>Add one non-iterated target</td>
-</tr>
-<tr>
-<td><code><a href="reference/tt_split.html">tt_split()</a></code></td>
-<td>Turn a pipeline list into mapped units</td>
-</tr>
-<tr>
-<td><code><a href="reference/tt_merge.html">tt_merge()</a></code></td>
-<td>Combine iterated results into one object</td>
-</tr>
-<tr>
 <td><code><a href="reference/tt_report.html">tt_report()</a></code></td>
 <td>Render a Quarto / R Markdown report</td>
-</tr>
-<tr>
-<td><code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code></td>
-<td>Write the target list and run <code>tar_make()</code>
-</td>
 </tr>
 <tr>
 <td><code><a href="reference/tt_explore.html">tt_explore()</a></code></td>
@@ -161,6 +200,7 @@
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 <div class="section level2">
 <h2 id="deployment">Deployment<a class="anchor" aria-label="anchor" href="#deployment"></a>

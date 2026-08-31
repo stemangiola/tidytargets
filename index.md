@@ -88,17 +88,34 @@ steps that mention it are mapped over each element.
 
 ## Grammar
 
+### Workflow
+
 | Function | Role |
 |----|----|
 | [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md) | Start a pipeline: store, optional mapped inputs |
+| [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md) | Write the target list and run `tar_make()` |
+
+### Data
+
+| Function | Role |
+|----|----|
 | [`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md) | Snapshot a session object onto the store as one target |
 | [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md) | Snapshot a list onto the store as mapped units |
+| [`tt_merge()`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md) | Combine iterated results into one object |
+| [`tt_split()`](https://stemangiola.github.io/tidytargets/reference/tt_split.md) | Turn a pipeline list into mapped units |
+
+### Commands
+
+| Function | Role |
+|----|----|
 | [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md) | Map or cross a function over mapped inputs |
 | [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md) | Add one non-iterated target |
-| [`tt_split()`](https://stemangiola.github.io/tidytargets/reference/tt_split.md) | Turn a pipeline list into mapped units |
-| [`tt_merge()`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md) | Combine iterated results into one object |
+
+### Reporting and debug
+
+| Function | Role |
+|----|----|
 | [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md) | Render a Quarto / R Markdown report |
-| [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md) | Write the target list and run `tar_make()` |
 | [`tt_explore()`](https://stemangiola.github.io/tidytargets/reference/tt_explore.md) | Return one stored instance of a named target |
 | [`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md) | Get or set free-form metadata on the pipeline object |
 
