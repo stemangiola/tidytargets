@@ -1,4 +1,4 @@
-# tidytargets
+# tidytargets (alpha)
 
 A tidy, pipe-friendly grammar for `{targets}`, internally based on [targets factories](https://books.ropensci.org/targets/static.html#target-factories).
 
