@@ -94,6 +94,7 @@ steps that mention it are mapped over each element.
 |----|----|
 | [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md) | Start a pipeline: store, optional mapped inputs |
 | [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md) | Write the target list and run `tar_make()` |
+| [`tt_read()`](https://stemangiola.github.io/tidytargets/reference/tt_read.md) | Read the full stored value of a named target |
 
 ### Data
 

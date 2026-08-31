@@ -94,6 +94,7 @@ steps that mention it are mapped over each element.
 |----|----|
 | [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md) | Start a pipeline: store, optional mapped inputs |
 | [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md) | Write the target list and run `tar_make()` |
+| [`tt_read()`](https://stemangiola.github.io/tidytargets/reference/tt_read.md) | Read the full stored value of a named target |
 
 ### Data
 
@@ -169,6 +170,8 @@ Pass this to `tt_initialise(computing_resources = ...)`.
   : Add a Merge Step to the tidytargets Pipeline
 - [`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md)
   : Get or Set Free-Form Metadata on a tidytargets Object
+- [`tt_read()`](https://stemangiola.github.io/tidytargets/reference/tt_read.md)
+  : Read a Stored Pipeline Target
 - [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md)
   : Add a Report Step to the tidytargets Pipeline
 - [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)

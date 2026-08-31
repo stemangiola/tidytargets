@@ -7,7 +7,7 @@ it because R auto-prints the result; a piped call does not.
 For a mapped (patterned) target this is one branch, loaded without pulling
 every branch into memory. For a mapped list stored as a single stem
 (e.g. input_list) this is one list element. For a non-mapped target the
-whole object is returned.
+whole object is returned. Use tt_read() to load every branch at once.
 If the target has not been built yet, the pipeline is evaluated first
 (same incremental tar_make() as tt_evaluate())."><meta property="og:description" content="Reads a stored target from a tidytargets pipeline and returns a single
 instance so you can inspect it or pipe it onward. A short heading is
@@ -17,7 +17,7 @@ it because R auto-prints the result; a piped call does not.
 For a mapped (patterned) target this is one branch, loaded without pulling
 every branch into memory. For a mapped list stored as a single stem
 (e.g. input_list) this is one list element. For a non-mapped target the
-whole object is returned.
+whole object is returned. Use tt_read() to load every branch at once.
 If the target has not been built yet, the pipeline is evaluated first
 (same incremental tar_make() as tt_evaluate())."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -27,7 +27,7 @@ If the target has not been built yet, the pipeline is evaluated first
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@ it because R auto-prints the result; a piped call does not.</p>
 <p>For a mapped (patterned) target this is one branch, loaded without pulling
 every branch into memory. For a mapped list stored as a single stem
 (e.g. <code>input_list</code>) this is one list element. For a non-mapped target the
-whole object is returned.</p>
+whole object is returned. Use <code><a href="tt_read.html">tt_read()</a></code> to load every branch at once.</p>
 <p>If the target has not been built yet, the pipeline is evaluated first
 (same incremental <code>tar_make()</code> as <code><a href="tt_evaluate.html">tt_evaluate()</a></code>).</p>
     </div>

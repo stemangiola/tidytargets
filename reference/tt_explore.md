@@ -10,7 +10,9 @@ auto-prints the result; a piped call does not.
 For a mapped (patterned) target this is one branch, loaded without
 pulling every branch into memory. For a mapped list stored as a single
 stem (e.g. `input_list`) this is one list element. For a non-mapped
-target the whole object is returned.
+target the whole object is returned. Use
+[`tt_read()`](https://stemangiola.github.io/tidytargets/reference/tt_read.md)
+to load every branch at once.
 
 If the target has not been built yet, the pipeline is evaluated first
 (same incremental `tar_make()` as
