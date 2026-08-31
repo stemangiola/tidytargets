@@ -26,7 +26,9 @@ all queued steps. Returns the \code{tar_meta()} table.
 If a target fails with an S4 method-dispatch error on a \code{list} (typically
 because a list was brought in with \code{\link[=tt_data]{tt_data()}} instead of
 \code{\link[=tt_data_list]{tt_data_list()}}), the error is rethrown with a hint to use
-\code{tt_data_list()}.
+\code{tt_data_list()}. If \code{{targets}} errors because \code{map()} inputs have
+unequal lengths, the error is rethrown with a hint to use
+\code{pattern = "cross"} (or \code{tt_data()} for a length-1 constant).
 
 The generic records that this store has been run before dispatching, so a
 subclass \code{tt_evaluate} method cannot leave the interactive "pipeline is

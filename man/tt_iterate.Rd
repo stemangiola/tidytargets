@@ -51,12 +51,11 @@ assignment; use \verb{<-}.}
 should be sourced in the worker before evaluating \code{command}. \code{NULL}
 sources nothing.}
 
-\item{pattern}{\code{"map"} (the default) or \code{"cross"}. \code{"map"} pairs
-mapped inputs of equal length and omits length-1 names from the
-pattern. Unequal sizes (ignoring length-1 lists) error; pass
-\code{"cross"} for a product of branches. With two or more mapped
-inputs, the chosen pattern is messaged; \code{cross()} names the
-targets being crossed.}
+\item{pattern}{\code{"map"} (the default) or \code{"cross"}. \code{"map"} pairs mapped
+inputs; \code{{targets}} errors at make time if their lengths differ.
+Pass \code{"cross"} for a product of branches. A single mapped input is
+always \code{map()}. With two or more mapped inputs, the chosen pattern
+is messaged; \code{cross()} names the targets being crossed.}
 
 \item{...}{Additional factory arguments such as \code{format}, \code{deployment},
 or \code{packages}.}

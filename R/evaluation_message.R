@@ -1,7 +1,7 @@
 #' Lazy evaluation notice for unevaluated pipelines
 #'
 #' A tidytargets pipeline is a targets graph. Building it (`tt_initialise()`,
-#' `tt_iterate()`, `tt_single()`, `tt_merge()`, `tt_report()`) does not run
+#' `tt_iterate()`, `tt_single()`, `tt_split()`, `tt_merge()`, `tt_report()`) does not run
 #' it. Printing it, or calling [tt_evaluate()], does. Assignment never
 #' prints, so a user who writes
 #' `pipeline <- tt_initialise() |> tt_data_list(inputs) |> tt_iterate(...)` would otherwise

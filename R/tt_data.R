@@ -96,14 +96,14 @@ tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
 #' elements.
 #'
 #' When a later [tt_iterate()] command mentions more than one mapped target,
-#' `{targets}` `map()` is used by default. Length-1 lists are omitted from
-#' `map()` and do not decide whether sizes match. Different lengths error;
-#' pass `pattern = "cross"` for a product of branches.
+#' `{targets}` `map()` is used by default. Unequal lengths error at make
+#' time; pass `pattern = "cross"` for a product of branches. A one-element
+#' list that should not be branched belongs in [tt_data()], not here.
 #'
 #' Typical use is a parameter grid split into rows, e.g.
-#' `tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))`
-#' or `dplyr::group_split()`. Unnamed lists are named with integer indices,
-#' the same way [tt_initialise()] names unnamed inputs.
+#' `tt_data_list(settings <- grid |> group_split(row_number()))`.
+#' Unnamed lists are named with integer indices, the same way
+#' [tt_initialise()] names unnamed inputs.
 #'
 #' If `target_output` is omitted, the name of `x` is used, or the left-hand
 #' side of an assignment (`tt_data_list(settings <- rows)`). An inline
@@ -122,7 +122,7 @@ tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
 #' \dontrun{
 #' grid <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
 #' pipeline <- tt_initialise(store = "store") |>
-#'   tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))
+#'   tt_data_list(settings <- grid |> group_split(row_number()))
 #' }
 #' @name tt_data_list
 #' @export
@@ -151,7 +151,7 @@ tt_data_list.tidytargets <- function(tt_input, x, target_output = NULL) {
   if (!is.list(x)) {
     stop(
       "tidytargets says: tt_data_list() expects a list, ",
-      "e.g. grid |> split(seq_len(nrow(grid))).",
+      "e.g. grid |> group_split(row_number()).",
       call. = FALSE
     )
   }
@@ -195,8 +195,7 @@ tt_data_list.tidytargets <- function(tt_input, x, target_output = NULL) {
     target_output,
     list(
       command = read_cmd,
-      iterate = "map",
-      n_units = length(x)
+      iterate = "map"
     )
   )
 }
