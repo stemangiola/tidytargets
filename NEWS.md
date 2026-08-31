@@ -1,5 +1,14 @@
 # tidytargets NEWS
 
+## tidytargets 0.0.10
+
+* Mapping is a binary label (`iterate = "map"` vs not). Exact `n_units`
+  and compose-time size checks are gone; `{targets}` errors at make if
+  `map()` lengths differ. `tt_evaluate()` intercepts that error and
+  hints to use `pattern = "cross"`. Use `tt_data()` for a constant
+  (including a length-1 list). Pass `pattern = "cross"` for a product
+  of branches.
+
 ## tidytargets 0.0.9
 
 * `tt_split()` is the inverse of `tt_merge()`: a pipeline command that

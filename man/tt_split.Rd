@@ -10,7 +10,6 @@ tt_split(
   tt_input,
   command = NULL,
   target_output = NULL,
-  n_units = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -19,7 +18,6 @@ tt_split(
   tt_input,
   command = NULL,
   target_output = NULL,
-  n_units = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -28,7 +26,6 @@ tt_split(
   tt_input,
   command = NULL,
   target_output = NULL,
-  n_units = NULL,
   user_function_source_path = NULL,
   ...
 )
@@ -46,10 +43,6 @@ argument matching, not assignment; use \verb{<-}.}
 \item{target_output}{Character name of the output target. Optional if
 \code{command} is \code{name <- expr}.}
 
-\item{n_units}{Optional positive integer override for the number of
-list elements. \code{NULL} (the default) infers it from the command when
-possible.}
-
 \item{user_function_source_path}{Optional character path to an R script
 to source in the worker before evaluating \code{command}. \code{NULL} sources
 nothing.}
@@ -65,8 +58,4 @@ steps that mention \code{target_output} branch over the elements.
 Use this when the list is produced \strong{in the pipeline} (for example
 splitting a \code{\link[=tt_data]{tt_data()}} grid). To snapshot a list from the current
 session, use \code{\link[=tt_data_list]{tt_data_list()}} instead.
-
-The number of units is taken from \code{length()} of the command result when
-that can be evaluated in the current session (typical after \code{\link[=tt_data]{tt_data()}}).
-Pass \code{n_units} only to override, or when the length is not known yet.
 }

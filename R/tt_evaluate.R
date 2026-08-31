@@ -8,7 +8,9 @@
 #' If a target fails with an S4 method-dispatch error on a `list` (typically
 #' because a list was brought in with [tt_data()] instead of
 #' [tt_data_list()]), the error is rethrown with a hint to use
-#' `tt_data_list()`.
+#' `tt_data_list()`. If `{targets}` errors because `map()` inputs have
+#' unequal lengths, the error is rethrown with a hint to use
+#' `pattern = "cross"` (or `tt_data()` for a length-1 constant).
 #'
 #' The generic records that this store has been run before dispatching, so a
 #' subclass `tt_evaluate` method cannot leave the interactive "pipeline is
@@ -70,6 +72,13 @@ tt_evaluate.tidytargets = function(tt_input) {
         stop(
           msg, "\n",
           "tidytargets says: did you remember to use tt_data_list for your list inputs you want to iterate on?",
+          call. = FALSE
+        )
+      }
+      if (grepl("unequal lengths of vars in map", msg, fixed = TRUE)) {
+        stop(
+          msg, "\n",
+          "tidytargets says: `pattern = \"map\"` can only be applied with input of the same length (size-1 inputs are fine). Did you mean to use `pattern = \"cross\"` to execute your command over the combinations of your inputs?",
           call. = FALSE
         )
       }

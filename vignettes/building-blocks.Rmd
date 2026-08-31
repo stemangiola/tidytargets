@@ -148,7 +148,7 @@ pipe <- pipe |>
 show_targets_script(pipe)
 ```
 
-With two mapped inputs, `tt_iterate()` uses `map()` when they have the same length. Length-1 lists are omitted from `map()` and do not decide whether sizes match. Different lengths error; pass `pattern = "cross"` for a product of branches.
+With two mapped inputs, `tt_iterate()` uses `map()` by default. `{targets}` errors at make if the lengths differ; pass `pattern = "cross"` for a product of branches. A constant (including a length-1 list) belongs in `tt_data()`, not `tt_data_list()`.
 
 ## `tt_evaluate()`
 
@@ -179,7 +179,7 @@ show_targets_script(pipe)
 
 ## `tt_split()`
 
-Inverse of `tt_merge()`: a stem command that returns a list is marked as mapped units. Later `tt_iterate()` steps that mention it branch over the elements. The number of units is inferred from the list length. Unlike `tt_data_list()`, the split runs in the pipeline.
+Inverse of `tt_merge()`: a stem command that returns a list is marked as mapped units. Later `tt_iterate()` steps that mention it branch over the elements. Unlike `tt_data_list()`, the split runs in the pipeline.
 
 ```{r split}
 grid_split <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))

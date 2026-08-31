@@ -28,7 +28,6 @@ test_that("tt_initialise returns a tidytargets object with input targets", {
   expect_true("input_list" %in% names(hpc$targets))
   expect_true("sample_names" %in% names(hpc$targets))
   expect_equal(hpc$targets$input_list$iterate, "map")
-  expect_equal(hpc$targets$input_list$n_units, 2L)
   expect_equal(hpc$targets$sample_names$iterate, "map")
   expect_null(hpc$initialisation$computing_resources)
 
@@ -472,6 +471,23 @@ test_that("tt_evaluate appends the import_list hint to tar_make list-dispatch er
   expect_error(tt_evaluate(pipe), "tt_data_list")
 })
 
+# Wraps a fake {targets} message; the real unequal-map pipeline below
+# is the canary if {targets} changes the wording.
+test_that("tt_evaluate appends the cross hint to unequal map() errors", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  pipe <- tt_initialise(store = file.path(tmp, "store")) |>
+    tt_single(
+      command = stop("unequal lengths of vars in map(methods, samples)"),
+      target_output = "oops"
+    )
+
+  expect_error(tt_evaluate(pipe), 'pattern = "cross"', fixed = TRUE)
+})
+
 test_that("tt_explore returns one mapped instance and one stem target", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
@@ -564,7 +580,7 @@ test_that("tt_data snapshots a session object as a single stem target", {
   )
 })
 
-test_that("tt_iterate maps equal-size lists and errors on different sizes", {
+test_that("tt_iterate maps equal-size lists; unequal sizes error at make", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -575,8 +591,8 @@ test_that("tt_iterate maps equal-size lists and errors on different sizes", {
     tt_data_list(methods <- list(a = 10, b = 20)) |>
     tt_data_list(samples <- list(x = 1, y = 2))
 
-  expect_equal(pipe$targets$methods$n_units, 2L)
-  expect_equal(pipe$targets$samples$n_units, 2L)
+  expect_equal(pipe$targets$methods$iterate, "map")
+  expect_equal(pipe$targets$samples$iterate, "map")
 
   expect_message(
     pipe <- pipe |> tt_iterate(out <- methods + samples),
@@ -592,7 +608,8 @@ test_that("tt_iterate maps equal-size lists and errors on different sizes", {
     'other_arguments_to_map = c("methods", "samples")',
     fixed = TRUE
   )
-  expect_equal(pipe$targets$out$n_units, 2L)
+  expect_equal(pipe$targets$out$iterate, "map")
+  expect_null(pipe$targets$out$n_units)
 
   tt_evaluate(pipe)
   expect_equal(
@@ -600,16 +617,35 @@ test_that("tt_iterate maps equal-size lists and errors on different sizes", {
     c(11, 22)
   )
 
+  store_unequal <- file.path(tmp, "store-unequal")
+  pipe_unequal <- tt_initialise(store = store_unequal) |>
+    tt_data_list(methods <- list(a = 10, b = 20)) |>
+    tt_data_list(samples <- list(x = 1, y = 2, z = 3))
+
+  expect_message(
+    pipe_unequal <- pipe_unequal |> tt_iterate(out <- methods + samples),
+    "using map()",
+    fixed = TRUE
+  )
+  # Canary: if {targets} rewords this, grepl() in tt_evaluate() will miss
+  # and the tidytargets hint will disappear from the error.
+  err <- tryCatch(tt_evaluate(pipe_unequal), error = identity)
+  expect_s3_class(err, "error")
+  expect_match(
+    conditionMessage(err),
+    "unequal lengths of vars in map",
+    fixed = TRUE
+  )
+  expect_match(
+    conditionMessage(err),
+    'pattern = "cross"',
+    fixed = TRUE
+  )
+
   store_cross <- file.path(tmp, "store-cross")
   pipe_cross <- tt_initialise(store = store_cross) |>
     tt_data_list(methods <- list(a = 10, b = 20)) |>
     tt_data_list(samples <- list(x = 1, y = 2, z = 3))
-
-  expect_error(
-    tt_iterate(pipe_cross, out <- methods + samples),
-    'use pattern = "cross"',
-    fixed = TRUE
-  )
 
   expect_message(
     pipe_cross <- pipe_cross |> tt_iterate(out <- methods + samples, pattern = "cross"),
@@ -620,7 +656,6 @@ test_that("tt_iterate maps equal-size lists and errors on different sizes", {
     paste(readLines(paste0(store_cross, ".R")), collapse = "\n"),
     'pattern_type = "cross"'
   )
-  expect_equal(pipe_cross$targets$out$n_units, 6L)
 
   # tar_make() via callr loads the installed factory, which has no
   # pattern_type. Run in-process so this session's factory can cross().
@@ -641,7 +676,7 @@ test_that("tt_iterate maps equal-size lists and errors on different sizes", {
   )
 })
 
-test_that("tt_iterate pattern = cross is explicit; map errors on unequal sizes", {
+test_that("tt_iterate pattern = cross is explicit; map writes all mapped names", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -660,20 +695,24 @@ test_that("tt_iterate pattern = cross is explicit; map errors on unequal sizes",
     paste(readLines(paste0(pipe$initialisation$store, ".R")), collapse = "\n"),
     'pattern_type = "cross"'
   )
-  expect_equal(pipe$targets$out$n_units, 4L)
 
   pipe_map <- tt_initialise(store = file.path(tmp, "store-map")) |>
     tt_data_list(methods <- list(a = 10, b = 20)) |>
     tt_data_list(samples <- list(x = 1, y = 2, z = 3))
 
-  expect_error(
-    tt_iterate(pipe_map, out <- methods + samples, pattern = "map"),
-    'use pattern = "cross"',
+  expect_message(
+    pipe_map <- pipe_map |> tt_iterate(out <- methods + samples, pattern = "map"),
+    "using map()",
+    fixed = TRUE
+  )
+  expect_match(
+    paste(readLines(paste0(pipe_map$initialisation$store, ".R")), collapse = "\n"),
+    'other_arguments_to_map = c("methods", "samples")',
     fixed = TRUE
   )
 })
 
-test_that("tt_iterate drops length-1 mapped inputs from a map() pattern", {
+test_that("tt_iterate maps every iterate=map name; constants use tt_data", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
   old <- setwd(tmp)
@@ -690,47 +729,37 @@ test_that("tt_iterate drops length-1 mapped inputs from a map() pattern", {
   )
   script <- paste(readLines(paste0(pipe$initialisation$store, ".R")), collapse = "\n")
   expect_match(script, 'pattern_type = "map"')
-  expect_match(script, 'other_arguments_to_map = "samples"')
-  expect_false(grepl('other_arguments_to_map = c\\("methods"', script))
-  expect_equal(pipe$targets$out$n_units, 3L)
-})
-
-test_that("tt_iterate map with three lists ignores size-1 when the others match", {
-  tmp <- tempfile("tidytargets-")
-  dir.create(tmp)
-  old <- setwd(tmp)
-  on.exit(setwd(old), add = TRUE)
-
-  pipe <- tt_initialise(store = file.path(tmp, "store-map")) |>
-    tt_data_list(const <- list(x = 100)) |>
-    tt_data_list(methods <- list(a = 10, b = 20)) |>
-    tt_data_list(samples <- list(x = 1, y = 2))
-
-  expect_message(
-    pipe <- pipe |> tt_iterate(out <- const + methods + samples),
-    "using map()",
-    fixed = TRUE
-  )
-  script <- paste(readLines(paste0(pipe$initialisation$store, ".R")), collapse = "\n")
-  expect_match(script, 'pattern_type = "map"')
   expect_match(
     script,
     'other_arguments_to_map = c("methods", "samples")',
     fixed = TRUE
   )
-  expect_false(grepl("other_arguments_to_map = c\\(\"const\"", script))
-  expect_equal(pipe$targets$out$n_units, 2L)
+
+  pipe_const <- tt_initialise(store = file.path(tmp, "store-const")) |>
+    tt_data(const <- 100) |>
+    tt_data_list(samples <- list(x = 1, y = 2, z = 3)) |>
+    tt_iterate(out <- const + samples)
+
+  script_const <- paste(
+    readLines(paste0(pipe_const$initialisation$store, ".R")),
+    collapse = "\n"
+  )
+  expect_match(script_const, 'other_arguments_to_map = "samples"')
+  expect_false(grepl("other_arguments_to_map = c\\(\"const\"", script_const))
+  expect_equal(pipe_const$targets$const$iterate, "none")
+})
+
+test_that("tt_iterate cross includes every mapped name", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
 
   pipe_cross <- tt_initialise(store = file.path(tmp, "store-cross")) |>
     tt_data_list(const <- list(x = 100)) |>
     tt_data_list(methods <- list(a = 10, b = 20)) |>
     tt_data_list(samples <- list(x = 1, y = 2, z = 3))
 
-  expect_error(
-    tt_iterate(pipe_cross, out <- const + methods + samples),
-    'use pattern = "cross"',
-    fixed = TRUE
-  )
   expect_message(
     pipe_cross <- pipe_cross |> tt_iterate(out <- const + methods + samples, pattern = "cross"),
     "crossing const, methods, samples",
@@ -746,7 +775,6 @@ test_that("tt_iterate map with three lists ignores size-1 when the others match"
     'other_arguments_to_map = c("const", "methods", "samples")',
     fixed = TRUE
   )
-  expect_equal(pipe_cross$targets$out$n_units, 6L)
 })
 
 test_that("tt_data defaults target_output to the object name", {
@@ -781,7 +809,6 @@ test_that("tt_data_list snapshots a list as mapped units", {
   expect_s3_class(pipe, "tidytargets")
   expect_true("settings" %in% names(pipe$targets))
   expect_equal(pipe$targets$settings$iterate, "map")
-  expect_equal(pipe$targets$settings$n_units, 4L)
   saved <- qs2::qs_read(file.path(store, "settings_data.qs"))
   expect_equal(names(saved), c("1", "2", "3", "4"))
 
@@ -838,7 +865,6 @@ test_that("tt_split marks a pipeline list as mapped units", {
     tt_split(settings <- grid |> dplyr::group_split(dplyr::row_number()))
 
   expect_equal(pipe$targets$settings$iterate, "map")
-  expect_equal(pipe$targets$settings$n_units, 4L)
   expect_equal(pipe$targets$grid$iterate, "none")
 
   pipe <- pipe |>
@@ -854,27 +880,8 @@ test_that("tt_split marks a pipeline list as mapped units", {
   expect_equal(unname(unlist(values)), grid$alpha)
 })
 
-test_that("tt_split infers n_units; bad n_units errors", {
-  tmp <- tempfile("tidytargets-")
-  dir.create(tmp)
-  old <- setwd(tmp)
-  on.exit(setwd(old), add = TRUE)
-
-  pipe <- tt_initialise(store = file.path(tmp, "store")) |>
-    tt_data(grid <- expand.grid(a = 1:2)) |>
-    tt_split(rows <- dplyr::group_split(grid, dplyr::row_number()))
-
-  expect_equal(pipe$targets$rows$iterate, "map")
-  expect_equal(pipe$targets$rows$n_units, 2L)
-
-  expect_error(
-    tt_split(pipe, rows2 <- list(1, 2), n_units = 0),
-    "positive integer"
-  )
-  expect_error(
-    tt_split(pipe, rows2 <- list(1, 2), n_units = 1.5),
-    "positive integer"
-  )
+test_that("tt_split has no n_units argument", {
+  expect_false("n_units" %in% names(formals(tt_split)))
 })
 
 test_that("tt_initialise snapshots attached package names, not session objects", {

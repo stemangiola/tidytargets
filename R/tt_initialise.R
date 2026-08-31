@@ -178,7 +178,6 @@ tt_initialise <- function(tt_input = NULL,
 
   if (!has_input) return(pipe)
 
-  n_in <- length(tt_input)
   target_script <- paste0(store, ".R")
 
   tar_append(
@@ -206,8 +205,7 @@ tt_initialise <- function(tt_input = NULL,
     "sample_names",
     list(
       command = quote(qs_read(sample_names_file)),
-      iterate = "map",
-      n_units = n_in
+      iterate = "map"
     )
   )
 
@@ -239,8 +237,7 @@ tt_initialise <- function(tt_input = NULL,
     target_output,
     list(
       command = input_read,
-      iterate = "map",
-      n_units = n_in
+      iterate = "map"
     )
   )
 }
