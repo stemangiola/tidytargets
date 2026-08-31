@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
   class.output = "r"
 )
 library(tidytargets)
+library(dplyr)
 
 work <- tempfile("tidytargets-vignette-")
 dir.create(work)
@@ -24,7 +25,7 @@ tidytargets is a tidy, pipe-friendly grammar for `{targets}`.
 
 `tt_initialise()` constructs a `tidytargets` object. Each method is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it appends `tar_target` definitions to a pipeline script. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
 
-The composition is **lazy**. `tt_initialise()`, `tt_data()`, `tt_data_list()`, `tt_single()`, `tt_iterate()`, `tt_merge()`, and `tt_report()` only write factories into `{store}.R`. User functions are not called until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console), which closes the script and runs `targets::tar_make()`.
+The composition is **lazy**. `tt_initialise()`, `tt_data()`, `tt_data_list()`, `tt_single()`, `tt_iterate()`, `tt_split()`, `tt_merge()`, and `tt_report()` only write factories into `{store}.R`. User functions are not called until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console), which closes the script and runs `targets::tar_make()`.
 Assigning the object does not print it, so an interactive session then says the pipeline is ready to be evaluated, rather than appearing to do nothing.
 
 Pipelines are **incremental**. Add a step, change a parameter, or grow the input list and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
@@ -40,13 +41,14 @@ This vignette walks through every building block and prints the targets script a
 | `tt_data_list()` | Snapshot a list onto the store as mapped units |
 | `tt_single()` | Add one non-iterated target |
 | `tt_iterate()` | Map a function over inputs |
+| `tt_split()` | Turn a pipeline list into mapped units |
 | `tt_merge()` | Combine iterated results into one object |
 | `tt_report()` | Render a Quarto / R Markdown report |
 | `tt_evaluate()` | Close the script and run `tar_make()` |
 | `tt_explore()` | Return one stored instance of a named target |
-| `tt_factory()` | Internal factory used by iterate / summarise / merge |
+| `tt_factory()` | Internal factory used by iterate / split / merge |
 
-`tt_factory()` is not meant to be called directly. `tt_single()`, `tt_iterate()`, and `tt_merge()` all append `target_list <- target_list |> target_append(tt_factory(...))` to the script.
+`tt_factory()` is not meant to be called directly. `tt_single()`, `tt_iterate()`, `tt_split()`, and `tt_merge()` all append `target_list <- target_list |> target_append(tt_factory(...))` to the script.
 
 ## Toy inputs
 
@@ -95,12 +97,12 @@ show_targets_script(pipe)
 
 ## `tt_data_list()`
 
-Same snapshot, but each list element is a mapped unit. Use this for a parameter grid split into rows (`split()`, or `dplyr::group_split()`). Name an inline expression with `<-`, or pass `target_output`.
+Same snapshot, but each list element is a mapped unit. Use this for a parameter grid split into rows (`group_split(row_number())`). Name an inline expression with `<-`, or pass `target_output`.
 
 ```{r data-list}
 grid <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
 pipe <- pipe |>
-  tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))
+  tt_data_list(settings <- grid |> group_split(row_number()))
 ```
 
 ```{r data-list-script, comment = ""}
@@ -175,6 +177,21 @@ pipe <- pipe |>
 show_targets_script(pipe)
 ```
 
+## `tt_split()`
+
+Inverse of `tt_merge()`: a stem command that returns a list is marked as mapped units. Later `tt_iterate()` steps that mention it branch over the elements. The number of units is inferred from the list length. Unlike `tt_data_list()`, the split runs in the pipeline.
+
+```{r split}
+grid_split <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
+split_pipe <- tt_initialise() |>
+  tt_data(grid_split) |>
+  tt_split(settings <- grid_split |> group_split(row_number()))
+```
+
+```{r split-script, comment = ""}
+show_targets_script(split_pipe)
+```
+
 ## `tt_report()`
 
 Appends a `tarchetypes::tar_quarto_raw()` factory. Rendering happens later, when you evaluate the pipeline; the grammar only writes the target.
@@ -211,7 +228,7 @@ show_targets_script(pipe)
 
 ## Custom functions from a file
 
-`tt_iterate()`, `tt_single()`, and `tt_merge()` accept `user_function_source_path`. The path is written as `source(...)` in the targets script so workers can load helpers that are not in a package.
+`tt_iterate()`, `tt_single()`, `tt_split()`, and `tt_merge()` accept `user_function_source_path`. The path is written as `source(...)` in the targets script so workers can load helpers that are not in a package.
 
 ```{r source-path, eval = FALSE}
 pipe |>

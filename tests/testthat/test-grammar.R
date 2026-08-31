@@ -187,6 +187,7 @@ test_that("grammar steps error on non-tidytargets input", {
   expect_error(tt_iterate("not a pipeline"), "tidytargets object")
   expect_error(tt_single("not a pipeline"), "tidytargets object")
   expect_error(tt_merge("not a pipeline"), "tidytargets object")
+  expect_error(tt_split("not a pipeline"), "tidytargets object")
   expect_error(tt_report("not a pipeline"), "tidytargets object")
   expect_error(tt_evaluate("not a pipeline"), "tidytargets object")
   expect_error(tt_metadata("not a pipeline"), "tidytargets object")
@@ -205,6 +206,7 @@ test_that("grammar steps require a target_output name", {
   expect_error(tt_single(pipe, command = 1), "target_output")
   expect_error(tt_iterate(pipe, command = 1), "target_output")
   expect_error(tt_merge(pipe, command = 1), "target_output")
+  expect_error(tt_split(pipe, command = 1), "target_output")
 })
 
 test_that("<- names the target and peels the command", {
@@ -772,7 +774,7 @@ test_that("tt_data_list snapshots a list as mapped units", {
   store <- file.path(tmp, "store")
   pipe <- tt_initialise(store = store) |>
     tt_data_list(
-      grid |> split(seq_len(nrow(grid))),
+      grid |> dplyr::group_split(dplyr::row_number()),
       target_output = "settings"
     )
 
@@ -820,6 +822,58 @@ test_that("tt_data_list rejects a non-list and an unnamed expression", {
   expect_error(
     tt_data_list(pipe, list(1, 2)),
     "target_output"
+  )
+})
+
+test_that("tt_split marks a pipeline list as mapped units", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  grid <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store) |>
+    tt_data(grid) |>
+    tt_split(settings <- grid |> dplyr::group_split(dplyr::row_number()))
+
+  expect_equal(pipe$targets$settings$iterate, "map")
+  expect_equal(pipe$targets$settings$n_units, 4L)
+  expect_equal(pipe$targets$grid$iterate, "none")
+
+  pipe <- pipe |>
+    tt_iterate(alpha <- settings$alpha)
+
+  expect_equal(pipe$targets$alpha$iterate, "map")
+  script <- readLines(paste0(store, ".R"))
+  expect_true(any(grepl("other_arguments_to_map = \"settings\"", script)))
+  expect_true(any(grepl("target_output = \"settings\"", script)))
+
+  tt_evaluate(pipe)
+  values <- targets::tar_read(alpha, store = pipe$initialisation$store)
+  expect_equal(unname(unlist(values)), grid$alpha)
+})
+
+test_that("tt_split infers n_units; bad n_units errors", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  pipe <- tt_initialise(store = file.path(tmp, "store")) |>
+    tt_data(grid <- expand.grid(a = 1:2)) |>
+    tt_split(rows <- dplyr::group_split(grid, dplyr::row_number()))
+
+  expect_equal(pipe$targets$rows$iterate, "map")
+  expect_equal(pipe$targets$rows$n_units, 2L)
+
+  expect_error(
+    tt_split(pipe, rows2 <- list(1, 2), n_units = 0),
+    "positive integer"
+  )
+  expect_error(
+    tt_split(pipe, rows2 <- list(1, 2), n_units = 1.5),
+    "positive integer"
   )
 })
 

@@ -3,8 +3,8 @@
 #' @description
 #' Appends one non-iterated targets step: a whole object in, a single object
 #' out. Use [tt_iterate()] when the step should be mapped or crossed over
-#' units. Use [tt_data_list()] (not this function) to bring in a list of
-#' units.
+#' units. Use [tt_data_list()] to bring a session list in as units, or
+#' [tt_split()] to turn a pipeline stem into units.
 #'
 #' @param tt_input A `tidytargets` object.
 #' @param command An unevaluated expression. Write `name <- expr` to name the

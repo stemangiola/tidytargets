@@ -44,7 +44,8 @@ stop_assignment_conflict <- function(from_assignment, target_output) {
 #' Derive `command` and `target_output` from an expression
 #'
 #' Intermediate step used by `tt_iterate()`, `tt_single()`, `tt_merge()`,
-#' `tt_data()`, and `tt_data_list()`. The name comes from `name <- expr`,
+#' `tt_split()`, `tt_data()`, and `tt_data_list()`. The name comes from
+#' `name <- expr`,
 #' a bare symbol, or `target_output`.
 #'
 #' @param command A language object from `substitute()`.

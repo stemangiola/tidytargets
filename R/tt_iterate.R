@@ -189,8 +189,8 @@ process_pattern <- function(sizes, pattern = c("map", "cross")) {
 #' already steps in `tt_input$targets` whose `$iterate` is in `value`.
 #'
 #' `tt_iterate()` uses this with `value = "map"` to find mapped stems in the
-#' command (from `tt_data_list()`, a mapped `tt_initialise()` input, or a
-#' prior iterate). Those names drive `map()` / `cross()`. Symbols that are
+#' command (from `tt_data_list()`, [tt_split()], a mapped `tt_initialise()`
+#' input, or a prior iterate). Those names drive `map()` / `cross()`. Symbols that are
 #' not pipeline steps (functions, locals) and unmapped steps (`iterate =
 #' "none"`) are ignored.
 #'
