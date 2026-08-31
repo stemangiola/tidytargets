@@ -40,6 +40,7 @@ This vignette walks through every building block and prints the targets script a
 | --- | --- |
 | `tt_initialise()` | Start a pipeline: write the script header, optional mapped inputs |
 | `tt_evaluate()` | Close the script and run `tar_make()` |
+| `tt_read()` | Read the full stored value of a named target |
 
 ### Data
 
@@ -179,6 +180,14 @@ Return one stored instance of a target so you can inspect it or pipe it onward. 
 
 ```{r tt-explore}
 pipe |> tt_explore(data)
+```
+
+## `tt_read()`
+
+Read the full stored value of a named target (every branch of a mapped target). Compare with `tt_explore()` when you only need one instance.
+
+```{r tt-read}
+pipe |> tt_read(data)
 ```
 
 ## `tt_merge()`

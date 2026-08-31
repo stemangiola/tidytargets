@@ -64,6 +64,7 @@ targets::tar_read(summaries, store = "_targets")
 | --- | --- |
 | `tt_initialise()` | Start a pipeline: store, optional mapped inputs |
 | `tt_evaluate()` | Write the target list and run `tar_make()` |
+| `tt_read()` | Read the full stored value of a named target |
 
 ### Data
 

@@ -10,7 +10,7 @@
 #' For a mapped (patterned) target this is one branch, loaded without pulling
 #' every branch into memory. For a mapped list stored as a single stem
 #' (e.g. `input_list`) this is one list element. For a non-mapped target the
-#' whole object is returned.
+#' whole object is returned. Use [tt_read()] to load every branch at once.
 #'
 #' If the target has not been built yet, the pipeline is evaluated first
 #' (same incremental `tar_make()` as `tt_evaluate()`).
@@ -42,37 +42,10 @@ tt_explore.default <- function(tt_input, target_output, index = 1L) {
 }
 
 #' @rdname tt_explore
-#' @importFrom glue glue
 #' @importFrom targets tar_meta tar_read_raw tar_exist_objects
 #' @export
 tt_explore.tidytargets <- function(tt_input, target_output, index = 1L) {
-
-  if (missing(target_output)) {
-    stop(
-      "tidytargets says: please supply a target name, ",
-      "e.g. tt_explore(pipeline, data).",
-      call. = FALSE
-    )
-  }
-
-  target_output <- as_explore_target_name(substitute(target_output))
-
-  target_names <- names(tt_input$targets)
-  if (!target_output %in% target_names) {
-    stop(
-      glue(
-        "tidytargets says: `{target_output}` is not a target in this pipeline. ",
-        "Available targets: {paste(target_names, collapse = ', ')}."
-      ),
-      call. = FALSE
-    )
-  }
-
-  index <- as.integer(index)
-  if (length(index) != 1L || is.na(index) || index < 1L) {
-    stop("tidytargets says: index must be a single integer >= 1.", call. = FALSE)
-  }
-
+  target_output <- as_target_name(substitute(target_output))
   store <- tt_input$initialisation$store
   if (!output_is_built(store, target_output)) {
     tt_evaluate(tt_input)
@@ -93,14 +66,10 @@ tt_explore.tidytargets <- function(tt_input, target_output, index = 1L) {
 #' Target name from an unquoted symbol or a string, like tar_read()
 #'
 #' @noRd
-as_explore_target_name <- function(expr) {
+as_target_name <- function(expr) {
   if (is.symbol(expr)) return(as.character(expr))
-  if (is.character(expr) && length(expr) == 1L && nzchar(expr)) return(expr)
-  stop(
-    "tidytargets says: please supply a target name, ",
-    "e.g. tt_explore(pipeline, data).",
-    call. = FALSE
-  )
+  if (is.character(expr) && length(expr) == 1L) return(expr)
+  as.character(expr)
 }
 
 #' Metadata row for a single target, without tidyselect on an external vector
@@ -146,13 +115,11 @@ read_output_instance <- function(tt_input, target_output, index) {
     children <- meta$children[[1]]
     children <- children[!is.na(children)]
     n <- length(children)
-    stop_if_index_out_of_range(target_output, index, n)
     value <- targets::tar_read_raw(
       target_output,
       branches = index,
       store = store
     )
-    # tar_read(..., branches = k) wraps a single branch in a length-1 list
     if (is.list(value) && !is.object(value) && length(value) == 1L) {
       value <- value[[1]]
     }
@@ -164,22 +131,8 @@ read_output_instance <- function(tt_input, target_output, index) {
   if (identical(iterate, "map") && is.list(value) && !is.object(value) &&
       length(value) > 0L) {
     n <- length(value)
-    stop_if_index_out_of_range(target_output, index, n)
     return(list(value = value[[index]], n = n))
   }
 
   list(value = value, n = NULL)
-}
-
-#' @noRd
-stop_if_index_out_of_range <- function(target_output, index, n) {
-  if (index > n) {
-    stop(
-      glue::glue(
-        "tidytargets says: index {index} is out of range; ",
-        "`{target_output}` has {n} instance{if (n == 1L) '' else 's'}."
-      ),
-      call. = FALSE
-    )
-  }
 }

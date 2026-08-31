@@ -191,6 +191,7 @@ test_that("grammar steps error on non-tidytargets input", {
   expect_error(tt_evaluate("not a pipeline"), "tidytargets object")
   expect_error(tt_metadata("not a pipeline"), "tidytargets object")
   expect_error(tt_explore("not a pipeline", "data"), "tidytargets object")
+  expect_error(tt_read("not a pipeline", "data"), "tidytargets object")
   expect_error(tt_data("not a pipeline", 1, target_output = "x"), "tidytargets object")
   expect_error(tt_data_list("not a pipeline", list(1), target_output = "x"), "tidytargets object")
 })
@@ -499,8 +500,8 @@ test_that("tt_explore returns one mapped instance and one stem target", {
     tt_iterate(command = input_list * 2, target_output = "data") |>
     tt_single(command = length(sample_names), target_output = "n_inputs")
 
-  expect_error(tt_explore(pipe, "missing"), "not a target")
-  expect_error(tt_explore(pipe, 1), "target name")
+  expect_error(tt_explore(pipe, "missing"), "not found")
+  expect_error(tt_explore(pipe, 1), "not found")
 
   first <- NULL
   expect_message(
@@ -522,7 +523,7 @@ test_that("tt_explore returns one mapped instance and one stem target", {
   expect_message(second <- tt_explore(pipe, "data", index = 2))
   expect_equal(second, c(8, 10, 12))
 
-  expect_error(tt_explore(pipe, "data", index = 3), "out of range")
+  expect_error(tt_explore(pipe, "data", index = 3), "out of range", fixed = TRUE)
 
   piped <- NULL
   expect_message(
@@ -543,6 +544,35 @@ test_that("tt_explore returns one mapped instance and one stem target", {
   input <- NULL
   expect_message(input <- tt_explore(pipe, "input_list"))
   expect_equal(input, 1:3)
+})
+
+test_that("tt_read returns the full stored target", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  pipe <- list(sample_a = 1:3, sample_b = 4:6) |>
+    tt_initialise(store = file.path(tmp, "store")) |>
+    tt_iterate(command = input_list * 2, target_output = "data") |>
+    tt_single(command = length(sample_names), target_output = "n_inputs")
+
+  expect_error(tt_read(pipe, "missing"), "not found")
+  expect_error(tt_read(pipe, 1), "not found")
+
+  expect_equal(
+    unname(tt_read(pipe, "data")),
+    list(c(2, 4, 6), c(8, 10, 12))
+  )
+  expect_equal(
+    unname(tt_read(pipe, data)),
+    list(c(2, 4, 6), c(8, 10, 12))
+  )
+  expect_equal(tt_read(pipe, "n_inputs"), 2)
+  expect_equal(
+    unname(tt_read(pipe, "input_list")),
+    list(1:3, 4:6)
+  )
 })
 
 test_that("tt_data snapshots a session object as a single stem target", {

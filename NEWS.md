@@ -1,5 +1,14 @@
 # tidytargets NEWS
 
+## tidytargets 0.0.11
+
+* `tt_read()` reads the full stored value of a named target (all branches
+  of a mapped target). Compare with `tt_explore()` for one instance at
+  a time.
+* `tt_read()` and `tt_explore()` are thin wrappers around
+  `{targets}` read helpers; validation and error messages are delegated
+  to `{targets}`.
+
 ## tidytargets 0.0.10
 
 * Mapping is a binary label (`iterate = "map"` vs not). Exact `n_units`
