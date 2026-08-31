@@ -58,17 +58,34 @@ targets::tar_read(summaries, store = "_targets")
 
 ## Grammar
 
+### Workflow
+
 | Function | Role |
 | --- | --- |
 | `tt_initialise()` | Start a pipeline: store, optional mapped inputs |
+| `tt_evaluate()` | Write the target list and run `tar_make()` |
+
+### Data
+
+| Function | Role |
+| --- | --- |
 | `tt_data()` | Snapshot a session object onto the store as one target |
 | `tt_data_list()` | Snapshot a list onto the store as mapped units |
+| `tt_merge()` | Combine iterated results into one object |
+| `tt_split()` | Turn a pipeline list into mapped units |
+
+### Commands
+
+| Function | Role |
+| --- | --- |
 | `tt_iterate()` | Map or cross a function over mapped inputs |
 | `tt_single()` | Add one non-iterated target |
-| `tt_split()` | Turn a pipeline list into mapped units |
-| `tt_merge()` | Combine iterated results into one object |
+
+### Reporting and debug
+
+| Function | Role |
+| --- | --- |
 | `tt_report()` | Render a Quarto / R Markdown report |
-| `tt_evaluate()` | Write the target list and run `tar_make()` |
 | `tt_explore()` | Return one stored instance of a named target |
 | `tt_metadata()` | Get or set free-form metadata on the pipeline object |
 
