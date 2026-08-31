@@ -11,14 +11,15 @@ steps that mention `target_output` are mapped over the elements.
 When a later
 [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)
 command mentions more than one mapped target, `{targets}` `map()` is
-used by default. Length-1 lists are omitted from `map()` and do not
-decide whether sizes match. Different lengths error; pass
-`pattern = "cross"` for a product of branches.
+used by default. Unequal lengths error at make time; pass
+`pattern = "cross"` for a product of branches. A one-element list that
+should not be branched belongs in
+[`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md),
+not here.
 
 Typical use is a parameter grid split into rows, e.g.
-`tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))` or
-[`dplyr::group_split()`](https://dplyr.tidyverse.org/reference/group_split.html).
-Unnamed lists are named with integer indices, the same way
+`tt_data_list(settings <- grid |> group_split(row_number()))`. Unnamed
+lists are named with integer indices, the same way
 [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)
 names unnamed inputs.
 
@@ -67,6 +68,6 @@ The updated `tidytargets` object.
 if (FALSE) { # \dontrun{
 grid <- expand.grid(alpha = c(0, 1), lambda = c(0.1, 1))
 pipeline <- tt_initialise(store = "store") |>
-  tt_data_list(settings <- grid |> split(seq_len(nrow(grid))))
+  tt_data_list(settings <- grid |> group_split(row_number()))
 } # }
 ```

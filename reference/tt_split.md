@@ -1,18 +1,23 @@
-# Add a Summarising (Non-Iterated) Step to the tidytargets Pipeline
+# Split a Stem Target into Mapped Units
 
-Appends one non-iterated targets step: a whole object in, a single
-object out. Use
+Inverse of
+[`tt_merge()`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md):
+appends a non-patterned target whose command returns a list, and marks
+it as mapped units so later
 [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)
-when the step should be mapped or crossed over units. Use
+steps that mention `target_output` branch over the elements.
+
+Use this when the list is produced **in the pipeline** (for example
+splitting a
+[`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md)
+grid). To snapshot a list from the current session, use
 [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)
-to bring a session list in as units, or
-[`tt_split()`](https://stemangiola.github.io/tidytargets/reference/tt_split.md)
-to turn a pipeline stem into units.
+instead.
 
 ## Usage
 
 ``` r
-tt_single(
+tt_split(
   tt_input,
   command = NULL,
   target_output = NULL,
@@ -21,7 +26,7 @@ tt_single(
 )
 
 # Default S3 method
-tt_single(
+tt_split(
   tt_input,
   command = NULL,
   target_output = NULL,
@@ -30,7 +35,7 @@ tt_single(
 )
 
 # S3 method for class 'tidytargets'
-tt_single(
+tt_split(
   tt_input,
   command = NULL,
   target_output = NULL,
@@ -47,11 +52,12 @@ tt_single(
 
 - command:
 
-  An unevaluated expression. Write `name <- expr` to name the target
-  from the assignment (`tt_single(n <- length(x))`). `{targets}` tracks
-  dependencies from global symbols in the command (the right-hand side
-  if you used `<-`). `=` inside the call is argument matching, not
-  assignment; use `<-`.
+  An unevaluated expression that returns a list. Write `name <- expr` to
+  name the target from the assignment
+  (`tt_split(settings <- grid |> group_split(row_number()))`).
+  `{targets}` tracks dependencies from global symbols in the command
+  (the right-hand side if you used `<-`). `=` inside the call is
+  argument matching, not assignment; use `<-`.
 
 - target_output:
 

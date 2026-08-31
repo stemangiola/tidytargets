@@ -66,10 +66,10 @@ tt_iterate(
 
 - pattern:
 
-  `"map"` (the default) or `"cross"`. `"map"` pairs mapped inputs of
-  equal length and omits length-1 names from the pattern. Unequal sizes
-  (ignoring length-1 lists) error; pass `"cross"` for a product of
-  branches. With two or more mapped inputs, the chosen pattern is
+  `"map"` (the default) or `"cross"`. `"map"` pairs mapped inputs;
+  `{targets}` errors at make time if their lengths differ. Pass
+  `"cross"` for a product of branches. A single mapped input is always
+  `map()`. With two or more mapped inputs, the chosen pattern is
   messaged; `cross()` names the targets being crossed.
 
 - ...:

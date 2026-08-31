@@ -11,6 +11,10 @@ instead of
 [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)),
 the error is rethrown with a hint to use
 [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md).
+If `{targets}` errors because `map()` inputs have unequal lengths, the
+error is rethrown with a hint to use `pattern = "cross"` (or
+[`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md)
+for a length-1 constant).
 
 The generic records that this store has been run before dispatching, so
 a subclass `tt_evaluate` method cannot leave the interactive "pipeline

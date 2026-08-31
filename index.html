@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,7 @@
 <div class="page-header"><h1 id="tidytargets">tidytargets<a class="anchor" aria-label="anchor" href="#tidytargets"></a>
 </h1></div>
 <p>A tidy, pipe-friendly grammar for <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a>, internally based on <a href="https://books.ropensci.org/targets/static.html#target-factories" class="external-link">targets factories</a>.</p>
-<p>Compose pipelines with pipes (<code>|&gt;</code>) and run them locally, on HPC, or in the cloud. <code><a href="reference/tt_initialise.html">tt_initialise()</a></code> constructs a <code>tidytargets</code> object; <code><a href="reference/tt_iterate.html">tt_iterate()</a></code>, <code><a href="reference/tt_single.html">tt_single()</a></code>, <code><a href="reference/tt_merge.html">tt_merge()</a></code>, <code><a href="reference/tt_report.html">tt_report()</a></code>, and <code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code> are methods on that class. Those calls are factories that write a <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> dependency graph. Compute backends (for example <a href="https://wlandau.github.io/crew/" class="external-link">crew</a> or <a href="https://wlandau.github.io/crew.cluster/" class="external-link">crew.cluster</a>) are optional and passed in at <code><a href="reference/tt_initialise.html">tt_initialise()</a></code>.</p>
+<p>Compose pipelines with pipes (<code>|&gt;</code>) and run them locally, on HPC, or in the cloud. <code><a href="reference/tt_initialise.html">tt_initialise()</a></code> constructs a <code>tidytargets</code> object; <code><a href="reference/tt_iterate.html">tt_iterate()</a></code>, <code><a href="reference/tt_single.html">tt_single()</a></code>, <code><a href="reference/tt_split.html">tt_split()</a></code>, <code><a href="reference/tt_merge.html">tt_merge()</a></code>, <code><a href="reference/tt_report.html">tt_report()</a></code>, and <code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code> are methods on that class. Those calls are factories that write a <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> dependency graph. Compute backends (for example <a href="https://wlandau.github.io/crew/" class="external-link">crew</a> or <a href="https://wlandau.github.io/crew.cluster/" class="external-link">crew.cluster</a>) are optional and passed in at <code><a href="reference/tt_initialise.html">tt_initialise()</a></code>.</p>
 <p>The grammar is <strong>lazy</strong> and <strong>incremental</strong>. Piping steps only appends factories to the targets script; nothing is computed until <code><a href="reference/tt_evaluate.html">tt_evaluate()</a></code> (or evaluating the object; e.g., printing it in the console). Assigning the object does not print it, so an interactive session then says the pipeline is ready to be evaluated, rather than appearing to do nothing. You can add inputs or steps later and <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> re-runs only the outdated branches of the graph.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -133,6 +133,10 @@
 <tr>
 <td><code><a href="reference/tt_single.html">tt_single()</a></code></td>
 <td>Add one non-iterated target</td>
+</tr>
+<tr>
+<td><code><a href="reference/tt_split.html">tt_split()</a></code></td>
+<td>Turn a pipeline list into mapped units</td>
 </tr>
 <tr>
 <td><code><a href="reference/tt_merge.html">tt_merge()</a></code></td>

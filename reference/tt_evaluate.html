@@ -4,7 +4,9 @@ all queued steps. Returns the tar_meta() table.
 If a target fails with an S4 method-dispatch error on a list (typically
 because a list was brought in with tt_data() instead of
 tt_data_list()), the error is rethrown with a hint to use
-tt_data_list().
+tt_data_list(). If {targets} errors because map() inputs have
+unequal lengths, the error is rethrown with a hint to use
+pattern = "cross" (or tt_data() for a length-1 constant).
 The generic records that this store has been run before dispatching, so a
 subclass tt_evaluate method cannot leave the interactive "pipeline is
 ready" notice standing after a result that has already been shown.'><meta property="og:description" content='Closes the pipeline target list and calls targets::tar_make() to execute
@@ -12,7 +14,9 @@ all queued steps. Returns the tar_meta() table.
 If a target fails with an S4 method-dispatch error on a list (typically
 because a list was brought in with tt_data() instead of
 tt_data_list()), the error is rethrown with a hint to use
-tt_data_list().
+tt_data_list(). If {targets} errors because map() inputs have
+unequal lengths, the error is rethrown with a hint to use
+pattern = "cross" (or tt_data() for a length-1 constant).
 The generic records that this store has been run before dispatching, so a
 subclass tt_evaluate method cannot leave the interactive "pipeline is
 ready" notice standing after a result that has already been shown.'></head><body>
@@ -23,7 +27,7 @@ ready" notice standing after a result that has already been shown.'></head><body
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +53,7 @@ ready" notice standing after a result that has already been shown.'></head><body
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Execute the tidytargets Pipeline</h1>
-      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/main/R/tt_evaluate.R" class="external-link"><code>R/tt_evaluate.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/tt_split/R/tt_evaluate.R" class="external-link"><code>R/tt_evaluate.R</code></a></small>
       <div class="d-none name"><code>tt_evaluate.Rd</code></div>
     </div>
 
@@ -59,7 +63,9 @@ all queued steps. Returns the <code>tar_meta()</code> table.</p>
 <p>If a target fails with an S4 method-dispatch error on a <code>list</code> (typically
 because a list was brought in with <code><a href="tt_data.html">tt_data()</a></code> instead of
 <code><a href="tt_data_list.html">tt_data_list()</a></code>), the error is rethrown with a hint to use
-<code><a href="tt_data_list.html">tt_data_list()</a></code>.</p>
+<code><a href="tt_data_list.html">tt_data_list()</a></code>. If <code>{targets}</code> errors because <code>map()</code> inputs have
+unequal lengths, the error is rethrown with a hint to use
+<code>pattern = "cross"</code> (or <code><a href="tt_data.html">tt_data()</a></code> for a length-1 constant).</p>
 <p>The generic records that this store has been run before dispatching, so a
 subclass <code>tt_evaluate</code> method cannot leave the interactive "pipeline is
 ready" notice standing after a result that has already been shown.</p>

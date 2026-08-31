@@ -11,6 +11,7 @@ the cloud.
 constructs a `tidytargets` object;
 [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md),
 [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md),
+[`tt_split()`](https://stemangiola.github.io/tidytargets/reference/tt_split.md),
 [`tt_merge()`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md),
 [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md),
 and
@@ -94,6 +95,7 @@ steps that mention it are mapped over each element.
 | [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md) | Snapshot a list onto the store as mapped units |
 | [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md) | Map or cross a function over mapped inputs |
 | [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md) | Add one non-iterated target |
+| [`tt_split()`](https://stemangiola.github.io/tidytargets/reference/tt_split.md) | Turn a pipeline list into mapped units |
 | [`tt_merge()`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md) | Combine iterated results into one object |
 | [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md) | Render a Quarto / R Markdown report |
 | [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md) | Write the target list and run `tar_make()` |
