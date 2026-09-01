@@ -23,7 +23,7 @@ tt_initialise(
   computing_resources = NULL,
   debug_step = NULL,
   verbosity = targets::tar_config_get("reporter_make"),
-  error = NULL,
+  error = "continue",
   update = "thorough",
   garbage_collection = 0,
   workspace_on_error = FALSE,
@@ -72,7 +72,8 @@ tt_initialise(
 
   Error-handling strategy passed to
   [`targets::tar_option_set()`](https://docs.ropensci.org/targets/reference/tar_option_set.html).
-  `NULL` uses the targets default.
+  Default: `"continue"` (keep running other targets after a failure).
+  Use `"stop"` to halt the pipeline on the first error.
 
 - update:
 
