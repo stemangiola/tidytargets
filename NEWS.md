@@ -2,6 +2,9 @@
 
 ## tidytargets 0.0.11
 
+* `tt_initialise(error = )` defaults to `"continue"` so a failed target does
+  not halt the rest of the pipeline. Pass `error = "stop"` for the previous
+  `{targets}` default.
 * `tt_read()` reads the full stored value of a named target (all branches
   of a mapped target). Compare with `tt_explore()` for one instance at
   a time.

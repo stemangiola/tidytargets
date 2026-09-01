@@ -86,7 +86,7 @@ This writes `{store}.R` and saves configuration. If you passed mapped inputs, it
 - `input_list` — the named input vector or list (override with `target_output`)
 - `sample_names` — the names of that vector or list
 
-With no `computing_resources`, the pipeline is sequential. With no `store`, a unique `./tidytargets-<HASH>` directory is created. With no inputs, start from `tt_initialise()` and add objects with `tt_data()`.
+With no `computing_resources`, the pipeline is sequential. With no `store`, a unique `./tidytargets-<HASH>` directory is created. With no inputs, start from `tt_initialise()` and add objects with `tt_data()`. By default `error = "continue"` so a failed target does not halt the rest of the pipeline; pass `error = "stop"` to halt on the first failure.
 
 Packages currently attached in your session (`.packages()`) are recorded at `tt_initialise()` as names on `tar_option_set(packages = )` so workers can `library()` them. `tt_initialise()` messages that list so you can check the same packages are available on HPC. Objects in the global environment are not copied; bring those in with `tt_data()` or `user_function_source_path`. Pass `packages` to override the snapshot. Attach libraries before initialise (or pass `packages`) if a later command needs them.
 

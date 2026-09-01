@@ -56,7 +56,8 @@ new_tidytargets <- function(initialisation = list(),
 #' @param verbosity Reporter string passed to `targets::tar_make()`. Defaults to
 #'   the current targets configuration value.
 #' @param error Error-handling strategy passed to `targets::tar_option_set()`.
-#'   `NULL` uses the targets default.
+#'   Default: `"continue"` (keep running other targets after a failure).
+#'   Use `"stop"` to halt the pipeline on the first error.
 #' @param update Cue mode string for `targets::tar_cue()`, controlling when
 #'   targets are re-run. Default: `"thorough"`.
 #' @param garbage_collection Numeric interval (in targets) at which R garbage
@@ -89,7 +90,7 @@ tt_initialise <- function(tt_input = NULL,
                            computing_resources = NULL,
                            debug_step = NULL,
                            verbosity = targets::tar_config_get("reporter_make"),
-                           error = NULL,
+                           error = "continue",
                            update = "thorough",
                            garbage_collection = 0,
                            workspace_on_error = FALSE,

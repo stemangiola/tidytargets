@@ -76,6 +76,12 @@ test_that("tt_initialise works with no mapped input", {
   expect_false(file.exists(file.path(store, "input_file.qs")))
   expect_false(file.exists(file.path(store, "sample_names.qs")))
   expect_true(file.exists(paste0(store, ".R")))
+  expect_equal(pipe$initialisation$error, "continue")
+  expect_match(
+    paste(readLines(paste0(store, ".R")), collapse = "\n"),
+    'error = "continue"',
+    fixed = TRUE
+  )
 
   extra <- 10:12
   pipe <- pipe |> tt_data(extra)
@@ -459,7 +465,7 @@ test_that("tt_evaluate appends the import_list hint to tar_make list-dispatch er
   old <- setwd(tmp)
   on.exit(setwd(old), add = TRUE)
 
-  pipe <- tt_initialise(store = file.path(tmp, "store")) |>
+  pipe <- tt_initialise(store = file.path(tmp, "store"), error = "stop") |>
     tt_single(
       command = stop(
         "unable to find an inherited method for function ",
@@ -480,7 +486,7 @@ test_that("tt_evaluate appends the cross hint to unequal map() errors", {
   old <- setwd(tmp)
   on.exit(setwd(old), add = TRUE)
 
-  pipe <- tt_initialise(store = file.path(tmp, "store")) |>
+  pipe <- tt_initialise(store = file.path(tmp, "store"), error = "stop") |>
     tt_single(
       command = stop("unequal lengths of vars in map(methods, samples)"),
       target_output = "oops"

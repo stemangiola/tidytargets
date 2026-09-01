@@ -10,7 +10,7 @@ tt_initialise(
   computing_resources = NULL,
   debug_step = NULL,
   verbosity = targets::tar_config_get("reporter_make"),
-  error = NULL,
+  error = "continue",
   update = "thorough",
   garbage_collection = 0,
   workspace_on_error = FALSE,
@@ -42,7 +42,8 @@ deployment uses.}
 the current targets configuration value.}
 
 \item{error}{Error-handling strategy passed to \code{targets::tar_option_set()}.
-\code{NULL} uses the targets default.}
+Default: \code{"continue"} (keep running other targets after a failure).
+Use \code{"stop"} to halt the pipeline on the first error.}
 
 \item{update}{Cue mode string for \code{targets::tar_cue()}, controlling when
 targets are re-run. Default: \code{"thorough"}.}
