@@ -92,7 +92,7 @@ targets::tar_read(summaries, store = "_targets")
 
 ## Deployment
 
-Pass any controller that `targets::tar_option_set(controller = )` accepts. tidytargets does not import a backend.
+Pass any controller that `targets::tar_option_set(controller = )` accepts. 
 
 ### Local parallel computing
 
