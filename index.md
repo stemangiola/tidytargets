@@ -123,7 +123,7 @@ steps that mention it are mapped over each element.
 ## Deployment
 
 Pass any controller that `targets::tar_option_set(controller = )`
-accepts. tidytargets does not import a backend.
+accepts.
 
 ### Local parallel computing
 
