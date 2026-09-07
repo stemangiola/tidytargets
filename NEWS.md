@@ -1,5 +1,14 @@
 # tidytargets NEWS
 
+## tidytargets 0.0.12
+
+* `tt_controller_elastic_slurm()` wraps a common `{crew.cluster}` pattern:
+  several `crew_controller_slurm()` resource tiers, sized from small to
+  large, each falling back to the next tier up once its workers exhaust
+  `crashes_max`. Returns a `crew::crew_controller_group()` ready to pass to
+  `tt_initialise(computing_resources = )`. `{crew}` and `{crew.cluster}`
+  remain optional (`Suggests`), not hard dependencies.
+
 ## tidytargets 0.0.11
 
 * `tt_initialise(error = )` defaults to `"continue"` so a failed target does
