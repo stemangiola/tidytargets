@@ -28,7 +28,8 @@ Imports:
     readr,
     magrittr,
     callr,
-    methods
+    methods,
+    rlang
 Suggests:
     testthat (>= 3.0.0),
     knitr,

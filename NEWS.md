@@ -14,7 +14,8 @@
   every tier, and defaults to `time_hours = 24`, `crashes_max = 2`,
   `cpus_per_task = 1`. Returns a `crew::crew_controller_group()` ready to
   pass to `tt_initialise(computing_resources = )`. `{crew}` and
-  `{crew.cluster}` remain optional (`Suggests`), not hard dependencies.
+  `{crew.cluster}` remain optional (`Suggests`), not hard dependencies;
+  `rlang::check_installed()` raises a clear error if either is missing.
 
 ## tidytargets 0.0.11
 

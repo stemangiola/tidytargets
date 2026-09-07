@@ -9,7 +9,7 @@ test_that("tt_controller_elastic_slurm errors when crew/crew.cluster are unavail
   )
   expect_error(
     tt_controller_elastic_slurm(workers = 2, mem_gb_per_job = 5),
-    "needs the \\{crew\\} and \\{crew.cluster\\} packages"
+    "crew.*required"
   )
 })
 

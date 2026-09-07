@@ -52,6 +52,7 @@
 #' tt_initialise(computing_resources = computing_resources)
 #' }
 #'
+#' @importFrom rlang check_installed
 #' @export
 tt_controller_elastic_slurm <- function(workers,
                                          mem_gb_per_job,
@@ -60,15 +61,10 @@ tt_controller_elastic_slurm <- function(workers,
                                          cpus_per_task = 1,
                                          seconds_idle = 30,
                                          ...) {
-  if (!requireNamespace("crew", quietly = TRUE) ||
-      !requireNamespace("crew.cluster", quietly = TRUE)) {
-    stop(
-      "tidytargets says: tt_controller_elastic_slurm() needs the {crew} and ",
-      "{crew.cluster} packages. Install them with ",
-      'install.packages(c("crew", "crew.cluster")).',
-      call. = FALSE
-    )
-  }
+  check_installed(
+    c("crew", "crew.cluster"),
+    reason = "to use tt_controller_elastic_slurm()."
+  )
 
   n <- length(mem_gb_per_job)
   if (n == 0L) {
