@@ -8,8 +8,18 @@ test_that("tt_controller_elastic_slurm errors when crew/crew.cluster are unavail
     "crew and crew.cluster are installed; cannot test the missing-package error"
   )
   expect_error(
-    tt_controller_elastic_slurm(mem_gb_per_job = 5),
+    tt_controller_elastic_slurm(workers = 2, mem_gb_per_job = 5),
     "needs the \\{crew\\} and \\{crew.cluster\\} packages"
+  )
+})
+
+test_that("tt_controller_elastic_slurm requires workers", {
+  skip_if_not_installed("crew")
+  skip_if_not_installed("crew.cluster")
+
+  expect_error(
+    tt_controller_elastic_slurm(mem_gb_per_job = c(5, 10)),
+    "workers"
   )
 })
 
@@ -18,13 +28,13 @@ test_that("tt_controller_elastic_slurm validates tier lengths", {
   skip_if_not_installed("crew.cluster")
 
   expect_error(
-    tt_controller_elastic_slurm(mem_gb_per_job = numeric(0)),
+    tt_controller_elastic_slurm(workers = 2, mem_gb_per_job = numeric(0)),
     "at least one value"
   )
 
   expect_error(
     tt_controller_elastic_slurm(
-      mem_gb_per_job = c(5, 10), time_hours = c(1, 2, 3)
+      workers = 1, mem_gb_per_job = c(5, 10), time_hours = c(1, 2, 3)
     ),
     "must have length 1 or the same length"
   )
@@ -79,13 +89,15 @@ test_that("tt_controller_elastic_slurm honors per-tier cpus_per_task and dots", 
   expect_null(controllers[[2]]$backup)
 })
 
-test_that("tt_controller_elastic_slurm defaults every argument but mem_gb_per_job", {
+test_that("tt_controller_elastic_slurm defaults every argument but workers and mem_gb_per_job", {
   skip_if_not_installed("crew")
   skip_if_not_installed("crew.cluster")
 
-  # Only mem_gb_per_job is required; everything else falls back to a single
-  # default value, recycled across all tiers.
-  group <- tt_controller_elastic_slurm(mem_gb_per_job = c(5, 10, 20, 50, 100))
+  # workers and mem_gb_per_job are required; everything else falls back to a
+  # single default value, recycled across all tiers.
+  group <- tt_controller_elastic_slurm(
+    workers = 8, mem_gb_per_job = c(5, 10, 20, 50, 100)
+  )
   controllers <- group$controllers
   expect_length(controllers, 5)
 
@@ -96,7 +108,7 @@ test_that("tt_controller_elastic_slurm defaults every argument but mem_gb_per_jo
   )
 
   for (controller in controllers) {
-    expect_equal(controller$workers, 1)
+    expect_equal(controller$workers, 8)
     expect_equal(controller$crashes_max, 2)
     expect_equal(controller$options_cluster$cpus_per_task, 1)
     expect_equal(controller$options_cluster$time_minutes, 24 * 60)

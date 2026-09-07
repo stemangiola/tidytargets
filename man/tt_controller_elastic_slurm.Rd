@@ -5,9 +5,9 @@
 \title{Build an elastic SLURM crew controller group}
 \usage{
 tt_controller_elastic_slurm(
+  workers,
   mem_gb_per_job,
   time_hours = 24,
-  workers = 1,
   crashes_max = 2,
   cpus_per_task = 1,
   seconds_idle = 30,
@@ -15,6 +15,9 @@ tt_controller_elastic_slurm(
 )
 }
 \arguments{
+\item{workers}{Numeric vector (or single value, recycled to the number of
+tiers), number of workers for each tier. Required.}
+
 \item{mem_gb_per_job}{Numeric vector, memory in gigabytes required per
 worker for each tier, ordered from smallest to largest. Tier names are
 generated automatically from these values (e.g. \code{5} becomes
@@ -32,9 +35,6 @@ survives as many targets as possible, and always longer than the
 longest single target it may run — a value shorter than one target's
 execution time guarantees that target is killed before it can finish.
 Default: \code{24}.}
-
-\item{workers}{Numeric vector (or single value, recycled to the number of
-tiers), number of workers for each tier. Default: \code{1}.}
 
 \item{crashes_max}{Numeric vector (or single value, recycled to the number
 of tiers), crashes allowed on a tier before falling back to the next one
@@ -64,12 +64,12 @@ argument) once its workers exhaust \code{crashes_max}. Returns a
 }
 \examples{
 \dontrun{
-# Every argument other than mem_gb_per_job may be a single value (recycled
-# to every tier) or one value per tier.
+# workers and mem_gb_per_job are required; every other argument may be a
+# single value (recycled to every tier) or one value per tier.
 computing_resources <- tt_controller_elastic_slurm(
+  workers = c(64, 48, 32, 24, 16, 8),
   mem_gb_per_job = c(5, 10, 20, 40, 80, 160),
   time_hours = c(4, 4, 4, 4, 4, 24),
-  workers = c(64, 48, 32, 24, 16, 8),
   crashes_max = c(6, 1, 1, 1, 1, 2)
 )
 tt_initialise(computing_resources = computing_resources)
