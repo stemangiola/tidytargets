@@ -128,13 +128,19 @@ yourself to use this wrapper.
 ``` r
 computing_resources <- tt_controller_elastic_slurm(
   mem_gb_per_job = c(5, 10, 20, 40, 80, 160),
-  time_min = c(60 * 4, 60 * 4, 60 * 4, 60 * 4, 60 * 4, 60 * 24),
+  time_hours = c(4, 4, 4, 4, 4, 24),
   workers = c(64, 48, 32, 24, 16, 8),
   crashes_max = c(6, 1, 1, 1, 1, 2)
 )
 ```
 
 Tiers are ordered smallest to largest; tier names are generated automatically
-from `mem_gb_per_job` (e.g. `5` becomes `"elastic_5"`).
+from `mem_gb_per_job` (e.g. `5` becomes `"elastic_5"`). `time_hours` is the
+lifetime of a worker (a SLURM job), not the run time of one target: a worker
+stays alive to run multiple targets back to back until `time_hours` elapses,
+at which point SLURM kills it — along with whatever target it happens to be
+running — and `{crew}` relaunches that target on a brand new worker. Set it
+as long as practical so a worker survives as many targets as possible, and
+always longer than the longest single target it may run.
 
 Pass this to `tt_initialise(computing_resources = ...)`.

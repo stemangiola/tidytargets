@@ -13,8 +13,17 @@
 #'   worker for each tier, ordered from smallest to largest. Tier names are
 #'   generated automatically from these values (e.g. `5` becomes
 #'   `"elastic_5"`).
-#' @param time_min Numeric vector (or single value recycled to the number of
-#'   tiers), walltime in minutes for each tier.
+#' @param time_hours Numeric vector (or single value recycled to the number
+#'   of tiers), the SLURM walltime allocated to each worker, in hours. This
+#'   is the *lifetime of the worker*, not the run time of one target: a
+#'   worker is a SLURM job that stays alive to run multiple targets back to
+#'   back, and `{targets}` dispatches a fresh target to it each time it goes
+#'   idle. When `time_hours` elapses, SLURM kills the worker (and whatever
+#'   target it is running at that moment); `{crew}` then relaunches that
+#'   target on a brand new worker. Set it as long as practical so a worker
+#'   survives as many targets as possible, and always longer than the
+#'   longest single target it may run — a value shorter than one target's
+#'   execution time guarantees that target is killed before it can finish.
 #' @param workers Numeric vector (or single value recycled to the number of
 #'   tiers), number of workers for each tier.
 #' @param crashes_max Numeric vector (or single value recycled to the number
@@ -33,7 +42,7 @@
 #' \dontrun{
 #' computing_resources <- tt_controller_elastic_slurm(
 #'   mem_gb_per_job = c(5, 10, 20, 40, 80, 160),
-#'   time_min = c(60 * 4, 60 * 4, 60 * 4, 60 * 4, 60 * 4, 60 * 24),
+#'   time_hours = c(4, 4, 4, 4, 4, 24),
 #'   workers = c(64, 48, 32, 24, 16, 8),
 #'   crashes_max = c(6, 1, 1, 1, 1, 2)
 #' )
@@ -42,7 +51,7 @@
 #'
 #' @export
 tt_controller_elastic_slurm <- function(mem_gb_per_job,
-                                         time_min,
+                                         time_hours,
                                          workers,
                                          crashes_max,
                                          cpus_per_task = 8,
@@ -69,7 +78,7 @@ tt_controller_elastic_slurm <- function(mem_gb_per_job,
   tiers <- data.frame(
     name = paste0("elastic_", mem_gb_per_job),
     mem_gb_per_job = mem_gb_per_job,
-    time_min = recycle_to_length(time_min, n, "time_min"),
+    time_hours = recycle_to_length(time_hours, n, "time_hours"),
     workers = recycle_to_length(workers, n, "workers"),
     crashes_max = recycle_to_length(crashes_max, n, "crashes_max"),
     cpus_per_task = recycle_to_length(cpus_per_task, n, "cpus_per_task"),
@@ -91,7 +100,7 @@ tt_controller_elastic_slurm <- function(mem_gb_per_job,
       options_cluster = crew.cluster::crew_options_slurm(
         memory_gigabytes_required = row$mem_gb_per_job,
         cpus_per_task = row$cpus_per_task,
-        time_minutes = row$time_min,
+        time_minutes = row$time_hours * 60,
         ...
       ),
       backup = backup
@@ -118,3 +127,4 @@ recycle_to_length <- function(x, n, arg) {
     call. = FALSE
   )
 }
+

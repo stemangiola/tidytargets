@@ -6,7 +6,7 @@
 \usage{
 tt_controller_elastic_slurm(
   mem_gb_per_job,
-  time_min,
+  time_hours,
   workers,
   crashes_max,
   cpus_per_task = 8,
@@ -20,8 +20,17 @@ worker for each tier, ordered from smallest to largest. Tier names are
 generated automatically from these values (e.g. \code{5} becomes
 \code{"elastic_5"}).}
 
-\item{time_min}{Numeric vector (or single value recycled to the number of
-tiers), walltime in minutes for each tier.}
+\item{time_hours}{Numeric vector (or single value recycled to the number
+of tiers), the SLURM walltime allocated to each worker, in hours. This
+is the \emph{lifetime of the worker}, not the run time of one target: a
+worker is a SLURM job that stays alive to run multiple targets back to
+back, and \code{{targets}} dispatches a fresh target to it each time it goes
+idle. When \code{time_hours} elapses, SLURM kills the worker (and whatever
+target it is running at that moment); \code{{crew}} then relaunches that
+target on a brand new worker. Set it as long as practical so a worker
+survives as many targets as possible, and always longer than the
+longest single target it may run — a value shorter than one target's
+execution time guarantees that target is killed before it can finish.}
 
 \item{workers}{Numeric vector (or single value recycled to the number of
 tiers), number of workers for each tier.}
@@ -56,7 +65,7 @@ argument) once its workers exhaust \code{crashes_max}. Returns a
 \dontrun{
 computing_resources <- tt_controller_elastic_slurm(
   mem_gb_per_job = c(5, 10, 20, 40, 80, 160),
-  time_min = c(60 * 4, 60 * 4, 60 * 4, 60 * 4, 60 * 4, 60 * 24),
+  time_hours = c(4, 4, 4, 4, 4, 24),
   workers = c(64, 48, 32, 24, 16, 8),
   crashes_max = c(6, 1, 1, 1, 1, 2)
 )
