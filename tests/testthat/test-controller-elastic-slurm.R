@@ -53,18 +53,22 @@ test_that("tt_controller_elastic_slurm chains backups from small to large and au
   controllers <- group$controllers
   expect_length(controllers, 3)
 
-  names_in_group <- vapply(controllers, function(x) x$name, character(1))
+  names_in_group <- unname(
+    vapply(controllers, function(x) x$launcher$name, character(1))
+  )
   expect_equal(names_in_group, c("elastic_5", "elastic_10", "elastic_20"))
 
   # Smallest tier falls back to the next tier up; largest has no backup.
-  expect_equal(controllers[[1]]$backup$name, "elastic_10")
-  expect_equal(controllers[[2]]$backup$name, "elastic_20")
+  expect_equal(controllers[[1]]$backup$launcher$name, "elastic_10")
+  expect_equal(controllers[[2]]$backup$launcher$name, "elastic_20")
   expect_null(controllers[[3]]$backup)
 
-  expect_equal(controllers[[1]]$options_cluster$memory_gigabytes_required, 5)
-  expect_equal(controllers[[1]]$options_cluster$cpus_per_task, 1)
+  expect_equal(
+    controllers[[1]]$launcher$options_cluster$memory_gigabytes_required, 5
+  )
+  expect_equal(controllers[[1]]$launcher$options_cluster$cpus_per_task, 1)
   # time_hours is converted to the minutes crew.cluster expects.
-  expect_equal(controllers[[1]]$options_cluster$time_minutes, 4 * 60)
+  expect_equal(controllers[[1]]$launcher$options_cluster$time_minutes, 4 * 60)
 })
 
 test_that("tt_controller_elastic_slurm honors per-tier cpus_per_task and dots", {
@@ -81,11 +85,11 @@ test_that("tt_controller_elastic_slurm honors per-tier cpus_per_task and dots", 
   )
   controllers <- group$controllers
 
-  expect_equal(controllers[[1]]$options_cluster$cpus_per_task, 4)
-  expect_equal(controllers[[2]]$options_cluster$cpus_per_task, 16)
-  expect_equal(controllers[[1]]$options_cluster$partition, "standard")
-  expect_equal(controllers[[1]]$options_cluster$time_minutes, 60)
-  expect_equal(controllers[[1]]$backup$name, "elastic_50")
+  expect_equal(controllers[[1]]$launcher$options_cluster$cpus_per_task, 4)
+  expect_equal(controllers[[2]]$launcher$options_cluster$cpus_per_task, 16)
+  expect_equal(controllers[[1]]$launcher$options_cluster$partition, "standard")
+  expect_equal(controllers[[1]]$launcher$options_cluster$time_minutes, 60)
+  expect_equal(controllers[[1]]$backup$launcher$name, "elastic_50")
   expect_null(controllers[[2]]$backup)
 })
 
@@ -101,17 +105,19 @@ test_that("tt_controller_elastic_slurm defaults every argument but workers and m
   controllers <- group$controllers
   expect_length(controllers, 5)
 
-  names_in_group <- vapply(controllers, function(x) x$name, character(1))
+  names_in_group <- unname(
+    vapply(controllers, function(x) x$launcher$name, character(1))
+  )
   expect_equal(
     names_in_group,
     c("elastic_5", "elastic_10", "elastic_20", "elastic_50", "elastic_100")
   )
 
   for (controller in controllers) {
-    expect_equal(controller$workers, 8)
+    expect_equal(controller$launcher$workers, 8)
     expect_equal(controller$crashes_max, 2)
-    expect_equal(controller$options_cluster$cpus_per_task, 1)
-    expect_equal(controller$options_cluster$time_minutes, 24 * 60)
+    expect_equal(controller$launcher$options_cluster$cpus_per_task, 1)
+    expect_equal(controller$launcher$options_cluster$time_minutes, 24 * 60)
   }
   expect_null(controllers[[5]]$backup)
 })
