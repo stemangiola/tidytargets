@@ -143,4 +143,15 @@ running — and `{crew}` relaunches that target on a brand new worker. Set it
 as long as practical so a worker survives as many targets as possible, and
 always longer than the longest single target it may run.
 
+Every argument other than `mem_gb_per_job` may be a single value, which is
+recycled to every tier, or a vector with one value per tier. So the minimal
+call only needs `mem_gb_per_job`, with `time_hours = 24`, `workers = 1`,
+`crashes_max = 2`, and `cpus_per_task = 1` applied to every tier:
+
+``` r
+computing_resources <- tt_controller_elastic_slurm(
+  mem_gb_per_job = c(5, 10, 20, 50, 100)
+)
+```
+
 Pass this to `tt_initialise(computing_resources = ...)`.

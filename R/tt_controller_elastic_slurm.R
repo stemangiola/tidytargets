@@ -13,7 +13,7 @@
 #'   worker for each tier, ordered from smallest to largest. Tier names are
 #'   generated automatically from these values (e.g. `5` becomes
 #'   `"elastic_5"`).
-#' @param time_hours Numeric vector (or single value recycled to the number
+#' @param time_hours Numeric vector (or single value, recycled to the number
 #'   of tiers), the SLURM walltime allocated to each worker, in hours. This
 #'   is the *lifetime of the worker*, not the run time of one target: a
 #'   worker is a SLURM job that stays alive to run multiple targets back to
@@ -24,13 +24,14 @@
 #'   survives as many targets as possible, and always longer than the
 #'   longest single target it may run — a value shorter than one target's
 #'   execution time guarantees that target is killed before it can finish.
-#' @param workers Numeric vector (or single value recycled to the number of
-#'   tiers), number of workers for each tier.
-#' @param crashes_max Numeric vector (or single value recycled to the number
+#'   Default: `24`.
+#' @param workers Numeric vector (or single value, recycled to the number of
+#'   tiers), number of workers for each tier. Default: `1`.
+#' @param crashes_max Numeric vector (or single value, recycled to the number
 #'   of tiers), crashes allowed on a tier before falling back to the next one
-#'   up.
-#' @param cpus_per_task Numeric vector (or single value recycled to the
-#'   number of tiers), CPUs per task for each tier. Default: `8`.
+#'   up. Default: `2`.
+#' @param cpus_per_task Numeric vector (or single value, recycled to the
+#'   number of tiers), CPUs per task for each tier. Default: `1`.
 #' @param seconds_idle Numeric seconds each worker idles before shutting
 #'   down, passed to every `crew_controller_slurm()`. Default: `30`.
 #' @param ... Additional arguments passed to every
@@ -40,6 +41,8 @@
 #'
 #' @examples
 #' \dontrun{
+#' # Every argument other than mem_gb_per_job may be a single value (recycled
+#' # to every tier) or one value per tier.
 #' computing_resources <- tt_controller_elastic_slurm(
 #'   mem_gb_per_job = c(5, 10, 20, 40, 80, 160),
 #'   time_hours = c(4, 4, 4, 4, 4, 24),
@@ -51,10 +54,10 @@
 #'
 #' @export
 tt_controller_elastic_slurm <- function(mem_gb_per_job,
-                                         time_hours,
-                                         workers,
-                                         crashes_max,
-                                         cpus_per_task = 8,
+                                         time_hours = 24,
+                                         workers = 1,
+                                         crashes_max = 2,
+                                         cpus_per_task = 1,
                                          seconds_idle = 30,
                                          ...) {
   if (!requireNamespace("crew", quietly = TRUE) ||

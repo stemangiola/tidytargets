@@ -9,9 +9,13 @@
   `crashes_max`, `cpus_per_task`) instead of a tier table; tier names are
   generated automatically from `mem_gb_per_job`. `time_hours` is the
   lifetime of a worker (converted to the minutes `{crew.cluster}` expects),
-  not the run time of one target. Returns a `crew::crew_controller_group()`
-  ready to pass to `tt_initialise(computing_resources = )`. `{crew}` and
-  `{crew.cluster}` remain optional (`Suggests`), not hard dependencies.
+  not the run time of one target. Every argument other than
+  `mem_gb_per_job` may be a single value, recycled across every tier, and
+  defaults to `time_hours = 24`, `workers = 1`, `crashes_max = 2`,
+  `cpus_per_task = 1`, so a minimal call only needs `mem_gb_per_job`.
+  Returns a `crew::crew_controller_group()` ready to pass to
+  `tt_initialise(computing_resources = )`. `{crew}` and `{crew.cluster}`
+  remain optional (`Suggests`), not hard dependencies.
 
 ## tidytargets 0.0.11
 
