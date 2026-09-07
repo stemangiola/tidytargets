@@ -126,17 +126,15 @@ on cheap, small workers while a few fall through to progressively larger ones.
 yourself to use this wrapper.
 
 ``` r
-tiers <- data.frame(
-  name = c(
-    "elastic_5", "elastic_10", "elastic_20",
-    "elastic_40", "elastic_80", "elastic_160"
-  ),
-  mem_gb = c(5, 10, 20, 40, 80, 160),
+computing_resources <- tt_controller_elastic_slurm(
+  mem_gb_per_job = c(5, 10, 20, 40, 80, 160),
   time_min = c(60 * 4, 60 * 4, 60 * 4, 60 * 4, 60 * 4, 60 * 24),
   workers = c(64, 48, 32, 24, 16, 8),
   crashes_max = c(6, 1, 1, 1, 1, 2)
 )
-computing_resources <- tt_controller_elastic_slurm(tiers)
 ```
+
+Tiers are ordered smallest to largest; tier names are generated automatically
+from `mem_gb_per_job` (e.g. `5` becomes `"elastic_5"`).
 
 Pass this to `tt_initialise(computing_resources = ...)`.

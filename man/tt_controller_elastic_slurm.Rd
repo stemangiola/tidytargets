@@ -4,22 +4,34 @@
 \alias{tt_controller_elastic_slurm}
 \title{Build an elastic SLURM crew controller group}
 \usage{
-tt_controller_elastic_slurm(tiers, cpus_per_task = 8, seconds_idle = 30, ...)
+tt_controller_elastic_slurm(
+  mem_gb_per_job,
+  time_min,
+  workers,
+  crashes_max,
+  cpus_per_task = 8,
+  seconds_idle = 30,
+  ...
+)
 }
 \arguments{
-\item{tiers}{A data frame (or a list coercible to one with
-\code{dplyr::bind_rows()}) with one row per resource tier, ordered from
-smallest to largest. Required columns: \code{name} (character), \code{mem_gb}
-(memory in gigabytes required per worker), \code{time_min} (walltime in
-minutes), \code{workers} (number of workers for that tier), and
-\code{crashes_max} (crashes allowed on a tier before falling back to the
-next one up). An optional \code{cpus_per_task} column overrides
-\code{cpus_per_task} per tier. The smallest tier (first row) is tried
-first; each tier's \code{backup} is the next largest tier, and the largest
-tier (last row) has no backup.}
+\item{mem_gb_per_job}{Numeric vector, memory in gigabytes required per
+worker for each tier, ordered from smallest to largest. Tier names are
+generated automatically from these values (e.g. \code{5} becomes
+\code{"elastic_5"}).}
 
-\item{cpus_per_task}{Default CPUs per task for tiers that do not supply
-their own \code{cpus_per_task} column. Default: \code{8}.}
+\item{time_min}{Numeric vector (or single value recycled to the number of
+tiers), walltime in minutes for each tier.}
+
+\item{workers}{Numeric vector (or single value recycled to the number of
+tiers), number of workers for each tier.}
+
+\item{crashes_max}{Numeric vector (or single value recycled to the number
+of tiers), crashes allowed on a tier before falling back to the next one
+up.}
+
+\item{cpus_per_task}{Numeric vector (or single value recycled to the
+number of tiers), CPUs per task for each tier. Default: \code{8}.}
 
 \item{seconds_idle}{Numeric seconds each worker idles before shutting
 down, passed to every \code{crew_controller_slurm()}. Default: \code{30}.}
@@ -42,17 +54,12 @@ argument) once its workers exhaust \code{crashes_max}. Returns a
 }
 \examples{
 \dontrun{
-tiers <- data.frame(
-  name = c(
-    "elastic_5", "elastic_10", "elastic_20",
-    "elastic_40", "elastic_80", "elastic_160"
-  ),
-  mem_gb = c(5, 10, 20, 40, 80, 160),
+computing_resources <- tt_controller_elastic_slurm(
+  mem_gb_per_job = c(5, 10, 20, 40, 80, 160),
   time_min = c(60 * 4, 60 * 4, 60 * 4, 60 * 4, 60 * 4, 60 * 24),
   workers = c(64, 48, 32, 24, 16, 8),
   crashes_max = c(6, 1, 1, 1, 1, 2)
 )
-computing_resources <- tt_controller_elastic_slurm(tiers)
 tt_initialise(computing_resources = computing_resources)
 }
 }
