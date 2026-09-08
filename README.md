@@ -82,7 +82,7 @@ targets::tar_read(summaries, store = "_targets")
 | `tt_iterate()` | Map or cross a function over mapped inputs |
 | `tt_single()` | Add one non-iterated target |
 
-### Reporting and debug
+### Reporting and debugging
 
 | Function | Role |
 | --- | --- |
@@ -106,7 +106,7 @@ Pass this to `tt_initialise(computing_resources = ...)`.
 
 ``` r
 computing_resources <- crew.cluster::crew_controller_slurm(
-  workers = 50,
+  workers = 100,
   tasks_max = 1,
   seconds_idle = 30,
   options_cluster = crew.cluster::crew_options_slurm(
@@ -114,3 +114,37 @@ computing_resources <- crew.cluster::crew_controller_slurm(
   )
 )
 ```
+
+### Elastic SLURM (auto-scaling tiers)
+
+`tt_controller_elastic_slurm()` wraps several `crew.cluster::crew_controller_slurm()`
+resource tiers, sized from small to large, into a `crew::crew_controller_group()`.
+A tier automatically falls back to the next tier up once its workers exhaust
+`crashes_max` (for example, once a job runs out of memory), so most jobs run
+on cheap, small workers while a few fall through to progressively larger ones.
+`{crew}` and `{crew.cluster}` are not dependencies of tidytargets; install them
+yourself to use this wrapper.
+
+Tiers are ordered smallest to largest; tier names are generated automatically
+from `mem_gb_per_job` (e.g. `5` becomes `"elastic_5"`). `time_hours` is the
+lifetime of a worker (a SLURM job), not the run time of one target: a worker
+stays alive to run multiple targets back to back until `time_hours` elapses,
+at which point SLURM kills it — along with whatever target it happens to be
+running — and `{crew}` relaunches that target on a brand new worker. Set it
+as long as practical so a worker survives as many targets as possible, and
+always longer than the longest single target it may run.
+
+`workers` and `mem_gb_per_job` are required. Every other argument may be a
+single value, which is recycled to every tier, or a vector with one value
+per tier. So the minimal call only needs `workers` and `mem_gb_per_job`,
+with `time_hours = 24`, `crashes_max = 2`, and `cpus_per_task = 1` applied
+to every tier:
+
+``` r
+computing_resources <- tt_controller_elastic_slurm(
+  workers = 100,
+  mem_gb_per_job = c(5, 10, 20, 50, 100)
+)
+```
+
+Pass this to `tt_initialise(computing_resources = ...)`.

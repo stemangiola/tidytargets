@@ -1,5 +1,22 @@
 # tidytargets NEWS
 
+## tidytargets 0.0.12
+
+* `tt_controller_elastic_slurm()` wraps a common `{crew.cluster}` pattern:
+  several `crew_controller_slurm()` resource tiers, sized from small to
+  large, each falling back to the next tier up once its workers exhaust
+  `crashes_max`. Takes vectors (`workers`, `mem_gb_per_job`, `time_hours`,
+  `crashes_max`, `cpus_per_task`) instead of a tier table; tier names are
+  generated automatically from `mem_gb_per_job`. `time_hours` is the
+  lifetime of a worker (converted to the minutes `{crew.cluster}` expects),
+  not the run time of one target. `workers` and `mem_gb_per_job` are
+  required; every other argument may be a single value, recycled across
+  every tier, and defaults to `time_hours = 24`, `crashes_max = 2`,
+  `cpus_per_task = 1`. Returns a `crew::crew_controller_group()` ready to
+  pass to `tt_initialise(computing_resources = )`. `{crew}` and
+  `{crew.cluster}` remain optional (`Suggests`), not hard dependencies;
+  `rlang::check_installed()` raises a clear error if either is missing.
+
 ## tidytargets 0.0.11
 
 * `tt_initialise(error = )` defaults to `"continue"` so a failed target does
