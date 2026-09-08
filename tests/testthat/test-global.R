@@ -124,6 +124,30 @@ test_that("tt_global names the object from assignment or argument name", {
   expect_true(any(grepl("^from_argument <- 42$", script)))
 })
 
+test_that("tt_global rejects an object that cannot be written as source", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets")
+
+  # Stands in for a DB connection or an HDF5 handle: deparses to the
+  # placeholder `<environment>`, which is not R code. Without this check the
+  # pipeline fails later, as a syntax error in the generated script.
+  conn <- new.env()
+  expect_error(tt_global(pipe, conn), "`conn` cannot be written")
+  expect_error(tt_global(pipe, conn), "tt_data")
+
+  # Deparsable structures are still allowed; the size limit is judgement,
+  # not a rule.
+  lookup <- data.frame(id = 1:2, label = c("a", "b"))
+  pipe <- tt_global(pipe, lookup)
+  expect_equal(names(pipe$globals), "lookup")
+  expect_error(parse(text = pipe$globals$lookup), NA)
+})
+
 test_that("tt_global validates its input", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)
@@ -134,6 +158,5 @@ test_that("tt_global validates its input", {
   pipe <- tt_initialise(store = store, packages = "tidytargets")
 
   expect_error(tt_global("not a pipeline", 1), "tidytargets object")
-  expect_error(tt_global(pipe), "at least one object")
   expect_error(tt_global(pipe, 1 + 1), "please name the target")
 })

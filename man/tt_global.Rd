@@ -37,9 +37,18 @@ uses, so editing one invalidates the targets that call it and leaves the
 rest up to date.
 
 Objects are written as source with \code{deparse()}, so they must be
-self-contained: top-level functions and small constants. A closure that
-depends on its enclosing environment, or a large or non-deparsable object
-such as a fitted model or a \code{SingleCellExperiment}, belongs in \code{\link[=tt_data]{tt_data()}}.
+self-contained: top-level functions and small constants. An object that
+cannot be deparsed, because it holds an environment, a connection, or an
+external pointer, is an error here; snapshot it with \code{\link[=tt_data]{tt_data()}}. A closure
+that depends on its enclosing environment deparses but loses that
+environment, so it belongs in \code{\link[=tt_data]{tt_data()}} too.
+
+Being deparsable is not the same as belonging here. Data structures are
+written out element by element, so the script grows with the object: a
+one-million-cell assay is around 20 MB of source that \code{{targets}} re-parses
+on every run. \code{\link[=tt_data]{tt_data()}} writes one \code{qs} file instead, so anything holding
+real data belongs there however well it deparses.
+
 A function keeps the formatting and comments you wrote it with, as long as
 the session kept source references (\code{options(keep.source = )}, \code{TRUE} by
 default in interactive R).

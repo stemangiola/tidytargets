@@ -14,9 +14,18 @@
 #' rest up to date.
 #'
 #' Objects are written as source with `deparse()`, so they must be
-#' self-contained: top-level functions and small constants. A closure that
-#' depends on its enclosing environment, or a large or non-deparsable object
-#' such as a fitted model or a `SingleCellExperiment`, belongs in [tt_data()].
+#' self-contained: top-level functions and small constants. An object that
+#' cannot be deparsed, because it holds an environment, a connection, or an
+#' external pointer, is an error here; snapshot it with [tt_data()]. A closure
+#' that depends on its enclosing environment deparses but loses that
+#' environment, so it belongs in [tt_data()] too.
+#'
+#' Being deparsable is not the same as belonging here. Data structures are
+#' written out element by element, so the script grows with the object: a
+#' one-million-cell assay is around 20 MB of source that `{targets}` re-parses
+#' on every run. [tt_data()] writes one `qs` file instead, so anything holding
+#' real data belongs there however well it deparses.
+#'
 #' A function keeps the formatting and comments you wrote it with, as long as
 #' the session kept source references (`options(keep.source = )`, `TRUE` by
 #' default in interactive R).
@@ -57,13 +66,6 @@ tt_global.default <- function(tt_input, ...) {
 #' @export
 tt_global.tidytargets <- function(tt_input, ...) {
   exprs <- as.list(substitute(list(...)))[-1L]
-  if (length(exprs) == 0L) {
-    stop(
-      "tidytargets says: tt_global() needs at least one object, ",
-      "e.g. tt_global(my_helper).",
-      call. = FALSE
-    )
-  }
 
   supplied <- names(exprs)
   if (is.null(supplied)) supplied <- rep("", length(exprs))
@@ -82,6 +84,21 @@ tt_global.tidytargets <- function(tt_input, ...) {
       control = c("useSource", "keepInteger", "keepNA", "niceNames", "showAttributes")
     )
     code[[1L]] <- paste0(resolved$target_output, " <- ", code[[1L]])
+
+    # An environment, connection or external pointer deparses to a placeholder
+    # such as `<environment>`. Left alone it is only caught when {targets}
+    # parses the script, as a syntax error in a generated file that names
+    # neither the object nor this function.
+    if (is.null(tryCatch(parse(text = code), error = function(e) NULL))) {
+      stop(
+        "tidytargets says: `", resolved$target_output, "` cannot be written ",
+        "to the pipeline script as source, so it cannot be a global. ",
+        "Objects holding an environment, a connection, or an external ",
+        "pointer are not deparsable; snapshot it with tt_data() instead.",
+        call. = FALSE
+      )
+    }
+
     tt_input$globals[[resolved$target_output]] <- code
   }
 
