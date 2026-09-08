@@ -38,12 +38,50 @@ attached_packages <- function() {
 
 
 
+#' Write the Targets Script Without Running the Pipeline
+#'
+#' @description
+#' `{store}.R` is generated from the pipeline object when the pipeline runs.
+#' Call this to write it early, so the `{targets}` functions that read a
+#' script can inspect the graph before anything executes, for example
+#' `targets::tar_manifest()`, `targets::tar_visnetwork()`,
+#' `targets::tar_outdated()`.
+#'
+#' The pipeline's script and store are registered with
+#' `targets::tar_config_set()`, so those functions then need no arguments.
+#' That writes `_targets.yaml` in the working directory, which is how
+#' `{targets}` is told to use a script other than `_targets.R`.
+#'
+#' Nothing is executed; use [tt_evaluate()] to run the pipeline.
+#'
+#' @param pipe A `tidytargets` object from [tt_initialise()].
+#'
+#' @return The script path, invisibly.
+#'
+#' @examples
+#' \dontrun{
+#' pipe <- tt_initialise(store = "store") |> tt_single(n <- 1)
+#' tt_script(pipe)
+#' targets::tar_manifest()
+#' targets::tar_visnetwork()
+#' }
+#'
+#' @importFrom targets tar_config_set
+#' @export
+tt_script <- function(pipe) {
+  if (!inherits(pipe, "tidytargets")) stop_if_not_tidytargets()
+
+  script <- write_script(pipe)
+  tar_config_set(script = script, store = pipe$initialisation$store)
+  invisible(script)
+}
+
 #' Print the Targets Script for a tidytargets Pipeline
 #'
 #' @description
-#' Reads `{store}.R` for a `tidytargets` object and prints its contents with a
+#' Writes `{store}.R` for a `tidytargets` object and prints its contents with a
 #' markdown-style heading. Useful for inspecting the pipeline script while
-#' composing steps.
+#' composing steps: the script shown is the one [tt_evaluate()] would run.
 #'
 #' @param pipe A `tidytargets` object from `tt_initialise()`.
 #'
@@ -52,7 +90,7 @@ attached_packages <- function() {
 #'
 #' @export
 show_targets_script <- function(pipe) {
-  path <- paste0(pipe$initialisation$store, ".R")
+  path <- write_script(pipe)
   cat("## ", basename(path), "\n\n", sep = "")
   lines <- readLines(path)
   writeLines(lines)

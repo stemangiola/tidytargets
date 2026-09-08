@@ -1,5 +1,33 @@
 # tidytargets NEWS
 
+## tidytargets 0.0.13
+
+* `{store}.R` is generated from the pipeline object when the pipeline runs,
+  instead of being appended to as each step is added. Grammar verbs now only
+  record a step, so composing a pipeline touches no files, and the script
+  `tt_evaluate()` runs always matches the object. Redefining a target name
+  replaces the earlier definition, because `$targets` is keyed by name;
+  previously the script was patched line by line to achieve this.
+  `show_targets_script()` writes the script before printing it, so it shows
+  what would run. `delete_lines_with_word()` is removed, and `{readr}` is no
+  longer a dependency.
+* `tt_script()` writes `{store}.R` without running the pipeline and registers
+  it with `targets::tar_config_set()`, so `targets::tar_manifest()`,
+  `targets::tar_outdated()`, `targets::tar_visnetwork()` and the other
+  `{targets}` functions that read a script can inspect the graph of a
+  pipeline that has not been evaluated. They take no arguments afterwards.
+* Named resource tiers work: pass a controller group as `computing_resources`
+  and pin a step to one tier with
+  `resources = quote(tar_resources(crew = tar_resources_crew(controller = "big")))`.
+  Two things prevented this. `tt_factory()` accepted `resources` through `...`
+  and never forwarded it to `targets::tar_target_raw()`, so every target ran on
+  the default controller; it is now forwarded. And a controller group could not
+  be restored from the snapshot the script reads, failing with ``` `cv2` is not
+  a valid Condition Variable ``` because `crew` controllers hold condition
+  variables that do not survive serialisation. The group is now stored as its
+  controllers and reassembled by the script. Groups from
+  `tt_controller_elastic_slurm()` are therefore usable as tiers.
+
 ## tidytargets 0.0.12
 
 * `tt_controller_elastic_slurm()` wraps a common `{crew.cluster}` pattern:

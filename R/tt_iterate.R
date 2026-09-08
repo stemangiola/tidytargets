@@ -68,36 +68,27 @@ tt_iterate.tidytargets <- function(
     target_output <- resolved$target_output
     rm(resolved)
     
-    # Target script
-    target_script = glue("{tt_input$initialisation$store}.R")
-    
-    # Append source if any
-    write_source(user_function_source_path, target_script)
-
     mapped <- mapped_names_in_command(command, tt_input, "map")
     spec <- resolve_pattern(mapped, pattern)
-    pattern_type <- spec$pattern_type
-    pattern_names <- spec$pattern_names
-    rm(spec)
 
-    tar_append(
-      fx = tt_factory |> quote(),
-      command = wrap_quote(command),
-      target_output = target_output,
-      script = target_script,
-      other_arguments_to_map = pattern_names,
-      pattern_type = pattern_type,
-      ...
-    )
-  
-      
     append_step(
       tt_input,
       target_output,
-      list(command = command, iterate = "map")
+      list(
+        command = command,
+        iterate = "map",
+        source = user_function_source_path,
+        factory = factory_call(
+          quote(tt_factory),
+          command = wrap_quote(command),
+          target_output = target_output,
+          other_arguments_to_map = spec$pattern_names,
+          pattern_type = spec$pattern_type,
+          ...
+        )
+      )
     )
-    
-    
+
   }
 
 

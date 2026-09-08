@@ -22,8 +22,8 @@ tt_initialise(
 \item{tt_input}{Named vector of inputs, typically file paths, or a named
 list of in-memory objects, one element per unit of iteration (e.g. sample).
 If names are not set, integer indices are used. \code{NULL} (the default)
-writes only the script header; add objects later with \code{\link[=tt_data]{tt_data()}} or
-pass a list here to map over.}
+registers no input targets; add objects later with \code{\link[=tt_data]{tt_data()}} or pass a
+list here to map over.}
 
 \item{store}{Directory path where pipeline files and targets store are written.
 \code{NULL} (the default) writes to \verb{./tidytargets-<HASH>} in the working
@@ -33,7 +33,11 @@ directory and prints that path.}
 \code{targets::tar_option_set(controller = )}, such as a \code{crew} controller or
 controller group. \code{NULL} (the default) runs the pipeline sequentially.
 tidytargets does not depend on any compute backend; pass whatever your
-deployment uses.}
+deployment uses. Pass a controller group (for example from
+\code{\link[=tt_controller_elastic_slurm]{tt_controller_elastic_slurm()}}) to make several named tiers available,
+and pin a step to one of them with
+\code{resources = quote(tar_resources(crew = tar_resources_crew(controller = "name")))}.
+Steps with no \code{resources} use the first controller in the group.}
 
 \item{debug_step}{Character name of a single target to debug; passed to
 \code{targets::tar_option_set(debug = ...)}. \code{NULL} disables debugging.}
@@ -72,12 +76,15 @@ step records), ready to be extended with pipeline step functions. The
 graph is not run until you print it or call \code{\link[=tt_evaluate]{tt_evaluate()}}.
 }
 \description{
-Sets up and writes a \code{targets} pipeline script. Saves configuration (and
-optional mapped inputs) to disk, then returns a \code{tidytargets} object that
-downstream grammar functions (e.g. \code{tt_data()}, \code{tt_iterate()},
-\code{tt_single()}, \code{tt_evaluate()}) can extend before the pipeline is executed
-with \code{tt_evaluate()}. The graph is not run until you print the object or
-call \code{\link[=tt_evaluate]{tt_evaluate()}}. Assigning it does not; an interactive session then
-says the pipeline is ready to be evaluated, rather than appearing to do
-nothing.
+Sets up a \code{targets} pipeline. Saves configuration (and optional mapped
+inputs) to disk, then returns a \code{tidytargets} object that downstream
+grammar functions (e.g. \code{tt_data()}, \code{tt_iterate()}, \code{tt_single()}) can
+extend before the pipeline is executed with \code{tt_evaluate()}.
+
+\verb{\{store\}.R} is written from the object by \code{\link[=tt_evaluate]{tt_evaluate()}} (or
+\code{\link[=show_targets_script]{show_targets_script()}}), not as steps are added, so the script always
+matches the object and redefining a step replaces it. The graph is not run
+until you print the object or call \code{\link[=tt_evaluate]{tt_evaluate()}}. Assigning it does not;
+an interactive session then says the pipeline is ready to be evaluated,
+rather than appearing to do nothing.
 }

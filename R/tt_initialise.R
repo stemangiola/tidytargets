@@ -29,20 +29,23 @@ new_tidytargets <- function(initialisation = list(),
 #' Initialise a tidytargets Pipeline
 #'
 #' @description
-#' Sets up and writes a `targets` pipeline script. Saves configuration (and
-#' optional mapped inputs) to disk, then returns a `tidytargets` object that
-#' downstream grammar functions (e.g. `tt_data()`, `tt_iterate()`,
-#' `tt_single()`, `tt_evaluate()`) can extend before the pipeline is executed
-#' with `tt_evaluate()`. The graph is not run until you print the object or
-#' call [tt_evaluate()]. Assigning it does not; an interactive session then
-#' says the pipeline is ready to be evaluated, rather than appearing to do
-#' nothing.
+#' Sets up a `targets` pipeline. Saves configuration (and optional mapped
+#' inputs) to disk, then returns a `tidytargets` object that downstream
+#' grammar functions (e.g. `tt_data()`, `tt_iterate()`, `tt_single()`) can
+#' extend before the pipeline is executed with `tt_evaluate()`.
+#'
+#' `{store}.R` is written from the object by [tt_evaluate()] (or
+#' [show_targets_script()]), not as steps are added, so the script always
+#' matches the object and redefining a step replaces it. The graph is not run
+#' until you print the object or call [tt_evaluate()]. Assigning it does not;
+#' an interactive session then says the pipeline is ready to be evaluated,
+#' rather than appearing to do nothing.
 #'
 #' @param tt_input Named vector of inputs, typically file paths, or a named
 #'   list of in-memory objects, one element per unit of iteration (e.g. sample).
 #'   If names are not set, integer indices are used. `NULL` (the default)
-#'   writes only the script header; add objects later with [tt_data()] or
-#'   pass a list here to map over.
+#'   registers no input targets; add objects later with [tt_data()] or pass a
+#'   list here to map over.
 #' @param store Directory path where pipeline files and targets store are written.
 #'   `NULL` (the default) writes to `./tidytargets-<HASH>` in the working
 #'   directory and prints that path.
@@ -50,7 +53,11 @@ new_tidytargets <- function(initialisation = list(),
 #'   `targets::tar_option_set(controller = )`, such as a `crew` controller or
 #'   controller group. `NULL` (the default) runs the pipeline sequentially.
 #'   tidytargets does not depend on any compute backend; pass whatever your
-#'   deployment uses.
+#'   deployment uses. Pass a controller group (for example from
+#'   [tt_controller_elastic_slurm()]) to make several named tiers available,
+#'   and pin a step to one of them with
+#'   `resources = quote(tar_resources(crew = tar_resources_crew(controller = "name")))`.
+#'   Steps with no `resources` use the first controller in the group.
 #' @param debug_step Character name of a single target to debug; passed to
 #'   `targets::tar_option_set(debug = ...)`. `NULL` disables debugging.
 #' @param verbosity Reporter string passed to `targets::tar_make()`. Defaults to
@@ -121,15 +128,21 @@ tt_initialise <- function(tt_input = NULL,
   store <- normalizePath(store, winslash = "/", mustWork = TRUE)
   args_list$store <- store
   
-  # Keep computing resources with the store. Mapped inputs (if any) stay here
-  # too so tar_make cannot pick up leftover input_file.qs from another pipeline.
-  resources_qs <- file.path(store, "temp_computing_resources.qs")
-  computing_resources |> qs_save(resources_qs)
-  backend_packages <- package_of_object(computing_resources)
-  worker_packages <- unique(c(packages, "qs2"))
+  # Snapshot the controller now, while it is untouched: crew controllers are
+  # mutable, and the script reads this file back rather than deparsing one.
+  # A controller group is stored as its controllers and reassembled by the
+  # script, because the group itself cannot be restored: it holds condition
+  # variables that do not survive serialisation.
+  # Mapped inputs (if any) stay with the store too, so tar_make cannot pick
+  # up a leftover input_file.qs from another pipeline.
+  snapshot <- computing_resources
+  if (is_controller_group(snapshot)) snapshot <- snapshot$controllers
+  snapshot |> qs_save(file.path(store, "temp_computing_resources.qs"))
+
+  args_list$packages <- unique(c(packages, "qs2"))
   message(
     "tidytargets says: these packages from the session will be loaded on workers: ",
-    paste(worker_packages, collapse = ", ")
+    paste(args_list$packages, collapse = ", ")
   )
 
   if (has_input) {
@@ -139,110 +152,88 @@ tt_initialise <- function(tt_input = NULL,
     tt_input |> names() |> qs_save(sample_names_qs)
   }
   
-  # Write pipeline to a file
-  {
-    library(tidytargets)
-    do.call("library", list("dplyr"))
-    do.call("library", list("magrittr"))
-    do.call("library", list("targets"))
-    do.call("library", list("tarchetypes"))
-    do.call("library", list("qs2"))
-    lapply(bp, function(pkg) do.call("library", list(pkg)))
-    
-    tar_option_set(
-      memory = "transient",
-      garbage_collection = g,
-      storage = "worker",
-      retrieval = "worker",
-      error = e,
-      debug = d, # Set the target you want to debug.
-      cue = tar_cue(mode = u), # Force skip non-debugging outdated targets.
-      controller = qs_read(rf),
-      format = "qs",
-      packages = p,
-      trust_timestamps = TRUE, 
-      workspace_on_error = w
-    )
-     
-    target_list <- list()
-    
-    } |> 
-    substitute(env = list(
-      d = debug_step, e = error, u = update, g = garbage_collection,
-      w = workspace_on_error, p = worker_packages,
-      bp = backend_packages, rf = resources_qs
-    )) |> 
-    tar_script_append2(script = glue("{store}.R"), append = FALSE)
-
-  
   pipe <- new_tidytargets(args_list)
 
   if (!has_input) return(pipe)
 
-  target_script <- paste0(store, ".R")
-
-  tar_append(
-    fx = quote(tt_factory),
-    command = wrap_quote(sample_names_qs),
-    target_output = "sample_names_file",
-    script = target_script,
-    format = "file"
-  )
   pipe <- append_step(
     pipe,
     "sample_names_file",
-    list(command = sample_names_qs, iterate = "none")
+    list(
+      command = sample_names_qs,
+      iterate = "none",
+      factory = factory_call(
+        quote(tt_factory),
+        command = wrap_quote(sample_names_qs),
+        target_output = "sample_names_file",
+        format = "file"
+      )
+    )
   )
 
-  tar_append(
-    fx = quote(tt_factory),
-    command = wrap_quote(quote(qs_read(sample_names_file))),
-    target_output = "sample_names",
-    script = target_script,
-    deployment = "main"
-  )
   pipe <- append_step(
     pipe,
     "sample_names",
     list(
       command = quote(qs_read(sample_names_file)),
-      iterate = "map"
+      iterate = "map",
+      factory = factory_call(
+        quote(tt_factory),
+        command = wrap_quote(quote(qs_read(sample_names_file))),
+        target_output = "sample_names",
+        deployment = "main"
+      )
     )
   )
 
   input_file_target <- paste0(target_output, "_file")
   input_read <- substitute(qs_read(ifs), list(ifs = as.name(input_file_target)))
 
-  tar_append(
-    fx = quote(tt_factory),
-    command = wrap_quote(input_qs),
-    target_output = input_file_target,
-    script = target_script,
-    format = "file"
-  )
   pipe <- append_step(
     pipe,
     input_file_target,
-    list(command = input_qs, iterate = "none")
+    list(
+      command = input_qs,
+      iterate = "none",
+      factory = factory_call(
+        quote(tt_factory),
+        command = wrap_quote(input_qs),
+        target_output = input_file_target,
+        format = "file"
+      )
+    )
   )
 
-  tar_append(
-    fx = quote(tt_factory),
-    command = wrap_quote(input_read),
-    target_output = target_output,
-    script = target_script,
-    deployment = "main"
-  )
   append_step(
     pipe,
     target_output,
     list(
       command = input_read,
-      iterate = "map"
+      iterate = "map",
+      factory = factory_call(
+        quote(tt_factory),
+        command = wrap_quote(input_read),
+        target_output = target_output,
+        deployment = "main"
+      )
     )
   )
 }
 
+
+#' Is this a crew controller group?
+#'
+#' Groups get special treatment on the way into `{store}.R`: only the
+#' controllers can be serialised, so the group is rebuilt from them. Tested by
+#' class name rather than with `crew::`, since tidytargets does not depend on
+#' any compute backend.
+#'
+#' @param x A controller, controller group, or `NULL`.
+#' @return `TRUE` for a controller group.
+#' @noRd
+is_controller_group <- function(x) {
+  inherits(x, "crew_class_controller_group")
+}
 
 #' Infer the package that defines a controller-like object
 #'

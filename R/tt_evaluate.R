@@ -39,14 +39,7 @@ tt_evaluate.default <- function(tt_input) {
 #' @export
 tt_evaluate.tidytargets = function(tt_input) {
 
-  script <- glue("{tt_input$initialisation$store}.R")
-
-  # {targets} eval()s the script and uses the last expression as the pipeline.
-  # Each factory already assigns `target_list <- ...`; a trailing `target_list`
-  # is enough to return it, and is stripped first so print() is idempotent.
-  lines <- readLines(script)
-  lines <- lines[!grepl("^\\s*target_list\\s*$", lines)]
-  writeLines(c(lines, "target_list"), script)
+  script <- write_script(tt_input)
   
   if(tt_input$initialisation$debug_step |> is.null())
     my_callr_function =  callr::r

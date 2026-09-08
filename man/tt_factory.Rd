@@ -12,6 +12,7 @@ tt_factory(
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
   format = targets::tar_option_get("format"),
+  resources = targets::tar_option_get("resources"),
   ...
 )
 }
@@ -32,6 +33,10 @@ per combination).}
 \item{deployment}{Deployment strategy string (e.g. \code{"worker"} or \code{"main"}).}
 
 \item{format}{Storage format string for the target value.}
+
+\item{resources}{A \code{targets::tar_resources()} object, used to pick a named
+controller out of a controller group with
+\code{tar_resources(crew = tar_resources_crew(controller = "name"))}.}
 
 \item{...}{Unused; retained so extra factory arguments are ignored.}
 }

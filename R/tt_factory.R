@@ -14,6 +14,9 @@
 #' @param packages Character vector of R packages to load in the worker.
 #' @param deployment Deployment strategy string (e.g. `"worker"` or `"main"`).
 #' @param format Storage format string for the target value.
+#' @param resources A `targets::tar_resources()` object, used to pick a named
+#'   controller out of a controller group with
+#'   `tar_resources(crew = tar_resources_crew(controller = "name"))`.
 #' @param ... Unused; retained so extra factory arguments are ignored.
 #' @return A `tar_target` object.
 #' @export
@@ -25,6 +28,7 @@ tt_factory = function(
     packages = targets::tar_option_get("packages") , 
     deployment = targets::tar_option_get("deployment"),
     format = targets::tar_option_get("format"),
+    resources = targets::tar_option_get("resources"),
     ...
 ){
   
@@ -38,7 +42,8 @@ tt_factory = function(
     iteration = "list", 
     packages = packages,
     deployment = deployment,
-    format = format
+    format = format,
+    resources = resources
   )
    
 }

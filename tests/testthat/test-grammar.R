@@ -24,14 +24,15 @@ test_that("tt_initialise returns a tidytargets object with input targets", {
     hpc$initialisation$store,
     normalizePath(store, winslash = "/", mustWork = TRUE)
   )
-  expect_true(file.exists(paste0(hpc$initialisation$store, ".R")))
+  # The script is written when the pipeline runs, not as steps are added.
+  expect_false(file.exists(paste0(hpc$initialisation$store, ".R")))
   expect_true("input_list" %in% names(hpc$targets))
   expect_true("sample_names" %in% names(hpc$targets))
   expect_equal(hpc$targets$input_list$iterate, "map")
   expect_equal(hpc$targets$sample_names$iterate, "map")
   expect_null(hpc$initialisation$computing_resources)
 
-  script <- readLines(paste0(store, ".R"))
+  script <- readLines(tidytargets:::write_script(hpc))
   expect_false(any(grepl('library\\("crew', script)))
   expect_false(any(grepl("crew_controller_group", script)))
   expect_true(any(grepl("controller = qs_read", script)))
@@ -52,7 +53,6 @@ test_that("tt_initialise defaults store to ./tidytargets-<hash> and messages", {
 
   expect_match(basename(hpc$initialisation$store), "^tidytargets-")
   expect_true(dir.exists(hpc$initialisation$store))
-  expect_true(file.exists(paste0(hpc$initialisation$store, ".R")))
 
   store <- file.path(tmp, "explicit-store")
   expect_message(
@@ -75,10 +75,9 @@ test_that("tt_initialise works with no mapped input", {
   expect_false("sample_names" %in% names(pipe$targets))
   expect_false(file.exists(file.path(store, "input_file.qs")))
   expect_false(file.exists(file.path(store, "sample_names.qs")))
-  expect_true(file.exists(paste0(store, ".R")))
   expect_equal(pipe$initialisation$error, "continue")
   expect_match(
-    paste(readLines(paste0(store, ".R")), collapse = "\n"),
+    paste(readLines(tidytargets:::write_script(pipe)), collapse = "\n"),
     'error = "continue"',
     fixed = TRUE
   )
@@ -108,7 +107,6 @@ test_that("tt_initialise accepts a named list of objects", {
     hpc$initialisation$store,
     normalizePath(store, winslash = "/", mustWork = TRUE)
   )
-  expect_true(file.exists(paste0(hpc$initialisation$store, ".R")))
   expect_true("input_list" %in% names(hpc$targets))
   expect_true("sample_names" %in% names(hpc$targets))
   expect_equal(hpc$targets$input_list$iterate, "map")
@@ -180,7 +178,7 @@ test_that("tt_iterate and tt_single chain onto a tidytargets object", {
   expect_true("n_inputs" %in% names(hpc$targets))
   expect_equal(hpc$targets$n_inputs$iterate, "none")
 
-  script <- readLines(paste0(store, ".R"))
+  script <- readLines(tidytargets:::write_script(hpc))
   expect_true(any(grepl("target_output = \"data\"", script)))
   expect_true(any(grepl("target_output = \"n_inputs\"", script)))
   expect_true(any(grepl("quote\\(readRDS\\(input_list\\)\\)", script)))
@@ -200,6 +198,7 @@ test_that("grammar steps error on non-tidytargets input", {
   expect_error(tt_read("not a pipeline", "data"), "tidytargets object")
   expect_error(tt_data("not a pipeline", 1, target_output = "x"), "tidytargets object")
   expect_error(tt_data_list("not a pipeline", list(1), target_output = "x"), "tidytargets object")
+  expect_error(tt_script("not a pipeline"), "tidytargets object")
 })
 
 test_that("grammar steps require a target_output name", {
@@ -240,7 +239,7 @@ test_that("<- names the target and peels the command", {
   expect_true("n_total" %in% names(hpc$targets))
   expect_equal(hpc$targets$n_total$command, quote(sum(unlist(n_inputs))))
 
-  script <- readLines(paste0(store, ".R"))
+  script <- readLines(tidytargets:::write_script(hpc))
   expect_true(any(grepl("target_output = \"data\"", script)))
   expect_true(any(grepl("quote\\(readRDS\\(input_list\\)\\)", script)))
   expect_false(any(grepl("data <- readRDS", script)))
@@ -408,7 +407,7 @@ test_that("tt_report captures params as command-style symbols", {
   expect_true("report" %in% names(hpc$targets))
   expect_equal(hpc$targets$report$iterate, "single")
 
-  script <- readLines(paste0(store, ".R"))
+  script <- readLines(tidytargets:::write_script(hpc))
   expect_true(any(grepl("n_samples = n_samples", script)))
   expect_false(any(grepl("is_target", script)))
 })
@@ -636,11 +635,11 @@ test_that("tt_iterate maps equal-size lists; unequal sizes error at make", {
     fixed = TRUE
   )
   expect_match(
-    paste(readLines(paste0(store, ".R")), collapse = "\n"),
+    paste(readLines(tidytargets:::write_script(pipe)), collapse = "\n"),
     'pattern_type = "map"'
   )
   expect_match(
-    paste(readLines(paste0(store, ".R")), collapse = "\n"),
+    paste(readLines(tidytargets:::write_script(pipe)), collapse = "\n"),
     'other_arguments_to_map = c("methods", "samples")',
     fixed = TRUE
   )
@@ -689,15 +688,13 @@ test_that("tt_iterate maps equal-size lists; unequal sizes error at make", {
     fixed = TRUE
   )
   expect_match(
-    paste(readLines(paste0(store_cross, ".R")), collapse = "\n"),
+    paste(readLines(tidytargets:::write_script(pipe_cross)), collapse = "\n"),
     'pattern_type = "cross"'
   )
 
   # tar_make() via callr loads the installed factory, which has no
   # pattern_type. Run in-process so this session's factory can cross().
-  script <- paste0(store_cross, ".R")
-  lines <- readLines(script)
-  writeLines(c(lines[!grepl("^\\s*target_list\\s*$", lines)], "target_list"), script)
+  script <- tidytargets:::write_script(pipe_cross)
   targets::tar_make(
     callr_function = NULL,
     script = script,
@@ -728,7 +725,7 @@ test_that("tt_iterate pattern = cross is explicit; map writes all mapped names",
     fixed = TRUE
   )
   expect_match(
-    paste(readLines(paste0(pipe$initialisation$store, ".R")), collapse = "\n"),
+    paste(readLines(tidytargets:::write_script(pipe)), collapse = "\n"),
     'pattern_type = "cross"'
   )
 
@@ -742,7 +739,7 @@ test_that("tt_iterate pattern = cross is explicit; map writes all mapped names",
     fixed = TRUE
   )
   expect_match(
-    paste(readLines(paste0(pipe_map$initialisation$store, ".R")), collapse = "\n"),
+    paste(readLines(tidytargets:::write_script(pipe_map)), collapse = "\n"),
     'other_arguments_to_map = c("methods", "samples")',
     fixed = TRUE
   )
@@ -763,7 +760,7 @@ test_that("tt_iterate maps every iterate=map name; constants use tt_data", {
     "using map()",
     fixed = TRUE
   )
-  script <- paste(readLines(paste0(pipe$initialisation$store, ".R")), collapse = "\n")
+  script <- paste(readLines(tidytargets:::write_script(pipe)), collapse = "\n")
   expect_match(script, 'pattern_type = "map"')
   expect_match(
     script,
@@ -777,7 +774,7 @@ test_that("tt_iterate maps every iterate=map name; constants use tt_data", {
     tt_iterate(out <- const + samples)
 
   script_const <- paste(
-    readLines(paste0(pipe_const$initialisation$store, ".R")),
+    readLines(tidytargets:::write_script(pipe_const)),
     collapse = "\n"
   )
   expect_match(script_const, 'other_arguments_to_map = "samples"')
@@ -802,7 +799,7 @@ test_that("tt_iterate cross includes every mapped name", {
     fixed = TRUE
   )
   script_cross <- paste(
-    readLines(paste0(pipe_cross$initialisation$store, ".R")),
+    readLines(tidytargets:::write_script(pipe_cross)),
     collapse = "\n"
   )
   expect_match(script_cross, 'pattern_type = "cross"')
@@ -852,7 +849,7 @@ test_that("tt_data_list snapshots a list as mapped units", {
     tt_iterate(command = settings$alpha, target_output = "alpha")
 
   expect_equal(pipe$targets$alpha$iterate, "map")
-  script <- readLines(paste0(store, ".R"))
+  script <- readLines(tidytargets:::write_script(pipe))
   expect_true(any(grepl("other_arguments_to_map = \"settings\"", script)))
 
   tt_evaluate(pipe)
@@ -907,7 +904,7 @@ test_that("tt_split marks a pipeline list as mapped units", {
     tt_iterate(alpha <- settings$alpha)
 
   expect_equal(pipe$targets$alpha$iterate, "map")
-  script <- readLines(paste0(store, ".R"))
+  script <- readLines(tidytargets:::write_script(pipe))
   expect_true(any(grepl("other_arguments_to_map = \"settings\"", script)))
   expect_true(any(grepl("target_output = \"settings\"", script)))
 
@@ -940,7 +937,7 @@ test_that("tt_initialise snapshots attached package names, not session objects",
     pipe <- tt_initialise(store = store),
     "glue"
   )
-  script <- paste(readLines(paste0(store, ".R")), collapse = "\n")
+  script <- paste(readLines(tidytargets:::write_script(pipe)), collapse = "\n")
 
   expect_true("glue" %in% pipe$initialisation$packages)
   expect_match(script, '"glue"')
@@ -961,9 +958,10 @@ test_that("tt_initialise packages= overrides the attached snapshot", {
 
   store <- file.path(tmp, "store")
   pipe <- tt_initialise(store = store, packages = "tidytargets")
-  script <- paste(readLines(paste0(store, ".R")), collapse = "\n")
+  script <- paste(readLines(tidytargets:::write_script(pipe)), collapse = "\n")
 
-  expect_equal(pipe$initialisation$packages, "tidytargets")
+  # qs2 is always added, so the override drops glue but keeps the reader.
+  expect_equal(pipe$initialisation$packages, c("tidytargets", "qs2"))
   expect_false(grepl('"glue"', script))
 })
 
@@ -983,7 +981,7 @@ test_that("explicit packages on a target is not overwritten by attached packages
   pipe <- tt_initialise(store = store, packages = "tidytargets") |>
     tt_single(n <- 1, packages = "qs2")
 
-  script <- readLines(paste0(store, ".R"))
+  script <- readLines(tidytargets:::write_script(pipe))
   factory_line <- script[grepl("target_output = \"n\"", script)]
   expect_length(factory_line, 1L)
   expect_match(factory_line, 'packages = "qs2"')
@@ -1010,4 +1008,91 @@ test_that("unqualified functions from attached packages run on workers", {
     as.character(targets::tar_read(msg, store = pipe$initialisation$store)),
     "hi"
   )
+})
+
+test_that("the script is written at evaluation, so redefining a step replaces it", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets") |>
+    tt_single(a <- 1) |>
+    tt_single(b <- a + 1) |>
+    tt_single(a <- 41)
+
+  expect_false(file.exists(paste0(store, ".R")))
+
+  script <- readLines(tidytargets:::write_script(pipe))
+  expect_length(script[grepl('target_output = "a"', script, fixed = TRUE)], 1L)
+  expect_true(any(grepl("command = 41", script, fixed = TRUE)))
+  expect_false(any(grepl("command = 1,", script, fixed = TRUE)))
+
+  # The graph, not just the file: b sees the surviving definition of a.
+  expect_setequal(tt_evaluate(pipe)$name, c("a", "b"))
+  expect_equal(targets::tar_read(b, store = store), 42)
+})
+
+test_that("tt_script writes the script and points targets at it, without running", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets") |>
+    tt_single(a <- 1)
+
+  path <- tt_script(pipe)
+  expect_equal(path, paste0(pipe$initialisation$store, ".R"))
+  expect_equal(targets::tar_config_get("script"), path)
+  expect_equal(targets::tar_config_get("store"), pipe$initialisation$store)
+
+  # The point of the verb: {targets} introspection needs no arguments, and
+  # still reports the target as pending rather than running it.
+  expect_equal(targets::tar_manifest()$name, "a")
+  expect_equal(targets::tar_outdated(), "a")
+})
+
+test_that("the controller is snapshotted at initialise, not at every script write", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets")
+  snapshot <- file.path(store, "temp_computing_resources.qs")
+  expect_true(file.exists(snapshot))
+
+  # Writing the script must not re-serialise the controller: crew
+  # controllers are mutable, so a later snapshot could differ from the one
+  # the user handed over.
+  file.remove(snapshot)
+  tidytargets:::write_script(pipe)
+  expect_false(file.exists(snapshot))
+})
+
+test_that("a user function file is sourced once, above the targets", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  helpers <- file.path(tmp, "helpers.R")
+  writeLines("triple <- function(x) x * 3", helpers)
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets") |>
+    tt_single(a <- triple(2), user_function_source_path = helpers) |>
+    tt_single(b <- triple(3), user_function_source_path = helpers)
+
+  script <- readLines(tidytargets:::write_script(pipe))
+  sourced <- grep("^source\\(", script)
+  expect_length(sourced, 1L)
+  expect_lt(sourced, min(grep("target_append", script)))
+
+  tt_evaluate(pipe)
+  expect_equal(targets::tar_read(a, store = store), 6)
 })

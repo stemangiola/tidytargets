@@ -14,7 +14,7 @@ Invisibly returns the script lines; called for its side effect of
 printing.
 }
 \description{
-Reads \verb{\{store\}.R} for a \code{tidytargets} object and prints its contents with a
+Writes \verb{\{store\}.R} for a \code{tidytargets} object and prints its contents with a
 markdown-style heading. Useful for inspecting the pipeline script while
-composing steps.
+composing steps: the script shown is the one \code{\link[=tt_evaluate]{tt_evaluate()}} would run.
 }
