@@ -990,6 +990,84 @@ test_that("explicit packages on a target is not overwritten by attached packages
   expect_false(grepl("glue", factory_line))
 })
 
+test_that("explicit resources on a target is written into the factory call", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets") |>
+    tt_single(
+      n <- 1,
+      resources = quote(tar_resources(crew = tar_resources_crew("slurm_1_80")))
+    )
+
+  script <- readLines(paste0(store, ".R"))
+  factory_line <- script[grepl("target_output = \"n\"", script)]
+  expect_length(factory_line, 1L)
+  expect_match(factory_line, "tar_resources")
+  expect_match(factory_line, "slurm_1_80")
+})
+
+test_that("resources reaches the target so the step runs on that controller", {
+  target <- tt_factory(
+    command = quote(1),
+    target_output = "n",
+    resources = targets::tar_resources(
+      crew = targets::tar_resources_crew("elastic_20")
+    )
+  )
+  expect_equal(target$settings$resources$crew$controller, "elastic_20")
+})
+
+
+test_that("brace-block commands stay valid R in the targets script", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets") |>
+    tt_single(
+      out <- {
+        x <- 1
+        x + 1
+      }
+    )
+
+  expect_error(parse(paste0(store, ".R")), NA)
+  tt_evaluate(pipe)
+  expect_equal(targets::tar_read(out, store = store), 2)
+})
+
+test_that("redefining a step leaves later steps alone", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  # The bracket inside the string literal must not be read as opening the
+  # factory call, or removing `a` takes every target written after it.
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets") |>
+    tt_single(
+      a <- {
+        msg <- "unbalanced ( inside a string"
+        msg
+      }
+    ) |>
+    tt_single(b <- 2) |>
+    tt_single(a <- 99)
+
+  script <- readLines(paste0(store, ".R"))
+  expect_length(script[grepl('target_output = "a"', script, fixed = TRUE)], 1L)
+  expect_length(script[grepl('target_output = "b"', script, fixed = TRUE)], 1L)
+  expect_false(any(grepl("unbalanced", script)))
+  expect_error(parse(paste0(store, ".R")), NA)
+})
+
 test_that("unqualified functions from attached packages run on workers", {
   tmp <- tempfile("tidytargets-")
   dir.create(tmp)

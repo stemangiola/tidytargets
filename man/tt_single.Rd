@@ -46,7 +46,10 @@ assignment; use \verb{<-}.}
 source in the worker before evaluating \code{command}. \code{NULL} sources nothing.}
 
 \item{...}{Additional factory arguments such as \code{format}, \code{deployment},
-or \code{packages}.}
+or \code{packages}. \code{resources} sends the step to one tier of the controller
+group given to \code{tt_initialise(computing_resources = )}. Quote the
+\code{{targets}} call so it reaches the pipeline script as source:
+\code{resources = quote(tar_resources(crew = tar_resources_crew("elastic_20")))}.}
 }
 \description{
 Appends one non-iterated targets step: a whole object in, a single object

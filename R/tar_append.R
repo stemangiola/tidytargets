@@ -35,15 +35,12 @@ tar_append = function(fx, script = targets::tar_config_get("script"), ...){
     as.call(arguments_to_pass) |>
     deparse(width.cutoff = 500)
   
-  # Add prefix. Assign so {targets} `eval(parse(script))` sees the grown list
-  # in the script environment (target_append is a pure function).
-  "target_list <- target_list |> target_append(" |> 
-    c(call_expr ) |> 
-    c(")") |> 
-    
-    paste(collapse = " ") |> 
-    
-    # Write
+  # Keep newlines from deparse(). Collapsing with spaces turns
+  # `quote({ a <- 1; a })` into invalid `quote({ a <- 1 a })`.
+  paste(
+    c("target_list <- target_list |> target_append(", call_expr, ")"),
+    collapse = "\n"
+  ) |>
     write_lines(script, append = TRUE)
   
 }

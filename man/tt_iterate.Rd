@@ -58,7 +58,10 @@ always \code{map()}. With two or more mapped inputs, the chosen pattern
 is messaged; \code{cross()} names the targets being crossed.}
 
 \item{...}{Additional factory arguments such as \code{format}, \code{deployment},
-or \code{packages}.}
+or \code{packages}. \code{resources} sends the step to one tier of the controller
+group given to \code{tt_initialise(computing_resources = )}. Quote the
+\code{{targets}} call so it reaches the pipeline script as source:
+\code{resources = quote(tar_resources(crew = tar_resources_crew("elastic_20")))}.}
 }
 \description{
 This function adds a new step to the HPC pipeline by appending the appropriate

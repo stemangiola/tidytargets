@@ -2,12 +2,12 @@
 % Please edit documentation in R/tar_append.R
 \name{delete_lines_with_word}
 \alias{delete_lines_with_word}
-\title{Delete Lines Containing a Word from a File}
+\title{Delete a factory block for a named target from a script}
 \usage{
 delete_lines_with_word(word, file_path)
 }
 \arguments{
-\item{word}{The target-output name whose line should be removed.}
+\item{word}{The target-output name whose factory should be removed.}
 
 \item{file_path}{Path to the file to modify.}
 }
@@ -15,6 +15,9 @@ delete_lines_with_word(word, file_path)
 Invisibly returns NULL; called for its side effect of modifying the file.
 }
 \description{
-Reads a text file and removes all lines that contain a
-\code{target_output = "word"} pattern, then writes the result back to disk.
+Removes the \code{target_list <- target_list |> target_append(...)} statement
+that defines \code{target_output = "word"}, including multi-line brace
+commands. Used so redefining a step does not stack duplicate factories.
+Statement boundaries come from the parser, so a bracket inside a string
+literal in the command does not extend the deletion.
 }

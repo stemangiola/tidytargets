@@ -12,6 +12,7 @@ tt_factory(
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
   format = targets::tar_option_get("format"),
+  resources = targets::tar_option_get("resources"),
   ...
 )
 }
@@ -32,6 +33,11 @@ per combination).}
 \item{deployment}{Deployment strategy string (e.g. \code{"worker"} or \code{"main"}).}
 
 \item{format}{Storage format string for the target value.}
+
+\item{resources}{A \code{tar_resources()} object passed to \code{tar_target_raw()},
+for example
+\code{tar_resources(crew = tar_resources_crew("elastic_20"))} to run the
+target on that controller.}
 
 \item{...}{Unused; retained so extra factory arguments are ignored.}
 }

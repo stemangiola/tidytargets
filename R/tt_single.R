@@ -17,7 +17,10 @@
 #' @param user_function_source_path Optional character path to an R script to
 #'   source in the worker before evaluating `command`. `NULL` sources nothing.
 #' @param ... Additional factory arguments such as `format`, `deployment`,
-#'   or `packages`.
+#'   or `packages`. `resources` sends the step to one tier of the controller
+#'   group given to `tt_initialise(computing_resources = )`. Quote the
+#'   `{targets}` call so it reaches the pipeline script as source:
+#'   `resources = quote(tar_resources(crew = tar_resources_crew("elastic_20")))`.
 #'
 #' @export
 tt_single <- function(

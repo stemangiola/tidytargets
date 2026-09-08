@@ -1,5 +1,26 @@
 # tidytargets NEWS
 
+## tidytargets 0.0.13
+
+
+* `tt_controller_elastic_slurm()` wraps a common `{crew.cluster}` pattern:
+  several `crew_controller_slurm()` resource tiers, sized from small to
+  large, each falling ba
+* `tt_global()` declares session objects, typically helper functions, in the
+  initialisation section of `{store}.R` so every target can call them. A
+  global is not a target: it is not a node in the graph, not stored in the
+  object store, and not read by `tt_read()`, but `{targets}` still tracks
+  which commands use it. One global function can call another, so helpers no
+  longer have to be threaded through `tt_data()` or passed as arguments.
+  Objects are written as source with `deparse()`, so they must be
+  self-contained; large or non-deparsable objects still belong in
+  `tt_data()`. Re-declaring a name appends a second assignment and the last
+  one wins, the same as sourcing a script twice.
+* Commands containing a brace block (`{ ... }`) are written to the script
+  across multiple lines. They were previously collapsed onto one line,
+  which turned `{ x <- 1; x }` into invalid R.
+
+
 ## tidytargets 0.0.12
 
 * `tt_controller_elastic_slurm()` wraps a common `{crew.cluster}` pattern:
@@ -16,6 +37,14 @@
   pass to `tt_initialise(computing_resources = )`. `{crew}` and
   `{crew.cluster}` remain optional (`Suggests`), not hard dependencies;
   `rlang::check_installed()` raises a clear error if either is missing.
+* `resources` on a grammar verb is forwarded to `targets::tar_target_raw()`,
+  so one step can run on its own tier of the controller group; it was
+  previously accepted and then dropped. Quote the `{targets}` call,
+  `resources = quote(tar_resources(crew = tar_resources_crew("elastic_100")))`,
+  so it reaches `{store}.R` as source: an evaluated `tar_resources()` object
+  deparses to `list(crew = <environment>)` and cannot be written to a script.
+  Tiers themselves are still defined once in
+  `tt_initialise(computing_resources = )`.
 
 ## tidytargets 0.0.11
 
