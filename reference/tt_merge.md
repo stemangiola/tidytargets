@@ -59,5 +59,10 @@ tt_merge(
 
 - ...:
 
-  Additional factory arguments such as `format`, `deployment`, or
-  `packages`.
+  Additional factory arguments such as `format`, `deployment`,
+  `packages`, or `resources`. Evaluated in your session, except
+  `resources`, which is written into the script as source: pass
+  `tar_resources(crew = tar_resources_crew(controller = "name"))` where
+  the step is declared, without
+  [`quote()`](https://rdrr.io/r/base/substitute.html), rather than an
+  object built beforehand.

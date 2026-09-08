@@ -51,8 +51,10 @@ session objects in with
 [`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md)
 (one target) or
 [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)
-(mapped units). Write `name <- expr` to name the target from the
-assignment, the same way you would write a `tar_target()` command;
+(mapped units), and helper functions with
+[`tt_global()`](https://stemangiola.github.io/tidytargets/reference/tt_global.md).
+Write `name <- expr` to name the target from the assignment, the same
+way you would write a `tar_target()` command;
 [targets](https://docs.ropensci.org/targets/) tracks upstream names in
 that expression. `target_output = "name"` still works. With no
 `computing_resources`, the pipeline runs sequentially. With no `store`,
@@ -103,6 +105,7 @@ steps that mention it are mapped over each element.
 |----|----|
 | [`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md) | Snapshot a session object onto the store as one target |
 | [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md) | Snapshot a list onto the store as mapped units |
+| [`tt_global()`](https://stemangiola.github.io/tidytargets/reference/tt_global.md) | Declare helper functions every target can call |
 | [`tt_merge()`](https://stemangiola.github.io/tidytargets/reference/tt_merge.md) | Combine iterated results into one object |
 | [`tt_split()`](https://stemangiola.github.io/tidytargets/reference/tt_split.md) | Turn a pipeline list into mapped units |
 
@@ -196,11 +199,13 @@ Any controller group makes its tiers available by name. A step with no
 pass `resources` to send a step straight to a chosen tier, using the
 [targets](https://docs.ropensci.org/targets/) syntax:
 
-[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``computing_resources ``=`` ``computing_resources``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``counts`` ``<-`` ``load_counts``(``input_list``)``)`` ``|>`` `` `[`tt_single`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)`(`` `` ``model`` ``<-`` ``fit``(``counts``)``,`` `` resources ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``tar_resources``(``crew ``=`` ``tar_resources_crew``(``controller ``=`` ``"elastic_100"``)``)``)`` `` ``)`
+[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``computing_resources ``=`` ``computing_resources``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``counts`` ``<-`` ``load_counts``(``input_list``)``)`` ``|>`` `` `[`tt_single`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)`(`` `` ``model`` ``<-`` ``fit``(``counts``)``,`` `` resources ``=`` ``tar_resources``(``crew ``=`` ``tar_resources_crew``(``controller ``=`` ``"elastic_100"``)``)`` `` ``)`
 
-[`quote()`](https://rdrr.io/r/base/substitute.html) is needed because
-the expression is written into `{store}.R` and evaluated there, next to
-the controller group it names.
+The `tar_resources()` call is written into `{store}.R` and evaluated
+there, next to the controller group it names. Write it where the step is
+declared: an object built beforehand holds an environment, so it cannot
+be written into a script, and `tidytargets` says so rather than leaving
+you a broken one.
 
 # Package index
 
@@ -227,6 +232,8 @@ the controller group it names.
   : Return One Instance of a Pipeline Target
 - [`tt_factory()`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)
   : Internal Factory for Iterating Targets
+- [`tt_global()`](https://stemangiola.github.io/tidytargets/reference/tt_global.md)
+  : Declare Global Objects Available to Every Target
 - [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)
   : Initialise a tidytargets Pipeline
 - [`tt_internal_report()`](https://stemangiola.github.io/tidytargets/reference/tt_internal_report.md)

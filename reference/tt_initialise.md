@@ -66,7 +66,7 @@ tt_initialise(
   [`tt_controller_elastic_slurm()`](https://stemangiola.github.io/tidytargets/reference/tt_controller_elastic_slurm.md))
   to make several named tiers available, and pin a step to one of them
   with
-  `resources = quote(tar_resources(crew = tar_resources_crew(controller = "name")))`.
+  `resources = tar_resources(crew = tar_resources_crew(controller = "name"))`.
   Steps with no `resources` use the first controller in the group.
 
 - debug_step:

@@ -13,7 +13,7 @@ tt_split() to turn a pipeline stem into units."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,7 +39,7 @@ tt_split() to turn a pipeline stem into units."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Add a Summarising (Non-Iterated) Step to the tidytargets Pipeline</h1>
-      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/main/R/tt_single.R" class="external-link"><code>R/tt_single.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/add-globals-2/R/tt_single.R" class="external-link"><code>R/tt_single.R</code></a></small>
       <div class="d-none name"><code>tt_single.Rd</code></div>
     </div>
 
@@ -107,7 +107,11 @@ source in the worker before evaluating <code>command</code>. <code>NULL</code> s
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional factory arguments such as <code>format</code>, <code>deployment</code>,
-or <code>packages</code>.</p></dd>
+<code>packages</code>, or <code>resources</code>. Evaluated in your session, except
+<code>resources</code>, which is written into the script as source: pass
+<code>tar_resources(crew = tar_resources_crew(controller = "name"))</code> where the
+step is declared, without <code><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote()</a></code>, rather than an object built
+beforehand.</p></dd>
 
 </dl></div>
 

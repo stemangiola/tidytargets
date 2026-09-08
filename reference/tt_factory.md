@@ -56,7 +56,7 @@ tt_factory(
 
   A
   [`targets::tar_resources()`](https://docs.ropensci.org/targets/reference/tar_resources.html)
-  object, used to pick a named controller out of a controller group with
+  call, used to pick a named controller out of a controller group with
   `tar_resources(crew = tar_resources_crew(controller = "name"))`.
 
 - ...:

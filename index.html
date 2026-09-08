@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,7 @@
 <div class="section level2">
 <h2 id="a-minimal-pipeline">A minimal pipeline<a class="anchor" aria-label="anchor" href="#a-minimal-pipeline"></a>
 </h2>
-<p><code><a href="reference/tt_initialise.html">tt_initialise()</a></code> starts a pipeline (store and optional <code>computing_resources</code>). Bring session objects in with <code><a href="reference/tt_data.html">tt_data()</a></code> (one target) or <code><a href="reference/tt_data_list.html">tt_data_list()</a></code> (mapped units). Write <code>name &lt;- expr</code> to name the target from the assignment, the same way you would write a <code>tar_target()</code> command; <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> tracks upstream names in that expression. <code>target_output = "name"</code> still works. With no <code>computing_resources</code>, the pipeline runs sequentially. With no <code>store</code>, a unique <code>./tidytargets-&lt;HASH&gt;</code> directory is created and printed.</p>
+<p><code><a href="reference/tt_initialise.html">tt_initialise()</a></code> starts a pipeline (store and optional <code>computing_resources</code>). Bring session objects in with <code><a href="reference/tt_data.html">tt_data()</a></code> (one target) or <code><a href="reference/tt_data_list.html">tt_data_list()</a></code> (mapped units), and helper functions with <code><a href="reference/tt_global.html">tt_global()</a></code>. Write <code>name &lt;- expr</code> to name the target from the assignment, the same way you would write a <code>tar_target()</code> command; <a href="https://docs.ropensci.org/targets/" class="external-link">targets</a> tracks upstream names in that expression. <code>target_output = "name"</code> still works. With no <code>computing_resources</code>, the pipeline runs sequentially. With no <code>store</code>, a unique <code>./tidytargets-&lt;HASH&gt;</code> directory is created and printed.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stemangiola.github.io/tidytargets/">tidytargets</a></span><span class="op">)</span></span>
 <span></span>
@@ -153,6 +153,10 @@
 <tr>
 <td><code><a href="reference/tt_data_list.html">tt_data_list()</a></code></td>
 <td>Snapshot a list onto the store as mapped units</td>
+</tr>
+<tr>
+<td><code><a href="reference/tt_global.html">tt_global()</a></code></td>
+<td>Declare helper functions every target can call</td>
 </tr>
 <tr>
 <td><code><a href="reference/tt_merge.html">tt_merge()</a></code></td>
@@ -276,9 +280,9 @@
 <span>  <span class="fu"><a href="reference/tt_iterate.html">tt_iterate</a></span><span class="op">(</span><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu">load_counts</span><span class="op">(</span><span class="va">input_list</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tt_single.html">tt_single</a></span><span class="op">(</span></span>
 <span>    <span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">fit</span><span class="op">(</span><span class="va">counts</span><span class="op">)</span>,</span>
-<span>    resources <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote</a></span><span class="op">(</span><span class="fu">tar_resources</span><span class="op">(</span>crew <span class="op">=</span> <span class="fu">tar_resources_crew</span><span class="op">(</span>controller <span class="op">=</span> <span class="st">"elastic_100"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>    resources <span class="op">=</span> <span class="fu">tar_resources</span><span class="op">(</span>crew <span class="op">=</span> <span class="fu">tar_resources_crew</span><span class="op">(</span>controller <span class="op">=</span> <span class="st">"elastic_100"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><code><a href="https://rdrr.io/r/base/substitute.html" class="external-link">quote()</a></code> is needed because the expression is written into <code>{store}.R</code> and evaluated there, next to the controller group it names.</p>
+<p>The <code>tar_resources()</code> call is written into <code>{store}.R</code> and evaluated there, next to the controller group it names. Write it where the step is declared: an object built beforehand holds an environment, so it cannot be written into a script, and <code>tidytargets</code> says so rather than leaving you a broken one.</p>
 </div>
 </div>
 </div>
