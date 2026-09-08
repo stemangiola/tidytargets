@@ -23,7 +23,11 @@
 #'   always `map()`. With two or more mapped inputs, the chosen pattern
 #'   is messaged; `cross()` names the targets being crossed.
 #' @param ... Additional factory arguments such as `format`, `deployment`,
-#'   or `packages`.
+#'   `packages`, or `resources`. Evaluated in your session, except
+#'   `resources`, which is written into the script as source: pass
+#'   `tar_resources(crew = tar_resources_crew(controller = "name"))` where the
+#'   step is declared, without `quote()`, rather than an object built
+#'   beforehand.
 #'
 #' @export
 tt_iterate <- function(
@@ -63,6 +67,7 @@ tt_iterate.tidytargets <- function(
 ) {
     
     command <- substitute(command)
+    envir <- parent.frame()
     resolved <- parse_command(command, target_output)
     command <- resolved$command
     target_output <- resolved$target_output
@@ -80,11 +85,14 @@ tt_iterate.tidytargets <- function(
         source = user_function_source_path,
         factory = factory_call(
           quote(tt_factory),
-          command = wrap_quote(command),
-          target_output = target_output,
-          other_arguments_to_map = spec$pattern_names,
-          pattern_type = spec$pattern_type,
-          ...
+          list(
+            command = wrap_quote(command),
+            target_output = target_output,
+            other_arguments_to_map = spec$pattern_names,
+            pattern_type = spec$pattern_type
+          ),
+          substitute(list(...)),
+          envir
         )
       )
     )

@@ -1,5 +1,31 @@
 # tidytargets NEWS
 
+## tidytargets 0.0.14
+
+* `tt_global()` declares session objects, typically helper functions, so every
+  target can call them. They are recorded in the pipeline's `$globals` and
+  assigned in `{store}.R` above the target list. A global is not a target: it
+  is not a node in the graph, not stored in the object store, and not read by
+  `tt_read()`, but `{targets}` still tracks which commands use it. One global
+  function can call another, so helpers no longer have to be threaded through
+  `tt_data()` or passed as arguments. Objects are written as source with
+  `deparse()`, so they must be self-contained; large or non-deparsable objects
+  still belong in `tt_data()`, and an object that cannot be deparsed at all,
+  because it holds an environment or a connection, is an error rather than a
+  syntax error in the generated script at run time. Functions keep the
+  formatting and comments they were written with. Re-declaring a name replaces
+  the earlier declaration, because `$globals` is keyed by name, as `$targets`
+  is.
+* `resources` on a grammar verb is captured as source, so
+  `resources = tar_resources(crew = tar_resources_crew(controller = "big"))`
+  is written into `{store}.R` without wrapping it in `quote()`. The quoted
+  form still works. It is the only factory argument treated this way, because
+  a `tar_resources` object holds an environment and cannot be written as
+  source; the rest of `...` is evaluated in your session as before, so
+  `packages = c(base_packages, "sccomp")` reaches the script as the vector it
+  names. Handing `resources` an object built beforehand is an error where the
+  step is declared, rather than a generated script that does not parse.
+
 ## tidytargets 0.0.13
 
 * `{store}.R` is generated from the pipeline object when the pipeline runs,

@@ -1,25 +1,34 @@
 #' Construct a tidytargets pipeline object
 #'
-#' Three slots, not a flat list of targets: `$initialisation` holds constructor
+#' Four slots, not a flat list of targets: `$initialisation` holds constructor
 #' arguments, `$metadata` the free-form store, `$targets` the named step
-#' records. Grammar verbs grow `$targets` with `append_step()` so `c()` never
-#' strips the class.
+#' records, `$globals` the named [tt_global()] declarations. Grammar verbs grow
+#' `$targets` with `append_step()` so `c()` never strips the class.
+#'
+#' `$targets` and `$globals` are both keyed by name, so redefining either
+#' replaces it rather than adding a second copy to `{store}.R`.
 #'
 #' @param initialisation Named list of [tt_initialise()] arguments.
 #' @param metadata Named list of free-form metadata.
 #' @param targets Named list of step records, one per target.
+#' @param globals Named list of deparsed global assignments, one per name.
 #' @return A `tidytargets` object.
 #' @noRd
 new_tidytargets <- function(initialisation = list(),
                             metadata = list(),
-                            targets = list()) {
+                            targets = list(),
+                            globals = list()) {
   if (length(targets) == 0L) {
     targets <- stats::setNames(list(), character())
+  }
+  if (length(globals) == 0L) {
+    globals <- stats::setNames(list(), character())
   }
   obj <- list(
     initialisation = initialisation,
     metadata = metadata,
-    targets = targets
+    targets = targets,
+    globals = globals
   )
   class(obj) <- c("tidytargets", "list")
   schedule_pipeline_ready_notice(initialisation$store)
@@ -56,7 +65,7 @@ new_tidytargets <- function(initialisation = list(),
 #'   deployment uses. Pass a controller group (for example from
 #'   [tt_controller_elastic_slurm()]) to make several named tiers available,
 #'   and pin a step to one of them with
-#'   `resources = quote(tar_resources(crew = tar_resources_crew(controller = "name")))`.
+#'   `resources = tar_resources(crew = tar_resources_crew(controller = "name"))`.
 #'   Steps with no `resources` use the first controller in the group.
 #' @param debug_step Character name of a single target to debug; passed to
 #'   `targets::tar_option_set(debug = ...)`. `NULL` disables debugging.
@@ -164,9 +173,11 @@ tt_initialise <- function(tt_input = NULL,
       iterate = "none",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(sample_names_qs),
-        target_output = "sample_names_file",
-        format = "file"
+        list(
+          command = wrap_quote(sample_names_qs),
+          target_output = "sample_names_file",
+          format = "file"
+        )
       )
     )
   )
@@ -179,9 +190,11 @@ tt_initialise <- function(tt_input = NULL,
       iterate = "map",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(quote(qs_read(sample_names_file))),
-        target_output = "sample_names",
-        deployment = "main"
+        list(
+          command = wrap_quote(quote(qs_read(sample_names_file))),
+          target_output = "sample_names",
+          deployment = "main"
+        )
       )
     )
   )
@@ -197,9 +210,11 @@ tt_initialise <- function(tt_input = NULL,
       iterate = "none",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(input_qs),
-        target_output = input_file_target,
-        format = "file"
+        list(
+          command = wrap_quote(input_qs),
+          target_output = input_file_target,
+          format = "file"
+        )
       )
     )
   )
@@ -212,9 +227,11 @@ tt_initialise <- function(tt_input = NULL,
       iterate = "map",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(input_read),
-        target_output = target_output,
-        deployment = "main"
+        list(
+          command = wrap_quote(input_read),
+          target_output = target_output,
+          deployment = "main"
+        )
       )
     )
   )

@@ -19,7 +19,7 @@ test_that("tt_initialise returns a tidytargets object with input targets", {
     tt_initialise(store = store)
 
   expect_s3_class(hpc, "tidytargets")
-  expect_equal(names(hpc), c("initialisation", "metadata", "targets"))
+  expect_equal(names(hpc), c("initialisation", "metadata", "targets", "globals"))
   expect_equal(
     hpc$initialisation$store,
     normalizePath(store, winslash = "/", mustWork = TRUE)
@@ -198,6 +198,7 @@ test_that("grammar steps error on non-tidytargets input", {
   expect_error(tt_read("not a pipeline", "data"), "tidytargets object")
   expect_error(tt_data("not a pipeline", 1, target_output = "x"), "tidytargets object")
   expect_error(tt_data_list("not a pipeline", list(1), target_output = "x"), "tidytargets object")
+  expect_error(tt_global("not a pipeline", 1), "tidytargets object")
   expect_error(tt_script("not a pipeline"), "tidytargets object")
 })
 
@@ -364,7 +365,7 @@ test_that("pipeline slots do not restrict target names", {
     ) |>
     tt_single(command = 1L, target_output = "initialisation")
 
-  expect_equal(names(hpc), c("initialisation", "metadata", "targets"))
+  expect_equal(names(hpc), c("initialisation", "metadata", "targets", "globals"))
   expect_equal(hpc$targets$metadata$iterate, "map")
   expect_equal(hpc$targets$initialisation$iterate, "none")
   expect_equal(tt_metadata(hpc)$api_url, "https://api.example.org")
@@ -986,6 +987,73 @@ test_that("explicit packages on a target is not overwritten by attached packages
   expect_length(factory_line, 1L)
   expect_match(factory_line, 'packages = "qs2"')
   expect_false(grepl("glue", factory_line))
+})
+
+test_that("resources is written as source, without quote()", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets") |>
+    tt_single(
+      a <- 1,
+      resources = tar_resources(crew = tar_resources_crew(controller = "big"))
+    ) |>
+    tt_single(
+      b <- 2,
+      resources = quote(tar_resources(crew = tar_resources_crew(controller = "small")))
+    )
+
+  script <- paste(readLines(tidytargets:::write_script(pipe)), collapse = " ")
+  expect_match(
+    script,
+    'resources = tar_resources(crew = tar_resources_crew(controller = "big"))',
+    fixed = TRUE
+  )
+  expect_match(
+    script,
+    'resources = tar_resources(crew = tar_resources_crew(controller = "small"))',
+    fixed = TRUE
+  )
+  expect_false(grepl("resources = quote(", script, fixed = TRUE))
+})
+
+test_that("factory arguments other than resources are evaluated in the session", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  # A call, not a bare symbol: the script cannot see extra_packages, so the
+  # argument has to reach it as the vector it names.
+  extra_packages <- c("glue", "readr")
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets") |>
+    tt_single(a <- 1, packages = c(extra_packages, "qs2"))
+
+  script <- paste(readLines(tidytargets:::write_script(pipe)), collapse = " ")
+  expect_match(script, 'packages = c("glue", "readr", "qs2")', fixed = TRUE)
+  expect_false(grepl("extra_packages", script, fixed = TRUE))
+})
+
+test_that("resources built beforehand is an error, not an unparseable script", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  # A live tar_resources object holds an environment: deparsing it gives
+  # list(crew = <environment>), which no longer parses.
+  pinned <- tar_resources(crew = tar_resources_crew(controller = "big"))
+  store <- file.path(tmp, "store")
+  pipe <- tt_initialise(store = store, packages = "tidytargets")
+
+  expect_error(
+    tt_single(pipe, a <- 1, resources = pinned),
+    "written into the pipeline script as source"
+  )
 })
 
 test_that("unqualified functions from attached packages run on workers", {

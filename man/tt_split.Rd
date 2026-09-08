@@ -48,7 +48,11 @@ to source in the worker before evaluating \code{command}. \code{NULL} sources
 nothing.}
 
 \item{...}{Additional factory arguments such as \code{format}, \code{deployment},
-or \code{packages}.}
+\code{packages}, or \code{resources}. Evaluated in your session, except
+\code{resources}, which is written into the script as source: pass
+\code{tar_resources(crew = tar_resources_crew(controller = "name"))} where the
+step is declared, without \code{quote()}, rather than an object built
+beforehand.}
 }
 \description{
 Inverse of \code{\link[=tt_merge]{tt_merge()}}: appends a non-patterned target whose command

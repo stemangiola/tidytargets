@@ -40,7 +40,12 @@ tt_report(
 \item{params}{An unevaluated \code{list()} of report parameters. \code{{targets}} tracks
 dependencies from symbols in this expression (including upstream target names).}
 
-\item{...}{Additional factory arguments such as \code{deployment} or \code{packages}.}
+\item{...}{Additional factory arguments such as \code{deployment}, \code{packages},
+or \code{resources}. Evaluated in your session, except \code{resources}, which is
+written into the script as source: pass
+\code{tar_resources(crew = tar_resources_crew(controller = "name"))} where the
+step is declared, without \code{quote()}, rather than an object built
+beforehand.}
 }
 \description{
 Appends a Quarto/R Markdown rendering step to the tidytargets pipeline, which

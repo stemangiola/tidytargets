@@ -25,7 +25,7 @@ tidytargets is a tidy, pipe-friendly grammar for `{targets}`.
 
 `tt_initialise()` constructs a `tidytargets` object. Each method is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it records a `tar_target` definition on that object. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
 
-The composition is **lazy**. `tt_initialise()`, `tt_data()`, `tt_data_list()`, `tt_single()`, `tt_iterate()`, `tt_split()`, `tt_merge()`, and `tt_report()` only add steps to the object. `{store}.R` is written from it by `tt_evaluate()` (or by `show_targets_script()`), which then runs `targets::tar_make()`; user functions are not called before that. Because the script is generated rather than accumulated, it always matches the object: declare a target name twice and the second definition simply replaces the first.
+The composition is **lazy**. `tt_initialise()`, `tt_data()`, `tt_data_list()`, `tt_global()`, `tt_single()`, `tt_iterate()`, `tt_split()`, `tt_merge()`, and `tt_report()` only add steps to the object. `{store}.R` is written from it by `tt_evaluate()` (or by `show_targets_script()`), which then runs `targets::tar_make()`; user functions are not called before that. Because the script is generated rather than accumulated, it always matches the object: declare a target name or a global twice and the second definition simply replaces the first.
 Assigning the object does not print it, so an interactive session then says the pipeline is ready to be evaluated, rather than appearing to do nothing.
 
 Pipelines are **incremental**. Add a step, change a parameter, or grow the input list and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
@@ -49,6 +49,7 @@ This vignette walks through every building block and prints the targets script a
 | --- | --- |
 | `tt_data()` | Snapshot a session object onto the store as one target |
 | `tt_data_list()` | Snapshot a list onto the store as mapped units |
+| `tt_global()` | Declare helper functions every target can call |
 | `tt_merge()` | Combine iterated results into one object |
 | `tt_split()` | Turn a pipeline list into mapped units |
 
@@ -127,6 +128,28 @@ pipe <- pipe |>
 ```{r data-list-script, comment = ""}
 show_targets_script(pipe)
 ```
+
+## `tt_global()`
+
+Helper functions are not data, so they do not belong in `tt_data()`. `tt_global()` records them on the pipeline object, and the generated script assigns them above the target list, where every target can call them. One global function can call another, so a helper never has to be passed as an argument just to reach the worker.
+
+A global is not a target: it is not a node in the graph, is not stored in the object store, and is not read by `tt_read()`. `{targets}` still tracks which commands use it, so editing one invalidates the targets that call it and leaves the rest up to date.
+
+```{r global}
+scale_values <- function(x) x / max(x)
+report_scale <- function(x) round(scale_values(x), 2)
+
+pipe <- pipe |>
+  tt_global(scale_values, report_scale)
+```
+
+```{r global-script, comment = ""}
+show_targets_script(pipe)
+```
+
+Objects are written as source with `deparse()`, so they must be self-contained: top-level functions and small constants. A closure that depends on its enclosing environment, or a large or non-deparsable object such as a fitted model, belongs in `tt_data()`.
+
+The value is read from the session when you declare it, as `tt_data()` snapshots its object. Re-declaring a name replaces the earlier declaration, so the script holds one assignment per global and every target sees the latest one.
 
 ## `tt_single()`
 

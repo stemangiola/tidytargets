@@ -22,7 +22,11 @@
 #'   to source in the worker before evaluating `command`. `NULL` sources
 #'   nothing.
 #' @param ... Additional factory arguments such as `format`, `deployment`,
-#'   or `packages`.
+#'   `packages`, or `resources`. Evaluated in your session, except
+#'   `resources`, which is written into the script as source: pass
+#'   `tar_resources(crew = tar_resources_crew(controller = "name"))` where the
+#'   step is declared, without `quote()`, rather than an object built
+#'   beforehand.
 #'
 #' @export
 tt_split <- function(
@@ -57,6 +61,7 @@ tt_split.tidytargets <- function(
     ...
 ) {
   command <- substitute(command)
+  envir <- parent.frame()
   resolved <- parse_command(command, target_output)
   command <- resolved$command
   target_output <- resolved$target_output
@@ -71,9 +76,9 @@ tt_split.tidytargets <- function(
       source = user_function_source_path,
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(command),
-        target_output = target_output,
-        ...
+        list(command = wrap_quote(command), target_output = target_output),
+        substitute(list(...)),
+        envir
       )
     )
   )

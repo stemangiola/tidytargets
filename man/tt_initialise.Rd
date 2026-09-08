@@ -36,7 +36,7 @@ tidytargets does not depend on any compute backend; pass whatever your
 deployment uses. Pass a controller group (for example from
 \code{\link[=tt_controller_elastic_slurm]{tt_controller_elastic_slurm()}}) to make several named tiers available,
 and pin a step to one of them with
-\code{resources = quote(tar_resources(crew = tar_resources_crew(controller = "name")))}.
+\code{resources = tar_resources(crew = tar_resources_crew(controller = "name"))}.
 Steps with no \code{resources} use the first controller in the group.}
 
 \item{debug_step}{Character name of a single target to debug; passed to

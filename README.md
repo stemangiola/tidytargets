@@ -20,7 +20,7 @@ vignette("building-blocks", package = "tidytargets")
 
 ## A minimal pipeline
 
-`tt_initialise()` starts a pipeline (store and optional `computing_resources`). Bring session objects in with `tt_data()` (one target) or `tt_data_list()` (mapped units). Write `name <- expr` to name the target from the assignment, the same way you would write a `tar_target()` command; `{targets}` tracks upstream names in that expression. `target_output = "name"` still works. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
+`tt_initialise()` starts a pipeline (store and optional `computing_resources`). Bring session objects in with `tt_data()` (one target) or `tt_data_list()` (mapped units), and helper functions with `tt_global()`. Write `name <- expr` to name the target from the assignment, the same way you would write a `tar_target()` command; `{targets}` tracks upstream names in that expression. `target_output = "name"` still works. With no `computing_resources`, the pipeline runs sequentially. With no `store`, a unique `./tidytargets-<HASH>` directory is created and printed.
 
 ``` r
 library(tidytargets)
@@ -73,6 +73,7 @@ targets::tar_read(summaries, store = "_targets")
 | --- | --- |
 | `tt_data()` | Snapshot a session object onto the store as one target |
 | `tt_data_list()` | Snapshot a list onto the store as mapped units |
+| `tt_global()` | Declare helper functions every target can call |
 | `tt_merge()` | Combine iterated results into one object |
 | `tt_split()` | Turn a pipeline list into mapped units |
 
@@ -184,9 +185,11 @@ tt_initialise(computing_resources = computing_resources) |>
   tt_iterate(counts <- load_counts(input_list)) |>
   tt_single(
     model <- fit(counts),
-    resources = quote(tar_resources(crew = tar_resources_crew(controller = "elastic_100")))
+    resources = tar_resources(crew = tar_resources_crew(controller = "elastic_100"))
   )
 ```
 
-`quote()` is needed because the expression is written into `{store}.R` and
-evaluated there, next to the controller group it names.
+The `tar_resources()` call is written into `{store}.R` and evaluated there,
+next to the controller group it names. Write it where the step is declared: an
+object built beforehand holds an environment, so it cannot be written into a
+script, and `tidytargets` says so rather than leaving you a broken one.
