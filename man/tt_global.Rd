@@ -25,7 +25,7 @@ The updated \code{tidytargets} object.
 }
 \description{
 Records objects from the current session in the pipeline's \verb{$globals}, which
-\code{\link[=write_script]{write_script()}} writes into \verb{\{store\}.R} above the target list, so every
+are written into \verb{\{store\}.R} above the target list, so every
 target can use them. Helper functions belong here: a command can call them
 directly, and one global function can call another, without passing either
 as an argument.

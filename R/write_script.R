@@ -1,6 +1,6 @@
 #' Build the factory call for one pipeline step
 #'
-#' Returns `<fx>(...)` unevaluated. [write_script()] deparses it into
+#' Returns `<fx>(...)` unevaluated. `write_script()` deparses it into
 #' `{store}.R` when the pipeline runs, so adding a step touches the pipeline
 #' object only, never the file.
 #'
@@ -110,6 +110,8 @@ parses_as_source <- function(code) {
 #'
 #' @param pipe A `tidytargets` object.
 #' @return The path to the written script.
+#' @importFrom dplyr mutate
+#' @importFrom magrittr %>%
 #' @noRd
 write_script <- function(pipe) {
   init <- pipe$initialisation

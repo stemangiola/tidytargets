@@ -2,7 +2,7 @@
 #'
 #' @description
 #' Records objects from the current session in the pipeline's `$globals`, which
-#' [write_script()] writes into `{store}.R` above the target list, so every
+#' are written into `{store}.R` above the target list, so every
 #' target can use them. Helper functions belong here: a command can call them
 #' directly, and one global function can call another, without passing either
 #' as an argument.
