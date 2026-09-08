@@ -85,11 +85,7 @@ tt_global.tidytargets <- function(tt_input, ...) {
     )
     code[[1L]] <- paste0(resolved$target_output, " <- ", code[[1L]])
 
-    # An environment, connection or external pointer deparses to a placeholder
-    # such as `<environment>`. Left alone it is only caught when {targets}
-    # parses the script, as a syntax error in a generated file that names
-    # neither the object nor this function.
-    if (is.null(tryCatch(parse(text = code), error = function(e) NULL))) {
+    if (!parses_as_source(code)) {
       stop(
         "tidytargets says: `", resolved$target_output, "` cannot be written ",
         "to the pipeline script as source, so it cannot be a global. ",

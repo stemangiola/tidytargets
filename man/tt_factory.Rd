@@ -34,7 +34,7 @@ per combination).}
 
 \item{format}{Storage format string for the target value.}
 
-\item{resources}{A \code{targets::tar_resources()} object, used to pick a named
+\item{resources}{A \code{targets::tar_resources()} call, used to pick a named
 controller out of a controller group with
 \code{tar_resources(crew = tar_resources_crew(controller = "name"))}.}
 

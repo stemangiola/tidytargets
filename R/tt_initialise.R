@@ -65,7 +65,7 @@ new_tidytargets <- function(initialisation = list(),
 #'   deployment uses. Pass a controller group (for example from
 #'   [tt_controller_elastic_slurm()]) to make several named tiers available,
 #'   and pin a step to one of them with
-#'   `resources = quote(tar_resources(crew = tar_resources_crew(controller = "name")))`.
+#'   `resources = tar_resources(crew = tar_resources_crew(controller = "name"))`.
 #'   Steps with no `resources` use the first controller in the group.
 #' @param debug_step Character name of a single target to debug; passed to
 #'   `targets::tar_option_set(debug = ...)`. `NULL` disables debugging.
@@ -173,9 +173,11 @@ tt_initialise <- function(tt_input = NULL,
       iterate = "none",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(sample_names_qs),
-        target_output = "sample_names_file",
-        format = "file"
+        list(
+          command = wrap_quote(sample_names_qs),
+          target_output = "sample_names_file",
+          format = "file"
+        )
       )
     )
   )
@@ -188,9 +190,11 @@ tt_initialise <- function(tt_input = NULL,
       iterate = "map",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(quote(qs_read(sample_names_file))),
-        target_output = "sample_names",
-        deployment = "main"
+        list(
+          command = wrap_quote(quote(qs_read(sample_names_file))),
+          target_output = "sample_names",
+          deployment = "main"
+        )
       )
     )
   )
@@ -206,9 +210,11 @@ tt_initialise <- function(tt_input = NULL,
       iterate = "none",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(input_qs),
-        target_output = input_file_target,
-        format = "file"
+        list(
+          command = wrap_quote(input_qs),
+          target_output = input_file_target,
+          format = "file"
+        )
       )
     )
   )
@@ -221,9 +227,11 @@ tt_initialise <- function(tt_input = NULL,
       iterate = "map",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(input_read),
-        target_output = target_output,
-        deployment = "main"
+        list(
+          command = wrap_quote(input_read),
+          target_output = target_output,
+          deployment = "main"
+        )
       )
     )
   )

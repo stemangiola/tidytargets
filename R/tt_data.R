@@ -66,9 +66,11 @@ tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
       iterate = "none",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(qs_path),
-        target_output = file_target,
-        format = "file"
+        list(
+          command = wrap_quote(qs_path),
+          target_output = file_target,
+          format = "file"
+        )
       )
     )
   )
@@ -81,9 +83,11 @@ tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
       iterate = "none",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(read_cmd),
-        target_output = target_output,
-        deployment = "main"
+        list(
+          command = wrap_quote(read_cmd),
+          target_output = target_output,
+          deployment = "main"
+        )
       )
     )
   )
@@ -180,9 +184,11 @@ tt_data_list.tidytargets <- function(tt_input, x, target_output = NULL) {
       iterate = "none",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(qs_path),
-        target_output = file_target,
-        format = "file"
+        list(
+          command = wrap_quote(qs_path),
+          target_output = file_target,
+          format = "file"
+        )
       )
     )
   )
@@ -195,9 +201,11 @@ tt_data_list.tidytargets <- function(tt_input, x, target_output = NULL) {
       iterate = "map",
       factory = factory_call(
         quote(tt_factory),
-        command = wrap_quote(read_cmd),
-        target_output = target_output,
-        deployment = "main"
+        list(
+          command = wrap_quote(read_cmd),
+          target_output = target_output,
+          deployment = "main"
+        )
       )
     )
   )

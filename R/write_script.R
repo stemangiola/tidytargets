@@ -5,15 +5,92 @@
 #' object only, never the file.
 #'
 #' @param fx Quoted factory, typically `quote(tt_factory)`.
-#' @param ... Factory arguments (`command`, `target_output`, ...).
+#' @param named Named list of factory arguments the verb has worked out
+#'   itself, such as `command` and `target_output`.
+#' @param dots_expr `substitute(list(...))` from a verb that passes user
+#'   arguments on to the factory, or `NULL` for a step that takes none.
+#' @param envir Frame in which to evaluate `...`.
 #' @return A call object.
 #' @noRd
-factory_call <- function(fx, ...) {
+factory_call <- function(fx, named, dots_expr = NULL, envir = NULL) {
+  dots <- if (is.null(dots_expr)) list() else resolve_factory_dots(dots_expr, envir)
 
-  # Symbols are wrapped in quote() so they survive into the script as names.
-  # Left bare, they would be evaluated in an environment where the targets
-  # they refer to do not exist.
-  as.call(c(fx, quote_name_classes(list(...))))
+  # quote_name_classes() so symbols survive into the script as names: left
+  # bare, they would be evaluated here, where the targets they refer to do not
+  # exist. Not do.call(), which evaluates language values, stripping
+  # wrap_quote() and looking up tt_factory as a function.
+  as.call(c(fx, quote_name_classes(c(named, dots))))
+}
+
+#' Resolve the factory arguments a verb was given in `...`
+#'
+#' Each one is evaluated in the caller's frame, as a function argument
+#' normally is, so `packages = c(base_packages, "sccomp")` reaches the script
+#' as the vector it names. `resources` is the exception: see
+#' `resolve_resources()`.
+#'
+#' @param dots_expr `substitute(list(...))` from the verb.
+#' @param envir Frame in which to evaluate `...`.
+#' @return A named list of factory arguments.
+#' @noRd
+resolve_factory_dots <- function(dots_expr, envir) {
+  exprs <- as.list(dots_expr)[-1L]
+  supplied <- names(exprs)
+  if (is.null(supplied)) supplied <- rep("", length(exprs))
+
+  values <- lapply(seq_along(exprs), function(i) {
+    if (identical(supplied[[i]], "resources")) {
+      resolve_resources(exprs[[i]], envir)
+    } else {
+      eval(exprs[[i]], envir)
+    }
+  })
+  names(values) <- supplied
+  values
+}
+
+#' Keep a `resources` argument as the user wrote it
+#'
+#' `resources` is the one factory argument the script needs as source: a live
+#' `tar_resources` object holds an environment, deparses to
+#' `list(crew = <environment>)`, and would leave a script that does not parse.
+#' A call is therefore kept unevaluated, and `quote(call)` is unwrapped so the
+#' older form still works. Anything else is evaluated, then checked, because
+#' whatever it holds still has to survive `deparse()`.
+#'
+#' @param expr The expression passed as `resources`.
+#' @param envir Frame in which to evaluate it, when it is not a call.
+#' @return A call, or a value that can be written as source.
+#' @noRd
+resolve_resources <- function(expr, envir) {
+  if (is.call(expr) && identical(expr[[1L]], quote(quote))) expr <- expr[[2L]]
+  if (is.call(expr)) return(expr)
+
+  value <- eval(expr, envir)
+  if (!parses_as_source(deparse(value))) {
+    stop(
+      "tidytargets says: `resources` is written into the pipeline script as ",
+      "source, and this value cannot be. Write the call where the step is ",
+      "declared, resources = tar_resources(crew = tar_resources_crew(",
+      "controller = \"name\")), rather than an object built beforehand.",
+      call. = FALSE
+    )
+  }
+  value
+}
+
+#' Does deparsed code parse back?
+#'
+#' An environment, a connection or an external pointer deparses to a
+#' placeholder such as `<environment>`, which is not R code. Checking it here
+#' turns what would reach the user as a syntax error in a generated file into
+#' an error where the object was handed over.
+#'
+#' @param code Character vector from `deparse()`.
+#' @return `TRUE` if `code` is parseable R.
+#' @noRd
+parses_as_source <- function(code) {
+  !is.null(tryCatch(parse(text = code), error = function(e) NULL))
 }
 
 #' Write the targets script for a pipeline

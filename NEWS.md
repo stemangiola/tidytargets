@@ -16,6 +16,15 @@
   formatting and comments they were written with. Re-declaring a name replaces
   the earlier declaration, because `$globals` is keyed by name, as `$targets`
   is.
+* `resources` on a grammar verb is captured as source, so
+  `resources = tar_resources(crew = tar_resources_crew(controller = "big"))`
+  is written into `{store}.R` without wrapping it in `quote()`. The quoted
+  form still works. It is the only factory argument treated this way, because
+  a `tar_resources` object holds an environment and cannot be written as
+  source; the rest of `...` is evaluated in your session as before, so
+  `packages = c(base_packages, "sccomp")` reaches the script as the vector it
+  names. Handing `resources` an object built beforehand is an error where the
+  step is declared, rather than a generated script that does not parse.
 
 ## tidytargets 0.0.13
 

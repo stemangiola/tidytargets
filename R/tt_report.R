@@ -9,7 +9,12 @@
 #' @param rmd_path Character path to the `.qmd` or `.Rmd` report file.
 #' @param params An unevaluated `list()` of report parameters. `{targets}` tracks
 #'   dependencies from symbols in this expression (including upstream target names).
-#' @param ... Additional factory arguments such as `deployment` or `packages`.
+#' @param ... Additional factory arguments such as `deployment`, `packages`,
+#'   or `resources`. Evaluated in your session, except `resources`, which is
+#'   written into the script as source: pass
+#'   `tar_resources(crew = tar_resources_crew(controller = "name"))` where the
+#'   step is declared, without `quote()`, rather than an object built
+#'   beforehand.
 #'
 #' @export
 tt_report <- function(tt_input, target_output = NULL, rmd_path = NULL, params = list(), ...) {
@@ -28,6 +33,7 @@ tt_report.default <- function(tt_input, target_output = NULL, rmd_path = NULL, p
 tt_report.tidytargets <- function(tt_input, target_output = NULL, rmd_path = NULL, params = list(), ...) {
     
     params <- substitute(params)
+    envir <- parent.frame()
 
     require_target_output(target_output)
 
@@ -43,13 +49,16 @@ tt_report.tidytargets <- function(tt_input, target_output = NULL, rmd_path = NUL
         iterate = "single",
         factory = factory_call(
           quote(tt_internal_report),
-          target_output = target_output,
-          rmd_path = rmd_path,
-          output_file = glue("{external_dir}/{target_output}") |> as.character(),
-          render_arguments = wrap_quote(
-            as.call(list(as.name("list"), params = params))
+          list(
+            target_output = target_output,
+            rmd_path = rmd_path,
+            output_file = glue("{external_dir}/{target_output}") |> as.character(),
+            render_arguments = wrap_quote(
+              as.call(list(as.name("list"), params = params))
+            )
           ),
-          ...
+          substitute(list(...)),
+          envir
         )
       )
     )

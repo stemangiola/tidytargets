@@ -113,7 +113,7 @@ test_that("a controller group is rebuilt in the script, so a target can pick a t
   ) |>
     tt_single(
       pinned <- 1,
-      resources = quote(tar_resources(crew = tar_resources_crew(controller = "big")))
+      resources = tar_resources(crew = tar_resources_crew(controller = "big"))
     )
 
   # Only the controllers can be serialised: a restored group holds dead

@@ -185,9 +185,11 @@ tt_initialise(computing_resources = computing_resources) |>
   tt_iterate(counts <- load_counts(input_list)) |>
   tt_single(
     model <- fit(counts),
-    resources = quote(tar_resources(crew = tar_resources_crew(controller = "elastic_100")))
+    resources = tar_resources(crew = tar_resources_crew(controller = "elastic_100"))
   )
 ```
 
-`quote()` is needed because the expression is written into `{store}.R` and
-evaluated there, next to the controller group it names.
+The `tar_resources()` call is written into `{store}.R` and evaluated there,
+next to the controller group it names. Write it where the step is declared: an
+object built beforehand holds an environment, so it cannot be written into a
+script, and `tidytargets` says so rather than leaving you a broken one.
