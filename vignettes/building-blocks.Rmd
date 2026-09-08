@@ -23,9 +23,9 @@ knitr::opts_knit$set(root.dir = work)
 
 tidytargets is a tidy, pipe-friendly grammar for `{targets}`. 
 
-`tt_initialise()` constructs a `tidytargets` object. Each method is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it appends `tar_target` definitions to a pipeline script. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
+`tt_initialise()` constructs a `tidytargets` object. Each method is a [target factory](https://books.ropensci.org/targets/static.html#target-factories): it records a `tar_target` definition on that object. You compose the pipeline with `|>`; `{targets}` runs the dependency graph.
 
-The composition is **lazy**. `tt_initialise()`, `tt_data()`, `tt_data_list()`, `tt_single()`, `tt_iterate()`, `tt_split()`, `tt_merge()`, and `tt_report()` only write factories into `{store}.R`. User functions are not called until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console), which closes the script and runs `targets::tar_make()`.
+The composition is **lazy**. `tt_initialise()`, `tt_data()`, `tt_data_list()`, `tt_single()`, `tt_iterate()`, `tt_split()`, `tt_merge()`, and `tt_report()` only add steps to the object. `{store}.R` is written from it by `tt_evaluate()` (or by `show_targets_script()`), which then runs `targets::tar_make()`; user functions are not called before that. Because the script is generated rather than accumulated, it always matches the object: declare a target name twice and the second definition simply replaces the first.
 Assigning the object does not print it, so an interactive session then says the pipeline is ready to be evaluated, rather than appearing to do nothing.
 
 Pipelines are **incremental**. Add a step, change a parameter, or grow the input list and `{targets}` skips up-to-date targets, re-running only what the new graph requires. That is why this vignette can show the script after each building block without executing the pipeline.
@@ -38,8 +38,9 @@ This vignette walks through every building block and prints the targets script a
 
 | Function | Role |
 | --- | --- |
-| `tt_initialise()` | Start a pipeline: write the script header, optional mapped inputs |
-| `tt_evaluate()` | Close the script and run `tar_make()` |
+| `tt_initialise()` | Start a pipeline: configuration, optional mapped inputs |
+| `tt_evaluate()` | Write the script and run `tar_make()` |
+| `tt_script()` | Write the script without running it, so `tar_manifest()`, `tar_outdated()`, and `tar_visnetwork()` can inspect the graph |
 | `tt_read()` | Read the full stored value of a named target |
 
 ### Data
@@ -70,7 +71,7 @@ This vignette walks through every building block and prints the targets script a
 
 ## Toy inputs
 
-`tt_initialise()` can be called with no inputs (script header and store only). A named list of in-memory objects, one element per unit of iteration (e.g. sample), registers mapped targets. `tt_data()` adds a session object later without splitting it; `tt_data_list()` adds a list as mapped units.
+`tt_initialise()` can be called with no inputs (configuration and store only). A named list of in-memory objects, one element per unit of iteration (e.g. sample), registers mapped targets. `tt_data()` adds a session object later without splitting it; `tt_data_list()` adds a list as mapped units.
 
 ```{r inputs}
 inputs <- list(

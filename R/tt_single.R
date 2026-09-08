@@ -56,20 +56,19 @@ tt_single.tidytargets <- function(
   command <- resolved$command
   target_output <- resolved$target_output
 
-  target_script <- paste0(tt_input$initialisation$store, ".R")
-  write_source(user_function_source_path, target_script)
-
-  tar_append(
-    fx = quote(tt_factory),
-    command = wrap_quote(command),
-    target_output = target_output,
-    script = target_script,
-    ...
-  )
-
   append_step(
     tt_input,
     target_output,
-    list(command = command, iterate = "none")
+    list(
+      command = command,
+      iterate = "none",
+      source = user_function_source_path,
+      factory = factory_call(
+        quote(tt_factory),
+        command = wrap_quote(command),
+        target_output = target_output,
+        ...
+      )
+    )
   )
 }

@@ -30,32 +30,30 @@ tt_report.tidytargets <- function(tt_input, target_output = NULL, rmd_path = NUL
     params <- substitute(params)
 
     require_target_output(target_output)
-    
-    # Target script
-    target_script = glue("{tt_input$initialisation$store}.R")
-    
+
     external_dir <- file.path(tt_input$initialisation$store, "external")
     dir.create(external_dir, showWarnings = FALSE, recursive = TRUE)
     external_dir <- normalizePath(external_dir)
 
-    tar_append(
-      fx = tt_internal_report |> quote(),
-      target_output = target_output,
-      script = target_script,
-      rmd_path = rmd_path,
-      output_file = glue("{external_dir}/{target_output}") |> as.character(),
-      render_arguments = wrap_quote(as.call(list(as.name("list"), params = params))),
-      ...
-    )
-    
     append_step(
       tt_input,
       target_output,
-      as.list(environment())[-1] |>
-        c(list(iterate = "single"))
+      list(
+        command = params,
+        iterate = "single",
+        factory = factory_call(
+          quote(tt_internal_report),
+          target_output = target_output,
+          rmd_path = rmd_path,
+          output_file = glue("{external_dir}/{target_output}") |> as.character(),
+          render_arguments = wrap_quote(
+            as.call(list(as.name("list"), params = params))
+          ),
+          ...
+        )
+      )
     )
-    
-    
+
   }
 
   #' Internal Factory for Report Targets

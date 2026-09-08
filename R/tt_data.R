@@ -56,33 +56,36 @@ tt_data.tidytargets <- function(tt_input, x, target_output = NULL) {
   qs2::qs_save(eval(command, parent.frame()), qs_path)
 
   file_target <- paste0(target_output, "_file")
-  target_script <- paste0(store, ".R")
   read_cmd <- substitute(qs_read(fts), list(fts = as.name(file_target)))
 
-  tar_append(
-    fx = quote(tt_factory),
-    command = wrap_quote(qs_path),
-    target_output = file_target,
-    script = target_script,
-    format = "file"
-  )
   tt_input <- append_step(
     tt_input,
     file_target,
-    list(command = qs_path, iterate = "none")
+    list(
+      command = qs_path,
+      iterate = "none",
+      factory = factory_call(
+        quote(tt_factory),
+        command = wrap_quote(qs_path),
+        target_output = file_target,
+        format = "file"
+      )
+    )
   )
 
-  tar_append(
-    fx = quote(tt_factory),
-    command = wrap_quote(read_cmd),
-    target_output = target_output,
-    script = target_script,
-    deployment = "main"
-  )
   append_step(
     tt_input,
     target_output,
-    list(command = read_cmd, iterate = "none")
+    list(
+      command = read_cmd,
+      iterate = "none",
+      factory = factory_call(
+        quote(tt_factory),
+        command = wrap_quote(read_cmd),
+        target_output = target_output,
+        deployment = "main"
+      )
+    )
   )
 }
 
@@ -167,35 +170,35 @@ tt_data_list.tidytargets <- function(tt_input, x, target_output = NULL) {
   qs2::qs_save(x, qs_path)
 
   file_target <- paste0(target_output, "_file")
-  target_script <- paste0(store, ".R")
   read_cmd <- substitute(qs_read(fts), list(fts = as.name(file_target)))
 
-  tar_append(
-    fx = quote(tt_factory),
-    command = wrap_quote(qs_path),
-    target_output = file_target,
-    script = target_script,
-    format = "file"
-  )
   tt_input <- append_step(
     tt_input,
     file_target,
-    list(command = qs_path, iterate = "none")
+    list(
+      command = qs_path,
+      iterate = "none",
+      factory = factory_call(
+        quote(tt_factory),
+        command = wrap_quote(qs_path),
+        target_output = file_target,
+        format = "file"
+      )
+    )
   )
 
-  tar_append(
-    fx = quote(tt_factory),
-    command = wrap_quote(read_cmd),
-    target_output = target_output,
-    script = target_script,
-    deployment = "main"
-  )
   append_step(
     tt_input,
     target_output,
     list(
       command = read_cmd,
-      iterate = "map"
+      iterate = "map",
+      factory = factory_call(
+        quote(tt_factory),
+        command = wrap_quote(read_cmd),
+        target_output = target_output,
+        deployment = "main"
+      )
     )
   )
 }

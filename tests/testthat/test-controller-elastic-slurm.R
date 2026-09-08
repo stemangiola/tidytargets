@@ -93,6 +93,57 @@ test_that("tt_controller_elastic_slurm honors per-tier cpus_per_task and dots", 
   expect_null(controllers[[2]]$backup)
 })
 
+test_that("a controller group is rebuilt in the script, so a target can pick a tier", {
+  skip_if_not_installed("crew")
+
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  tiers <- crew::crew_controller_group(
+    crew::crew_controller_local(name = "small", workers = 1),
+    crew::crew_controller_local(name = "big", workers = 1)
+  )
+
+  pipe <- tt_initialise(
+    store = file.path(tmp, "store"),
+    computing_resources = tiers,
+    packages = "tidytargets"
+  ) |>
+    tt_single(
+      pinned <- 1,
+      resources = quote(tar_resources(crew = tar_resources_crew(controller = "big")))
+    )
+
+  # Only the controllers can be serialised: a restored group holds dead
+  # condition variables, so the script assembles the group itself.
+  snapshot <- qs2::qs_read(
+    file.path(pipe$initialisation$store, "temp_computing_resources.qs")
+  )
+  expect_equal(names(snapshot), c("small", "big"))
+
+  script <- tidytargets:::write_script(pipe)
+  expect_match(
+    paste(readLines(script), collapse = " "),
+    "do.call(crew_controller_group",
+    fixed = TRUE
+  )
+
+  # Run in-process so this session's factory forwards resources; tar_make()
+  # via callr would load the installed one.
+  targets::tar_make(
+    callr_function = NULL,
+    script = script,
+    store = pipe$initialisation$store,
+    reporter = "silent"
+  )
+  expect_equal(
+    targets::tar_read(pinned, store = pipe$initialisation$store),
+    1
+  )
+})
+
 test_that("tt_controller_elastic_slurm defaults every argument but workers and mem_gb_per_job", {
   skip_if_not_installed("crew")
   skip_if_not_installed("crew.cluster")

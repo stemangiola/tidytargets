@@ -91,3 +91,17 @@ test_that("tt_factory builds map() and cross() patterns", {
   expect_equal(crossed$settings$pattern, expression(cross(a, b)))
 })
 
+test_that("tt_factory forwards resources, so a target can pick its controller", {
+  pinned <- tt_factory(
+    command = quote(1),
+    target_output = "out",
+    resources = targets::tar_resources(
+      crew = targets::tar_resources_crew(controller = "big")
+    )
+  )
+  expect_equal(pinned$settings$resources$crew$controller, "big")
+
+  # Unpinned targets fall back to the pipeline-wide default.
+  expect_null(tt_factory(command = quote(1), target_output = "out")$settings$resources$crew)
+})
+

@@ -64,6 +64,7 @@ targets::tar_read(summaries, store = "_targets")
 | --- | --- |
 | `tt_initialise()` | Start a pipeline: store, optional mapped inputs |
 | `tt_evaluate()` | Write the target list and run `tar_make()` |
+| `tt_script()` | Write the target list without running it, for inspection |
 | `tt_read()` | Read the full stored value of a named target |
 
 ### Data
@@ -89,6 +90,28 @@ targets::tar_read(summaries, store = "_targets")
 | `tt_report()` | Render a Quarto / R Markdown report |
 | `tt_explore()` | Return one stored instance of a named target |
 | `tt_metadata()` | Get or set free-form metadata on the pipeline object |
+
+## Inspecting the graph before running it
+
+Composing a pipeline only builds an object; `{store}.R` is generated from it
+when the pipeline runs. Call `tt_script()` to write the script early and
+register it with `targets::tar_config_set()`, after which the `{targets}`
+inspection functions work with no arguments:
+
+``` r
+pipe <- tt_initialise() |>
+  tt_data_list(inputs) |>
+  tt_iterate(summaries <- summary(inputs))
+
+tt_script(pipe)
+
+targets::tar_manifest()    # one row per target
+targets::tar_outdated()    # what a run would rebuild
+targets::tar_visnetwork()  # the dependency graph
+```
+
+Nothing is executed until `tt_evaluate()`. Use `show_targets_script()` to
+read the generated script instead of inspecting the graph.
 
 ## Deployment
 
@@ -148,3 +171,22 @@ computing_resources <- tt_controller_elastic_slurm(
 ```
 
 Pass this to `tt_initialise(computing_resources = ...)`.
+
+### Pinning a step to a named tier
+
+Any controller group makes its tiers available by name. A step with no
+`resources` runs on the first tier and falls back as described above; pass
+`resources` to send a step straight to a chosen tier, using the `{targets}`
+syntax:
+
+``` r
+tt_initialise(computing_resources = computing_resources) |>
+  tt_iterate(counts <- load_counts(input_list)) |>
+  tt_single(
+    model <- fit(counts),
+    resources = quote(tar_resources(crew = tar_resources_crew(controller = "elastic_100")))
+  )
+```
+
+`quote()` is needed because the expression is written into `{store}.R` and
+evaluated there, next to the controller group it names.
