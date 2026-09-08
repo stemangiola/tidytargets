@@ -13,6 +13,8 @@
 - [`tidytargets`](https://stemangiola.github.io/tidytargets/reference/tidytargets-package.md)
   [`tidytargets-package`](https://stemangiola.github.io/tidytargets/reference/tidytargets-package.md)
   : tidytargets: Tidy Pipe-Friendly Grammar for Targets Pipelines
+- [`tt_controller_elastic_slurm()`](https://stemangiola.github.io/tidytargets/reference/tt_controller_elastic_slurm.md)
+  : Build an elastic SLURM crew controller group
 - [`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md)
   : Add a Session Object as a Pipeline Target
 - [`tt_data_list()`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)

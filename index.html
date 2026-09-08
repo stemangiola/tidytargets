@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -229,6 +229,26 @@
 <span>    partition <span class="op">=</span> <span class="st">"standard"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="elastic-slurm-auto-scaling-tiers">Elastic SLURM (auto-scaling tiers)<a class="anchor" aria-label="anchor" href="#elastic-slurm-auto-scaling-tiers"></a>
+</h3>
+<p><code><a href="reference/tt_controller_elastic_slurm.html">tt_controller_elastic_slurm()</a></code> wraps several <code><a href="https://wlandau.github.io/crew.cluster/reference/crew_controller_slurm.html" class="external-link">crew.cluster::crew_controller_slurm()</a></code> resource tiers, sized from small to large, into a <code><a href="https://wlandau.github.io/crew/reference/crew_controller_group.html" class="external-link">crew::crew_controller_group()</a></code>. A tier automatically falls back to the next tier up once its workers exhaust <code>crashes_max</code> (for example, once a job runs out of memory), so most jobs run on cheap, small workers while a few fall through to progressively larger ones. <a href="https://wlandau.github.io/crew/" class="external-link">crew</a> and <a href="https://wlandau.github.io/crew.cluster/" class="external-link">crew.cluster</a> are not dependencies of tidytargets; install them yourself to use this wrapper.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">computing_resources</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tt_controller_elastic_slurm.html">tt_controller_elastic_slurm</a></span><span class="op">(</span></span>
+<span>  workers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">64</span>, <span class="fl">48</span>, <span class="fl">32</span>, <span class="fl">24</span>, <span class="fl">16</span>, <span class="fl">8</span><span class="op">)</span>,</span>
+<span>  mem_gb_per_job <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">40</span>, <span class="fl">80</span>, <span class="fl">160</span><span class="op">)</span>,</span>
+<span>  time_hours <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">24</span><span class="op">)</span>,</span>
+<span>  crashes_max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Tiers are ordered smallest to largest; tier names are generated automatically from <code>mem_gb_per_job</code> (e.g. <code>5</code> becomes <code>"elastic_5"</code>). <code>time_hours</code> is the lifetime of a worker (a SLURM job), not the run time of one target: a worker stays alive to run multiple targets back to back until <code>time_hours</code> elapses, at which point SLURM kills it — along with whatever target it happens to be running — and <a href="https://wlandau.github.io/crew/" class="external-link">crew</a> relaunches that target on a brand new worker. Set it as long as practical so a worker survives as many targets as possible, and always longer than the longest single target it may run.</p>
+<p><code>workers</code> and <code>mem_gb_per_job</code> are required. Every other argument may be a single value, which is recycled to every tier, or a vector with one value per tier. So the minimal call only needs <code>workers</code> and <code>mem_gb_per_job</code>, with <code>time_hours = 24</code>, <code>crashes_max = 2</code>, and <code>cpus_per_task = 1</code> applied to every tier:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">computing_resources</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tt_controller_elastic_slurm.html">tt_controller_elastic_slurm</a></span><span class="op">(</span></span>
+<span>  workers <span class="op">=</span> <span class="fl">8</span>,</span>
+<span>  mem_gb_per_job <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span>, <span class="fl">50</span>, <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Pass this to <code>tt_initialise(computing_resources = ...)</code>.</p>
 </div>
 </div>
 </div>
