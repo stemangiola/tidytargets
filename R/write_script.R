@@ -19,9 +19,10 @@ factory_call <- function(fx, ...) {
 #' Write the targets script for a pipeline
 #'
 #' `{store}.R` is derived from the pipeline object rather than accumulated as
-#' steps are added: the header comes from `$initialisation`, then one factory
-#' call per record in `$targets`. Since `$targets` is keyed by target name,
-#' redefining a step replaces it, and the file always matches the object.
+#' steps are added: the header comes from `$initialisation`, then the
+#' assignments in `$globals`, then one factory call per record in `$targets`.
+#' Since both are keyed by name, redefining a step or a global replaces it, and
+#' the file always matches the object.
 #'
 #' `{targets}` `eval()`s the script and takes the last expression as the
 #' pipeline, hence the trailing `target_list`.
@@ -74,8 +75,6 @@ write_script <- function(pipe) {
       workspace_on_error = w
     )
 
-    target_list <- list()
-
   } |>
     substitute(env = list(
       d = init$debug_step, e = init$error, u = init$update,
@@ -86,6 +85,11 @@ write_script <- function(pipe) {
     deparse() |>
     head(-1) |>
     tail(-1)
+
+  # Globals are already source, deparsed by tt_global(). They sit above the
+  # target list so the script reads as configuration first, then targets, and
+  # one assignment per name because $globals is keyed by name.
+  globals <- unlist(pipe$globals, use.names = FALSE)
 
   # Functions a command calls may live in a user script rather than in the
   # pipeline object. Sourcing happens once, above the targets.
@@ -101,7 +105,10 @@ write_script <- function(pipe) {
   }))
 
   script <- paste0(init$store, ".R")
-  writeLines(c(header, sources, factories, "target_list"), script)
+  writeLines(
+    c(header, globals, sources, "target_list <- list()", factories, "target_list"),
+    script
+  )
   script
 }
 

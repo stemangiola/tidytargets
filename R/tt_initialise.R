@@ -1,25 +1,34 @@
 #' Construct a tidytargets pipeline object
 #'
-#' Three slots, not a flat list of targets: `$initialisation` holds constructor
+#' Four slots, not a flat list of targets: `$initialisation` holds constructor
 #' arguments, `$metadata` the free-form store, `$targets` the named step
-#' records. Grammar verbs grow `$targets` with `append_step()` so `c()` never
-#' strips the class.
+#' records, `$globals` the named [tt_global()] declarations. Grammar verbs grow
+#' `$targets` with `append_step()` so `c()` never strips the class.
+#'
+#' `$targets` and `$globals` are both keyed by name, so redefining either
+#' replaces it rather than adding a second copy to `{store}.R`.
 #'
 #' @param initialisation Named list of [tt_initialise()] arguments.
 #' @param metadata Named list of free-form metadata.
 #' @param targets Named list of step records, one per target.
+#' @param globals Named list of deparsed global assignments, one per name.
 #' @return A `tidytargets` object.
 #' @noRd
 new_tidytargets <- function(initialisation = list(),
                             metadata = list(),
-                            targets = list()) {
+                            targets = list(),
+                            globals = list()) {
   if (length(targets) == 0L) {
     targets <- stats::setNames(list(), character())
+  }
+  if (length(globals) == 0L) {
+    globals <- stats::setNames(list(), character())
   }
   obj <- list(
     initialisation = initialisation,
     metadata = metadata,
-    targets = targets
+    targets = targets,
+    globals = globals
   )
   class(obj) <- c("tidytargets", "list")
   schedule_pipeline_ready_notice(initialisation$store)

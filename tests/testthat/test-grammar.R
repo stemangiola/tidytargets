@@ -19,7 +19,7 @@ test_that("tt_initialise returns a tidytargets object with input targets", {
     tt_initialise(store = store)
 
   expect_s3_class(hpc, "tidytargets")
-  expect_equal(names(hpc), c("initialisation", "metadata", "targets"))
+  expect_equal(names(hpc), c("initialisation", "metadata", "targets", "globals"))
   expect_equal(
     hpc$initialisation$store,
     normalizePath(store, winslash = "/", mustWork = TRUE)
@@ -198,6 +198,7 @@ test_that("grammar steps error on non-tidytargets input", {
   expect_error(tt_read("not a pipeline", "data"), "tidytargets object")
   expect_error(tt_data("not a pipeline", 1, target_output = "x"), "tidytargets object")
   expect_error(tt_data_list("not a pipeline", list(1), target_output = "x"), "tidytargets object")
+  expect_error(tt_global("not a pipeline", 1), "tidytargets object")
   expect_error(tt_script("not a pipeline"), "tidytargets object")
 })
 
@@ -364,7 +365,7 @@ test_that("pipeline slots do not restrict target names", {
     ) |>
     tt_single(command = 1L, target_output = "initialisation")
 
-  expect_equal(names(hpc), c("initialisation", "metadata", "targets"))
+  expect_equal(names(hpc), c("initialisation", "metadata", "targets", "globals"))
   expect_equal(hpc$targets$metadata$iterate, "map")
   expect_equal(hpc$targets$initialisation$iterate, "none")
   expect_equal(tt_metadata(hpc)$api_url, "https://api.example.org")

@@ -2,6 +2,17 @@
 
 ## tidytargets 0.0.13
 
+* `tt_global()` declares session objects, typically helper functions, so every
+  target can call them. They are recorded in the pipeline's `$globals` and
+  assigned in `{store}.R` above the target list. A global is not a target: it
+  is not a node in the graph, not stored in the object store, and not read by
+  `tt_read()`, but `{targets}` still tracks which commands use it. One global
+  function can call another, so helpers no longer have to be threaded through
+  `tt_data()` or passed as arguments. Objects are written as source with
+  `deparse()`, so they must be self-contained; large or non-deparsable objects
+  still belong in `tt_data()`. Functions keep the formatting and comments they
+  were written with. Re-declaring a name replaces the earlier declaration,
+  because `$globals` is keyed by name, as `$targets` is.
 * `{store}.R` is generated from the pipeline object when the pipeline runs,
   instead of being appended to as each step is added. Grammar verbs now only
   record a step, so composing a pipeline touches no files, and the script

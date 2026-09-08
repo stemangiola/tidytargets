@@ -4,7 +4,7 @@ library(tidytargets)
 test_that("new_tidytargets and append_step keep class and separate slots", {
   pipe <- tidytargets:::new_tidytargets(list(store = "s"))
   expect_s3_class(pipe, "tidytargets")
-  expect_equal(names(pipe), c("initialisation", "metadata", "targets"))
+  expect_equal(names(pipe), c("initialisation", "metadata", "targets", "globals"))
   expect_equal(names(pipe$targets), character())
   expect_equal(pipe$metadata, list())
 
@@ -14,7 +14,7 @@ test_that("new_tidytargets and append_step keep class and separate slots", {
     list(command = quote(1), iterate = "none")
   )
   expect_s3_class(pipe, "tidytargets")
-  expect_equal(names(pipe), c("initialisation", "metadata", "targets"))
+  expect_equal(names(pipe), c("initialisation", "metadata", "targets", "globals"))
   expect_equal(names(pipe$targets), "fit")
   expect_equal(pipe$targets$fit$iterate, "none")
   expect_equal(pipe$initialisation$store, "s")
