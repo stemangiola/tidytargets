@@ -14,6 +14,7 @@ tt_factory(
   packages = targets::tar_option_get("packages"),
   deployment = targets::tar_option_get("deployment"),
   format = targets::tar_option_get("format"),
+  resources = targets::tar_option_get("resources"),
   ...
 )
 ```
@@ -50,6 +51,13 @@ tt_factory(
 - format:
 
   Storage format string for the target value.
+
+- resources:
+
+  A
+  [`targets::tar_resources()`](https://docs.ropensci.org/targets/reference/tar_resources.html)
+  object, used to pick a named controller out of a controller group with
+  `tar_resources(crew = tar_resources_crew(controller = "name"))`.
 
 - ...:
 

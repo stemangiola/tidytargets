@@ -2,8 +2,6 @@
 
 ## All functions
 
-- [`delete_lines_with_word()`](https://stemangiola.github.io/tidytargets/reference/delete_lines_with_word.md)
-  : Delete Lines Containing a Word from a File
 - [`print(`*`<tidytargets>`*`)`](https://stemangiola.github.io/tidytargets/reference/print.tidytargets.md)
   : Print a tidytargets Object
 - [`show_targets_script()`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)
@@ -39,6 +37,8 @@
   : Read a Stored Pipeline Target
 - [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md)
   : Add a Report Step to the tidytargets Pipeline
+- [`tt_script()`](https://stemangiola.github.io/tidytargets/reference/tt_script.md)
+  : Write the Targets Script Without Running the Pipeline
 - [`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)
   : Add a Summarising (Non-Iterated) Step to the tidytargets Pipeline
 - [`tt_split()`](https://stemangiola.github.io/tidytargets/reference/tt_split.md)

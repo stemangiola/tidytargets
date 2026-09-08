@@ -1,15 +1,21 @@
 # Initialise a tidytargets Pipeline
 
-Sets up and writes a `targets` pipeline script. Saves configuration (and
-optional mapped inputs) to disk, then returns a `tidytargets` object
-that downstream grammar functions (e.g.
+Sets up a `targets` pipeline. Saves configuration (and optional mapped
+inputs) to disk, then returns a `tidytargets` object that downstream
+grammar functions (e.g.
 [`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md),
 [`tt_iterate()`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md),
-[`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md),
-[`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md))
+[`tt_single()`](https://stemangiola.github.io/tidytargets/reference/tt_single.md))
 can extend before the pipeline is executed with
 [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md).
-The graph is not run until you print the object or call
+
+`{store}.R` is written from the object by
+[`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)
+(or
+[`show_targets_script()`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)),
+not as steps are added, so the script always matches the object and
+redefining a step replaces it. The graph is not run until you print the
+object or call
 [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md).
 Assigning it does not; an interactive session then says the pipeline is
 ready to be evaluated, rather than appearing to do nothing.
@@ -39,7 +45,7 @@ tt_initialise(
   Named vector of inputs, typically file paths, or a named list of
   in-memory objects, one element per unit of iteration (e.g. sample). If
   names are not set, integer indices are used. `NULL` (the default)
-  writes only the script header; add objects later with
+  registers no input targets; add objects later with
   [`tt_data()`](https://stemangiola.github.io/tidytargets/reference/tt_data.md)
   or pass a list here to map over.
 
@@ -55,7 +61,13 @@ tt_initialise(
   `targets::tar_option_set(controller = )`, such as a `crew` controller
   or controller group. `NULL` (the default) runs the pipeline
   sequentially. tidytargets does not depend on any compute backend; pass
-  whatever your deployment uses.
+  whatever your deployment uses. Pass a controller group (for example
+  from
+  [`tt_controller_elastic_slurm()`](https://stemangiola.github.io/tidytargets/reference/tt_controller_elastic_slurm.md))
+  to make several named tiers available, and pin a step to one of them
+  with
+  `resources = quote(tar_resources(crew = tar_resources_crew(controller = "name")))`.
+  Steps with no `resources` use the first controller in the group.
 
 - debug_step:
 

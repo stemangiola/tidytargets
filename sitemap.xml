@@ -6,7 +6,6 @@
 <url><loc>https://stemangiola.github.io/tidytargets/authors.html</loc></url>
 <url><loc>https://stemangiola.github.io/tidytargets/index.html</loc></url>
 <url><loc>https://stemangiola.github.io/tidytargets/news/index.html</loc></url>
-<url><loc>https://stemangiola.github.io/tidytargets/reference/delete_lines_with_word.html</loc></url>
 <url><loc>https://stemangiola.github.io/tidytargets/reference/index.html</loc></url>
 <url><loc>https://stemangiola.github.io/tidytargets/reference/print.tidytargets.html</loc></url>
 <url><loc>https://stemangiola.github.io/tidytargets/reference/show_targets_script.html</loc></url>
@@ -25,6 +24,7 @@
 <url><loc>https://stemangiola.github.io/tidytargets/reference/tt_metadata.html</loc></url>
 <url><loc>https://stemangiola.github.io/tidytargets/reference/tt_read.html</loc></url>
 <url><loc>https://stemangiola.github.io/tidytargets/reference/tt_report.html</loc></url>
+<url><loc>https://stemangiola.github.io/tidytargets/reference/tt_script.html</loc></url>
 <url><loc>https://stemangiola.github.io/tidytargets/reference/tt_single.html</loc></url>
 <url><loc>https://stemangiola.github.io/tidytargets/reference/tt_split.html</loc></url>
 </urlset>

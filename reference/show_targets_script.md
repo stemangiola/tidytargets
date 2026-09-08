@@ -1,8 +1,10 @@
 # Print the Targets Script for a tidytargets Pipeline
 
-Reads `{store}.R` for a `tidytargets` object and prints its contents
+Writes `{store}.R` for a `tidytargets` object and prints its contents
 with a markdown-style heading. Useful for inspecting the pipeline script
-while composing steps.
+while composing steps: the script shown is the one
+[`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)
+would run.
 
 ## Usage
 

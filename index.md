@@ -94,6 +94,7 @@ steps that mention it are mapped over each element.
 |----|----|
 | [`tt_initialise()`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md) | Start a pipeline: store, optional mapped inputs |
 | [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md) | Write the target list and run `tar_make()` |
+| [`tt_script()`](https://stemangiola.github.io/tidytargets/reference/tt_script.md) | Write the target list without running it, for inspection |
 | [`tt_read()`](https://stemangiola.github.io/tidytargets/reference/tt_read.md) | Read the full stored value of a named target |
 
 ### Data
@@ -119,6 +120,24 @@ steps that mention it are mapped over each element.
 | [`tt_report()`](https://stemangiola.github.io/tidytargets/reference/tt_report.md) | Render a Quarto / R Markdown report |
 | [`tt_explore()`](https://stemangiola.github.io/tidytargets/reference/tt_explore.md) | Return one stored instance of a named target |
 | [`tt_metadata()`](https://stemangiola.github.io/tidytargets/reference/tt_metadata.md) | Get or set free-form metadata on the pipeline object |
+
+## Inspecting the graph before running it
+
+Composing a pipeline only builds an object; `{store}.R` is generated
+from it when the pipeline runs. Call
+[`tt_script()`](https://stemangiola.github.io/tidytargets/reference/tt_script.md)
+to write the script early and register it with
+[`targets::tar_config_set()`](https://docs.ropensci.org/targets/reference/tar_config_set.html),
+after which the [targets](https://docs.ropensci.org/targets/) inspection
+functions work with no arguments:
+
+`pipe`` ``<-`` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``)`` ``|>`` `` `[`tt_data_list`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)`(``inputs``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``summaries`` ``<-`` `[`summary`](https://rdrr.io/r/base/summary.html)`(``inputs``)``)`` `` `[`tt_script`](https://stemangiola.github.io/tidytargets/reference/tt_script.md)`(``pipe``)`` `` ``targets``::`[`tar_manifest`](https://docs.ropensci.org/targets/reference/tar_manifest.html)`(``)`` ``# one row per target`` ``targets``::`[`tar_outdated`](https://docs.ropensci.org/targets/reference/tar_outdated.html)`(``)`` ``# what a run would rebuild`` ``targets``::`[`tar_visnetwork`](https://docs.ropensci.org/targets/reference/tar_visnetwork.html)`(``)`` ``# the dependency graph`
+
+Nothing is executed until
+[`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md).
+Use
+[`show_targets_script()`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)
+to read the generated script instead of inspecting the graph.
 
 ## Deployment
 
@@ -169,3 +188,16 @@ value per tier. So the minimal call only needs `workers` and
 `computing_resources`` ``<-`` `[`tt_controller_elastic_slurm`](https://stemangiola.github.io/tidytargets/reference/tt_controller_elastic_slurm.md)`(`` `` workers ``=`` ``100``,`` `` mem_gb_per_job ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``5``, ``10``, ``20``, ``50``, ``100``)`` ``)`
 
 Pass this to `tt_initialise(computing_resources = ...)`.
+
+### Pinning a step to a named tier
+
+Any controller group makes its tiers available by name. A step with no
+`resources` runs on the first tier and falls back as described above;
+pass `resources` to send a step straight to a chosen tier, using the
+[targets](https://docs.ropensci.org/targets/) syntax:
+
+[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``computing_resources ``=`` ``computing_resources``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``counts`` ``<-`` ``load_counts``(``input_list``)``)`` ``|>`` `` `[`tt_single`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)`(`` `` ``model`` ``<-`` ``fit``(``counts``)``,`` `` resources ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``tar_resources``(``crew ``=`` ``tar_resources_crew``(``controller ``=`` ``"elastic_100"``)``)``)`` `` ``)`
+
+[`quote()`](https://rdrr.io/r/base/substitute.html) is needed because
+the expression is written into `{store}.R` and evaluated there, next to
+the controller group it names.
