@@ -26,22 +26,19 @@ and passed in at
 The grammar is **lazy** and **incremental**. Piping steps only appends
 factories to the targets script; nothing is computed until
 [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)
-(or evaluating the object; e.g., printing it in the console). Assigning
-the object does not print it, so an interactive session then says the
-pipeline is ready to be evaluated, rather than appearing to do nothing.
-You can add inputs or steps later and
-[targets](https://docs.ropensci.org/targets/) re-runs only the outdated
-branches of the graph.
+(or evaluating the object; e.g., printing it in the console).
 
 ## Installation
 
+\
 `remotes``::`[`install_github`](https://remotes.r-lib.org/reference/install_github.html)`(``"stemangiola/tidytargets"``)`
 
 A full walkthrough of every grammar function, with the
 [targets](https://docs.ropensci.org/targets/) script each step writes,
 is in the vignette:
 
-[`vignette`](https://rdrr.io/r/utils/vignette.html)`(``"building-blocks"``, package ``=`` ``"tidytargets"``)`
+\
+[`vignette`](https://rdrr.io/r/utils/vignette.html)`(``"building-blocks"``, package ``=`` ``"tidytargets"``)`
 
 ## A minimal pipeline
 
@@ -60,7 +57,18 @@ that expression. `target_output = "name"` still works. With no
 `computing_resources`, the pipeline runs sequentially. With no `store`,
 a unique `./tidytargets-<HASH>` directory is created and printed.
 
-[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`` `` ``inputs`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(`` `` sample_a ``=`` ``1``:``3``,`` `` sample_b ``=`` ``4``:``6`` ``)`` `` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``)`` ``|>`` `` `[`tt_data_list`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)`(``inputs``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``summaries`` ``<-`` `[`summary`](https://rdrr.io/r/base/summary.html)`(``inputs``)``)`` ``|>`` `` `[`tt_evaluate`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)`(``)`
+\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
+\
+`inputs`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(`\
+`  sample_a ``=`` ``1``:``3``,`\
+`  sample_b ``=`` ``4``:``6`\
+`)`\
+\
+[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``)`` ``|>`\
+`  `[`tt_data_list`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)`(``inputs``)`` ``|>`\
+`  `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``summaries`` ``<-`` `[`summary`](https://rdrr.io/r/base/summary.html)`(``inputs``)``)`` ``|>`\
+`  `[`tt_evaluate`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)`(``)`
 
     #> + inputs_file dispatched
     #> ✔ inputs_file completed [0ms, 187 B]
@@ -134,7 +142,16 @@ to write the script early and register it with
 after which the [targets](https://docs.ropensci.org/targets/) inspection
 functions work with no arguments:
 
-`pipe`` ``<-`` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``)`` ``|>`` `` `[`tt_data_list`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)`(``inputs``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``summaries`` ``<-`` `[`summary`](https://rdrr.io/r/base/summary.html)`(``inputs``)``)`` `` `[`tt_script`](https://stemangiola.github.io/tidytargets/reference/tt_script.md)`(``pipe``)`` `` ``targets``::`[`tar_manifest`](https://docs.ropensci.org/targets/reference/tar_manifest.html)`(``)`` ``# one row per target`` ``targets``::`[`tar_outdated`](https://docs.ropensci.org/targets/reference/tar_outdated.html)`(``)`` ``# what a run would rebuild`` ``targets``::`[`tar_visnetwork`](https://docs.ropensci.org/targets/reference/tar_visnetwork.html)`(``)`` ``# the dependency graph`
+\
+`pipe`` ``<-`` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``)`` ``|>`\
+`  `[`tt_data_list`](https://stemangiola.github.io/tidytargets/reference/tt_data_list.md)`(``inputs``)`` ``|>`\
+`  `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``summaries`` ``<-`` `[`summary`](https://rdrr.io/r/base/summary.html)`(``inputs``)``)`\
+\
+[`tt_script`](https://stemangiola.github.io/tidytargets/reference/tt_script.md)`(``pipe``)`\
+\
+`targets``::`[`tar_manifest`](https://docs.ropensci.org/targets/reference/tar_manifest.html)`(``)``    ``# one row per target`\
+`targets``::`[`tar_outdated`](https://docs.ropensci.org/targets/reference/tar_outdated.html)`(``)``    ``# what a run would rebuild`\
+`targets``::`[`tar_visnetwork`](https://docs.ropensci.org/targets/reference/tar_visnetwork.html)`(``)``  ``# the dependency graph`
 
 Nothing is executed until
 [`tt_evaluate()`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md).
@@ -149,13 +166,22 @@ accepts.
 
 ### Local parallel computing
 
-`computing_resources`` ``<-`` ``crew``::`[`crew_controller_local`](https://wlandau.github.io/crew/reference/crew_controller_local.html)`(``workers ``=`` ``10``)`
+\
+`computing_resources`` ``<-`` ``crew``::`[`crew_controller_local`](https://wlandau.github.io/crew/reference/crew_controller_local.html)`(``workers ``=`` ``10``)`
 
 Pass this to `tt_initialise(computing_resources = ...)`.
 
 ### SLURM
 
-`computing_resources`` ``<-`` ``crew.cluster``::`[`crew_controller_slurm`](https://wlandau.github.io/crew.cluster/reference/crew_controller_slurm.html)`(`` `` workers ``=`` ``100``,`` `` tasks_max ``=`` ``1``,`` `` seconds_idle ``=`` ``30``,`` `` options_cluster ``=`` ``crew.cluster``::`[`crew_options_slurm`](https://wlandau.github.io/crew.cluster/reference/crew_options_slurm.html)`(`` `` partition ``=`` ``"standard"`` `` ``)`` ``)`
+\
+`computing_resources`` ``<-`` ``crew.cluster``::`[`crew_controller_slurm`](https://wlandau.github.io/crew.cluster/reference/crew_controller_slurm.html)`(`\
+`  workers ``=`` ``100``,`\
+`  tasks_max ``=`` ``1``,`\
+`  seconds_idle ``=`` ``30``,`\
+`  options_cluster ``=`` ``crew.cluster``::`[`crew_options_slurm`](https://wlandau.github.io/crew.cluster/reference/crew_options_slurm.html)`(`\
+`    partition ``=`` ``"standard"`\
+`  ``)`\
+`)`
 
 ### Elastic SLURM (auto-scaling tiers)
 
@@ -171,24 +197,11 @@ progressively larger ones. [crew](https://wlandau.github.io/crew/) and
 [crew.cluster](https://wlandau.github.io/crew.cluster/) are not
 dependencies of tidytargets; install them yourself to use this wrapper.
 
-Tiers are ordered smallest to largest; tier names are generated
-automatically from `mem_gb_per_job` (e.g. `5` becomes `"elastic_5"`).
-`time_hours` is the lifetime of a worker (a SLURM job), not the run time
-of one target: a worker stays alive to run multiple targets back to back
-until `time_hours` elapses, at which point SLURM kills it — along with
-whatever target it happens to be running — and
-[crew](https://wlandau.github.io/crew/) relaunches that target on a
-brand new worker. Set it as long as practical so a worker survives as
-many targets as possible, and always longer than the longest single
-target it may run.
-
-`workers` and `mem_gb_per_job` are required. Every other argument may be
-a single value, which is recycled to every tier, or a vector with one
-value per tier. So the minimal call only needs `workers` and
-`mem_gb_per_job`, with `time_hours = 24`, `crashes_max = 2`, and
-`cpus_per_task = 1` applied to every tier:
-
-`computing_resources`` ``<-`` `[`tt_controller_elastic_slurm`](https://stemangiola.github.io/tidytargets/reference/tt_controller_elastic_slurm.md)`(`` `` workers ``=`` ``100``,`` `` mem_gb_per_job ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``5``, ``10``, ``20``, ``50``, ``100``)`` ``)`
+\
+`computing_resources`` ``<-`` `[`tt_controller_elastic_slurm`](https://stemangiola.github.io/tidytargets/reference/tt_controller_elastic_slurm.md)`(`\
+`  workers ``=`` ``100``,`\
+`  mem_gb_per_job ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``5``, ``10``, ``20``, ``50``, ``100``)`\
+`)`
 
 Pass this to `tt_initialise(computing_resources = ...)`.
 
@@ -199,7 +212,13 @@ Any controller group makes its tiers available by name. A step with no
 pass `resources` to send a step straight to a chosen tier, using the
 [targets](https://docs.ropensci.org/targets/) syntax:
 
-[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``computing_resources ``=`` ``computing_resources``)`` ``|>`` `` `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``counts`` ``<-`` ``load_counts``(``input_list``)``)`` ``|>`` `` `[`tt_single`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)`(`` `` ``model`` ``<-`` ``fit``(``counts``)``,`` `` resources ``=`` ``tar_resources``(``crew ``=`` ``tar_resources_crew``(``controller ``=`` ``"elastic_100"``)``)`` `` ``)`
+\
+[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``computing_resources ``=`` ``computing_resources``)`` ``|>`\
+`  `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``counts`` ``<-`` ``load_counts``(``input_list``)``)`` ``|>`\
+`  `[`tt_single`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)`(`\
+`    ``model`` ``<-`` ``fit``(``counts``)``,`\
+`    resources ``=`` ``tar_resources``(``crew ``=`` ``tar_resources_crew``(``controller ``=`` ``"elastic_100"``)``)`\
+`  ``)`
 
 The `tar_resources()` call is written into `{store}.R` and evaluated
 there, next to the controller group it names. Write it where the step is
