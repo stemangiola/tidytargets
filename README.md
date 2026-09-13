@@ -4,7 +4,7 @@ A tidy, pipe-friendly grammar for `{targets}`, internally based on [targets fact
 
 Compose pipelines with pipes (`|>`) and run them locally, on HPC, or in the cloud. `tt_initialise()` constructs a `tidytargets` object; `tt_iterate()`, `tt_single()`, `tt_split()`, `tt_merge()`, `tt_report()`, and `tt_evaluate()` are methods on that class. Those calls are factories that write a `{targets}` dependency graph. Compute backends (for example `{crew}` or `{crew.cluster}`) are optional and passed in at `tt_initialise()`.
 
-The grammar is **lazy** and **incremental**. Piping steps only appends factories to the targets script; nothing is computed until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console). Assigning the object does not print it, so an interactive session then says the pipeline is ready to be evaluated, rather than appearing to do nothing. You can add inputs or steps later and `{targets}` re-runs only the outdated branches of the graph.
+The grammar is **lazy** and **incremental**. Piping steps only appends factories to the targets script; nothing is computed until `tt_evaluate()` (or evaluating the object; e.g., printing it in the console). 
 
 ## Installation
 
@@ -148,21 +148,6 @@ A tier automatically falls back to the next tier up once its workers exhaust
 on cheap, small workers while a few fall through to progressively larger ones.
 `{crew}` and `{crew.cluster}` are not dependencies of tidytargets; install them
 yourself to use this wrapper.
-
-Tiers are ordered smallest to largest; tier names are generated automatically
-from `mem_gb_per_job` (e.g. `5` becomes `"elastic_5"`). `time_hours` is the
-lifetime of a worker (a SLURM job), not the run time of one target: a worker
-stays alive to run multiple targets back to back until `time_hours` elapses,
-at which point SLURM kills it — along with whatever target it happens to be
-running — and `{crew}` relaunches that target on a brand new worker. Set it
-as long as practical so a worker survives as many targets as possible, and
-always longer than the longest single target it may run.
-
-`workers` and `mem_gb_per_job` are required. Every other argument may be a
-single value, which is recycled to every tier, or a vector with one value
-per tier. So the minimal call only needs `workers` and `mem_gb_per_job`,
-with `time_hours = 24`, `crashes_max = 2`, and `cpus_per_task = 1` applied
-to every tier:
 
 ``` r
 computing_resources <- tt_controller_elastic_slurm(
