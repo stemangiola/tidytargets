@@ -80,6 +80,14 @@ new_tidytargets <- function(initialisation = list(),
 #'   collection is triggered during the pipeline run. Default: `0` (disabled).
 #' @param workspace_on_error Logical; if `TRUE`, saves a workspace snapshot when
 #'   a target errors. Default: `FALSE`.
+#' @param storage Where a target's value is written, passed to
+#'   `targets::tar_option_set(storage = )`. `"worker"` (the default) writes it
+#'   on the worker, which needs to see the store. `"main"` writes it in the
+#'   session running the pipeline, so workers only return the value.
+#' @param retrieval Where a target reads an upstream value from, passed to
+#'   `targets::tar_option_set(retrieval = )`. `"worker"` (the default) reads it
+#'   on the worker. `"main"` reads it in the session running the pipeline and
+#'   sends the value to the worker.
 #' @param packages Character vector of R packages loaded on workers, written to
 #'   `tar_option_set(packages = )`. The default is packages currently attached in
 #'   the session ([`.packages()`]), as names only — not objects in the global
@@ -111,7 +119,9 @@ tt_initialise <- function(tt_input = NULL,
                            garbage_collection = 0,
                            workspace_on_error = FALSE,
                            packages = attached_packages(),
-                           target_output = "input_list"
+                           target_output = "input_list",
+                           storage = "worker",
+                           retrieval = "worker"
                           ) {
   
   # Capture all arguments including defaults
@@ -165,6 +175,9 @@ tt_initialise <- function(tt_input = NULL,
 
   if (!has_input) return(pipe)
 
+  # These two targets only check that a small file in the store exists.
+  # That check has to run in this session: a worker that cannot see the store
+  # fails it. The files are the names and the mapped input, nothing larger.
   pipe <- append_step(
     pipe,
     "sample_names_file",
@@ -176,7 +189,8 @@ tt_initialise <- function(tt_input = NULL,
         list(
           command = wrap_quote(sample_names_qs),
           target_output = "sample_names_file",
-          format = "file"
+          format = "file",
+          deployment = "main"
         )
       )
     )
@@ -213,7 +227,8 @@ tt_initialise <- function(tt_input = NULL,
         list(
           command = wrap_quote(input_qs),
           target_output = input_file_target,
-          format = "file"
+          format = "file",
+          deployment = "main"
         )
       )
     )

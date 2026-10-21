@@ -142,8 +142,8 @@ write_script <- function(pipe) {
     tar_option_set(
       memory = "transient",
       garbage_collection = g,
-      storage = "worker",
-      retrieval = "worker",
+      storage = s,
+      retrieval = r,
       error = e,
       debug = d, # Set the target you want to debug.
       cue = tar_cue(mode = u), # Force skip non-debugging outdated targets.
@@ -158,6 +158,7 @@ write_script <- function(pipe) {
     substitute(env = list(
       d = init$debug_step, e = init$error, u = init$update,
       g = init$garbage_collection, w = init$workspace_on_error,
+      s = init$storage, r = init$retrieval,
       p = init$packages, cx = controller_expr,
       bp = package_of_object(init$computing_resources)
     )) |>
