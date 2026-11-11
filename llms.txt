@@ -213,21 +213,7 @@ where you start R, and run `chmod +x remote_qsub.sh`.
 `qsub`. It rewrites the script Gadi rejects, copies it to
 `gadi.nci.org.au`, and submits it. `sed -i ''` is the macOS form.
 
-``` bash
-#!/bin/bash
-# remote_qsub.sh
-set -euo pipefail
-script=$1
-remote=YOUR_USER@gadi.nci.org.au
-dir=/scratch/YOUR_PROJECT/$USER/crew_scripts
-sed -i '' \
-  -e '/^#PBS -J 1-1$/d' \
-  -e 's/^#PBS -l ppn=/#PBS -l ncpus=/' \
-  -e 's/^#PBS -l mem=\([0-9.]*\)gb$/#PBS -l mem=\1GB/' \
-  "$script"
-ssh -S /tmp/gadi.sock "$remote" "mkdir -p $dir && cat > $dir/$(basename "$script")" < "$script"
-ssh -S /tmp/gadi.sock "$remote" "/opt/pbs/default/bin/qsub $dir/$(basename "$script")"
-```
+`{bash remote-qsub, eval = FALSE} #!/bin/bash # remote_qsub.sh set -euo pipefail script=$1 remote=YOUR_USER@gadi.nci.org.au dir=/scratch/YOUR_PROJECT/$USER/crew_scripts sed -i '' \ -e '/^#PBS -J 1-1$/d' \ -e 's/^#PBS -l ppn=/#PBS -l ncpus=/' \ -e 's/^#PBS -l mem=\([0-9.]*\)gb$/#PBS -l mem=\1GB/' \ "$script" ssh -S /tmp/gadi.sock "$remote" "mkdir -p $dir && cat > $dir/$(basename "$script")" < "$script" ssh -S /tmp/gadi.sock "$remote" "/opt/pbs/default/bin/qsub $dir/$(basename "$script")"`
 
 **Run in your terminal.** The first command logs in to `gadi.nci.org.au`
 and opens the tunnel back to your machine. The second runs `nc` on that
@@ -237,12 +223,7 @@ pipeline finishes. Bash cannot listen on a port. `nc` on Gadi is ncat,
 and `-k` keeps it accepting connections. `hostname -I` prints the login
 node’s address; the R code below calls it `LOGIN_NODE_IP`.
 
-``` bash
-ssh -o ControlMaster=yes -o ControlPath=/tmp/gadi.sock -o ControlPersist=2h \
-  -fN -R 127.0.0.1:47200:127.0.0.1:47200 YOUR_USER@gadi.nci.org.au
-ssh -S /tmp/gadi.sock YOUR_USER@gadi.nci.org.au \
-  'nc -k -l $(hostname -I | cut -d" " -f1) 47201 -c "nc 127.0.0.1 47200"'
-```
+`{bash gadi-tunnel, eval = FALSE} ssh -o ControlMaster=yes -o ControlPath=/tmp/gadi.sock -o ControlPersist=2h \ -fN -R 127.0.0.1:47200:127.0.0.1:47200 YOUR_USER@gadi.nci.org.au ssh -S /tmp/gadi.sock YOUR_USER@gadi.nci.org.au \ 'nc -k -l $(hostname -I | cut -d" " -f1) 47201 -c "nc 127.0.0.1 47200"'`
 
 **Run in R.** `host` and `port` are the tunnel on your machine.
 Everything else here is what Gadi needs to start the worker and send it
@@ -307,84 +288,20 @@ dependencies of tidytargets; install them yourself to use this wrapper.
 
 Pass this to `tt_initialise(computing_resources = ...)`.
 
-## Submitting jobs to a remote HPC from your local machine
+### Pinning a step to a named tier
 
-The controller stays in the R session on your machine. A
-`command_submit` wrapper copies each job script to Gadi and runs `qsub`
-there. The worker dials back through an SSH tunnel: a compute node has
-no route to your machine, and Gadi only lets that tunnel listen on the
-login node’s `127.0.0.1`, so `nc` on the login node accepts the compute
-node and forwards it into the tunnel. The job runs `nc` again, so the
-worker keeps dialling `127.0.0.1`, which is the address in the
-certificate [crew](https://wlandau.github.io/crew/) creates. One SSH
-master connection carries the tunnel, the relay, and `qsub`, so all
-three land on the same login node.
+Any controller group makes its tiers available by name. A step with no
+`resources` runs on the first tier and falls back as described above;
+pass `resources` to send a step straight to a chosen tier, using the
+[targets](https://docs.ropensci.org/targets/) syntax:
 
-`storage` and `retrieval` have to be `"main"`. The default `"worker"`
-fails: the compute node tries to read and write the store, and the store
-is on your machine. `"main"` sends every input to the worker and every
-result back, so each object passes through the R session on your
-machine. tidytargets drops an object once it has been saved, but the
-session holds whatever is in flight. One large object costs about its
-size in memory, and several workers finishing together cost that several
-times over.
-
-Save this file, then run the terminal commands, then run the R code.
-
-**File `remote_qsub.sh`.** Save it on your machine, in the directory
-where you start R, and run `chmod +x remote_qsub.sh`.
-[crew](https://wlandau.github.io/crew/) calls this file instead of
-`qsub`. It rewrites the script Gadi rejects, copies it to
-`gadi.nci.org.au`, and submits it. `sed -i ''` is the macOS form.
-
-`{bash remote-qsub, eval = FALSE} #!/bin/bash # remote_qsub.sh set -euo pipefail script=$1 remote=YOUR_USER@gadi.nci.org.au dir=/scratch/YOUR_PROJECT/$USER/crew_scripts sed -i '' \ -e '/^#PBS -J 1-1$/d' \ -e 's/^#PBS -l ppn=/#PBS -l ncpus=/' \ -e 's/^#PBS -l mem=\([0-9.]*\)gb$/#PBS -l mem=\1GB/' \ "$script" ssh -S /tmp/gadi.sock "$remote" "mkdir -p $dir && cat > $dir/$(basename "$script")" < "$script" ssh -S /tmp/gadi.sock "$remote" "/opt/pbs/default/bin/qsub $dir/$(basename "$script")"`
-
-**Run in your terminal.** The first command logs in to `gadi.nci.org.au`
-and opens the tunnel back to your machine. The second runs `nc` on that
-login node and keeps running: it listens on the login node’s own address
-and forwards each connection into the tunnel. Leave it running until the
-pipeline finishes. Bash cannot listen on a port. `nc` on Gadi is ncat,
-and `-k` keeps it accepting connections. `hostname -I` prints the login
-node’s address; the R code below calls it `LOGIN_NODE_IP`.
-
-`{bash gadi-tunnel, eval = FALSE} ssh -o ControlMaster=yes -o ControlPath=/tmp/gadi.sock -o ControlPersist=2h \ -fN -R 127.0.0.1:47200:127.0.0.1:47200 YOUR_USER@gadi.nci.org.au ssh -S /tmp/gadi.sock YOUR_USER@gadi.nci.org.au \ 'nc -k -l $(hostname -I | cut -d" " -f1) 47201 -c "nc 127.0.0.1 47200"'`
-
-**Run in R.** `host` and `port` are the tunnel on your machine.
-Everything else here is what Gadi needs to start the worker and send it
-back through that tunnel. The controller uses
-[crew](https://wlandau.github.io/crew/)’s default of one worker, which
-is the job `remote_qsub.sh` accepts.
-
-\`\`\`{r pbs, eval = FALSE} library(crew.cluster) library(tidytargets)
-
-computing_resources \<- crew_controller_pbs( host = “127.0.0.1”, port =
-47200, options_cluster = crew_options_pbs( command_submit =
-“./remote_qsub.sh”, script_lines = c( “#PBS -P YOUR_PROJECT”, “#PBS -q
-express”, “#PBS -l storage=scratch/YOUR_PROJECT”, “source
-/etc/profile.d/modules.sh”, “module load intel-compiler-llvm/2025.3.2”,
-“module load intel-mkl/2025.0.1”, “module load R/4.5.0”, “export
-R_LIBS_USER=/scratch/YOUR_PROJECT/\$USER/Rlib”, “nc -k -l 127.0.0.1
-47200 -c ‘nc LOGIN_NODE_IP 47201’ &”, “sleep 2” ) ) )
-
-inputs \<- list(sample_a = 1:3, sample_b = 4:6) inputs \|\>
-tt_initialise( computing_resources = computing_resources, packages =
-“tidytargets”, storage = “main”, retrieval = “main” ) \|\>
-tt_iterate(summaries \<- summary(input_list)) \|\> tt_evaluate()
-
-    ### Pinning a step to a named tier
-
-    Any controller group makes its tiers available by name. A step with no
-    `resources` runs on the first tier and falls back as described above; pass
-    `resources` to send a step straight to a chosen tier, using the `{targets}`
-    syntax:
-
-    ``` r
-    tt_initialise(computing_resources = computing_resources) |>
-      tt_iterate(counts <- load_counts(input_list)) |>
-      tt_single(
-        model <- fit(counts),
-        resources = tar_resources(crew = tar_resources_crew(controller = "elastic_100"))
-      )
+\
+[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``computing_resources ``=`` ``computing_resources``)`` ``|>`\
+`  `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``counts`` ``<-`` ``load_counts``(``input_list``)``)`` ``|>`\
+`  `[`tt_single`](https://stemangiola.github.io/tidytargets/reference/tt_single.md)`(`\
+`    ``model`` ``<-`` ``fit``(``counts``)``,`\
+`    resources ``=`` ``tar_resources``(``crew ``=`` ``tar_resources_crew``(``controller ``=`` ``"elastic_100"``)``)`\
+`  ``)`
 
 The `tar_resources()` call is written into `{store}.R` and evaluated
 there, next to the controller group it names. Write it where the step is
