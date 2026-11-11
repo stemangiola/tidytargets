@@ -144,12 +144,12 @@ later command needs them.
 \
 `pipe`` ``<-`` ``inputs`` ``|>`\
 `  `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``)`\
-`#> tidytargets says: the store is ./tidytargets-15f7482d7c82`\
+`#> tidytargets says: the store is ./tidytargets-1809339e1f18`\
 `#> tidytargets says: these packages from the session will be loaded on workers: dplyr, tidytargets, qs2`
 
 \
 [`show_targets_script`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)`(``pipe``)`\
-`## tidytargets-15f7482d7c82.R`\
+`## tidytargets-1809339e1f18.R`\
 \
 `    `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
 `    `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`\
@@ -160,18 +160,18 @@ later command needs them.
 `    `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`\
 `    ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `\
 `        storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``"continue"``, `\
-`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/temp_computing_resources.qs"``)``, `\
+`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/temp_computing_resources.qs"``)``, `\
 `        format ``=`` ``"qs"``, packages ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"dplyr"``, ``"tidytargets"``, ``"qs2"`\
 `        ``)``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`\
 `target_list`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``sample_names_file``)``)``, target_output ``=`` ``"sample_names"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``input_list_file``)``)``, target_output ``=`` ``"input_list"``, deployment ``=`` ``"main"``)`\
@@ -191,7 +191,7 @@ the value is not split into iteration units.
 
 \
 [`show_targets_script`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)`(``pipe``)`\
-`## tidytargets-15f7482d7c82.R`\
+`## tidytargets-1809339e1f18.R`\
 \
 `    `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
 `    `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`\
@@ -202,24 +202,24 @@ the value is not split into iteration units.
 `    `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`\
 `    ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `\
 `        storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``"continue"``, `\
-`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/temp_computing_resources.qs"``)``, `\
+`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/temp_computing_resources.qs"``)``, `\
 `        format ``=`` ``"qs"``, packages ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"dplyr"``, ``"tidytargets"``, ``"qs2"`\
 `        ``)``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`\
 `target_list`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``sample_names_file``)``)``, target_output ``=`` ``"sample_names"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``input_list_file``)``)``, target_output ``=`` ``"input_list"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``extra_file``)``)``, target_output ``=`` ``"extra"``, deployment ``=`` ``"main"``)`\
@@ -239,7 +239,7 @@ inline expression with `<-`, or pass `target_output`.
 
 \
 [`show_targets_script`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)`(``pipe``)`\
-`## tidytargets-15f7482d7c82.R`\
+`## tidytargets-1809339e1f18.R`\
 \
 `    `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
 `    `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`\
@@ -250,30 +250,30 @@ inline expression with `<-`, or pass `target_output`.
 `    `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`\
 `    ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `\
 `        storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``"continue"``, `\
-`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/temp_computing_resources.qs"``)``, `\
+`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/temp_computing_resources.qs"``)``, `\
 `        format ``=`` ``"qs"``, packages ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"dplyr"``, ``"tidytargets"``, ``"qs2"`\
 `        ``)``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`\
 `target_list`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``sample_names_file``)``)``, target_output ``=`` ``"sample_names"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``input_list_file``)``)``, target_output ``=`` ``"input_list"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``extra_file``)``)``, target_output ``=`` ``"extra"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``settings_file``)``)``, target_output ``=`` ``"settings"``, deployment ``=`` ``"main"``)`\
@@ -306,7 +306,7 @@ leaves the rest up to date.
 
 \
 [`show_targets_script`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)`(``pipe``)`\
-`## tidytargets-15f7482d7c82.R`\
+`## tidytargets-1809339e1f18.R`\
 \
 `    `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
 `    `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`\
@@ -317,7 +317,7 @@ leaves the rest up to date.
 `    `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`\
 `    ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `\
 `        storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``"continue"``, `\
-`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/temp_computing_resources.qs"``)``, `\
+`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/temp_computing_resources.qs"``)``, `\
 `        format ``=`` ``"qs"``, packages ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"dplyr"``, ``"tidytargets"``, ``"qs2"`\
 `        ``)``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`\
 `scale_values`` ``<-`` ``function`` ``(``x``)`` `\
@@ -326,25 +326,25 @@ leaves the rest up to date.
 [`round`](https://rdrr.io/r/base/Round.html)`(``scale_values``(``x``)``, ``2``)`\
 `target_list`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``sample_names_file``)``)``, target_output ``=`` ``"sample_names"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``input_list_file``)``)``, target_output ``=`` ``"input_list"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``extra_file``)``)``, target_output ``=`` ``"extra"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``settings_file``)``)``, target_output ``=`` ``"settings"``, deployment ``=`` ``"main"``)`\
@@ -375,7 +375,7 @@ iterative/grouped).
 
 \
 [`show_targets_script`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)`(``pipe``)`\
-`## tidytargets-15f7482d7c82.R`\
+`## tidytargets-1809339e1f18.R`\
 \
 `    `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
 `    `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`\
@@ -386,7 +386,7 @@ iterative/grouped).
 `    `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`\
 `    ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `\
 `        storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``"continue"``, `\
-`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/temp_computing_resources.qs"``)``, `\
+`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/temp_computing_resources.qs"``)``, `\
 `        format ``=`` ``"qs"``, packages ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"dplyr"``, ``"tidytargets"``, ``"qs2"`\
 `        ``)``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`\
 `scale_values`` ``<-`` ``function`` ``(``x``)`` `\
@@ -395,25 +395,25 @@ iterative/grouped).
 [`round`](https://rdrr.io/r/base/Round.html)`(``scale_values``(``x``)``, ``2``)`\
 `target_list`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``sample_names_file``)``)``, target_output ``=`` ``"sample_names"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``input_list_file``)``)``, target_output ``=`` ``"input_list"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``extra_file``)``)``, target_output ``=`` ``"extra"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``settings_file``)``)``, target_output ``=`` ``"settings"``, deployment ``=`` ``"main"``)`\
@@ -443,7 +443,7 @@ Map a function over every input. Write `name <- expr` as you would a
 
 \
 [`show_targets_script`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)`(``pipe``)`\
-`## tidytargets-15f7482d7c82.R`\
+`## tidytargets-1809339e1f18.R`\
 \
 `    `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
 `    `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`\
@@ -454,7 +454,7 @@ Map a function over every input. Write `name <- expr` as you would a
 `    `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`\
 `    ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `\
 `        storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``"continue"``, `\
-`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/temp_computing_resources.qs"``)``, `\
+`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/temp_computing_resources.qs"``)``, `\
 `        format ``=`` ``"qs"``, packages ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"dplyr"``, ``"tidytargets"``, ``"qs2"`\
 `        ``)``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`\
 `scale_values`` ``<-`` ``function`` ``(``x``)`` `\
@@ -463,25 +463,25 @@ Map a function over every input. Write `name <- expr` as you would a
 [`round`](https://rdrr.io/r/base/Round.html)`(``scale_values``(``x``)``, ``2``)`\
 `target_list`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``sample_names_file``)``)``, target_output ``=`` ``"sample_names"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``input_list_file``)``)``, target_output ``=`` ``"input_list"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``extra_file``)``)``, target_output ``=`` ``"extra"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``settings_file``)``)``, target_output ``=`` ``"settings"``, deployment ``=`` ``"main"``)`\
@@ -502,7 +502,7 @@ A second iterate maps over the result of the first:
 
 \
 [`show_targets_script`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)`(``pipe``)`\
-`## tidytargets-15f7482d7c82.R`\
+`## tidytargets-1809339e1f18.R`\
 \
 `    `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
 `    `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`\
@@ -513,7 +513,7 @@ A second iterate maps over the result of the first:
 `    `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`\
 `    ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `\
 `        storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``"continue"``, `\
-`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/temp_computing_resources.qs"``)``, `\
+`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/temp_computing_resources.qs"``)``, `\
 `        format ``=`` ``"qs"``, packages ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"dplyr"``, ``"tidytargets"``, ``"qs2"`\
 `        ``)``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`\
 `scale_values`` ``<-`` ``function`` ``(``x``)`` `\
@@ -522,25 +522,25 @@ A second iterate maps over the result of the first:
 [`round`](https://rdrr.io/r/base/Round.html)`(``scale_values``(``x``)``, ``2``)`\
 `target_list`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``sample_names_file``)``)``, target_output ``=`` ``"sample_names"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``input_list_file``)``)``, target_output ``=`` ``"input_list"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``extra_file``)``)``, target_output ``=`` ``"extra"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``settings_file``)``)``, target_output ``=`` ``"settings"``, deployment ``=`` ``"main"``)`\
@@ -582,7 +582,7 @@ not
 `#> `\
 `#> qs2 0.3.1`\
 `#> ``+`` ``input_list_file`` dispatched`\
-`#> ``✔`` ``input_list_file`` completed [1ms, 187 B]`\
+`#> ``✔`` ``input_list_file`` completed [0ms, 187 B]`\
 `#> ``+`` ``extra_file`` dispatched`\
 `#> ``✔`` ``extra_file`` completed [0ms, 114 B]`\
 `#> ``+`` ``sample_names_file`` dispatched`\
@@ -590,39 +590,39 @@ not
 `#> ``+`` ``settings_file`` dispatched`\
 `#> ``✔`` ``settings_file`` completed [0ms, 359 B]`\
 `#> ``+`` ``input_list`` dispatched`\
-`#> ``✔`` ``input_list`` completed [1ms, 187 B]`\
+`#> ``✔`` ``input_list`` completed [0ms, 187 B]`\
 `#> ``+`` ``extra`` dispatched`\
 `#> ``✔`` ``extra`` completed [0ms, 114 B]`\
 `#> ``+`` ``sample_names`` dispatched`\
-`#> ``✔`` ``sample_names`` completed [1ms, 93 B]`\
+`#> ``✔`` ``sample_names`` completed [0ms, 93 B]`\
 `#> ``+`` ``settings`` dispatched`\
 `#> ``✔`` ``settings`` completed [0ms, 359 B]`\
 `#> ``+`` ``data`` declared [2 branches]`\
-`#> ``✔`` ``data`` completed [1ms, 165 B]`\
+`#> ``✔`` ``data`` completed [0ms, 165 B]`\
 `#> ``+`` ``n_samples`` dispatched`\
 `#> ``✔`` ``n_samples`` completed [0ms, 72 B]`\
 `#> ``+`` ``n`` declared [2 branches]`\
 `#> ``✔`` ``n`` completed [0ms, 144 B]`\
-`#> ``✔`` ended pipeline [246ms, 13 completed, 0 skipped]`\
+`#> ``✔`` ended pipeline [136ms, 13 completed, 0 skipped]`\
 `#> ``# A tibble: 17 × 18`\
 `#>    name       type  data  command depend    seed path  time                size `\
 `#>    ``<chr>``      ``<chr>`` ``<chr>`` ``<chr>``   ``<chr>``    ``<int>`` ``<lis>`` ``<dttm>``              ``<chr>`\
 `#> `` 1`` scale_val… func… a953… ``NA``      ``NA``     ``NA``   `` ``  ``<chr>`` ``NA``                  ``NA``   `\
 `#> `` 2`` report_sc… func… 3e84… ``NA``      ``NA``     ``NA``   `` ``  ``<chr>`` ``NA``                  ``NA``   `\
-`#> `` 3`` input_lis… stem  3b58… 078409… 2c530… -``1.91``e``9 ``<chr>`` 2026-09-13 ``09:27:29`` s187b`\
-`#> `` 4`` extra_file stem  95ba… 90e9cb… 2c530…  1.24``e``9 ``<chr>`` 2026-09-13 ``09:27:29`` s114b`\
-`#> `` 5`` sample_na… stem  8808… fd29c3… 2c530…  7.22``e``8 ``<chr>`` 2026-09-13 ``09:27:29`` s93b `\
-`#> `` 6`` settings_… stem  fe90… b2e36b… 2c530…  8.94``e``7 ``<chr>`` 2026-09-13 ``09:27:30`` s359b`\
-`#> `` 7`` input_list stem  3b58… ac6520… e9076… -``1.62``e``9 ``<chr>`` 2026-09-13 ``09:27:31`` s187b`\
-`#> `` 8`` extra      stem  95ba… 686f35… 6fc76…  1.41``e``9 ``<chr>`` 2026-09-13 ``09:27:31`` s114b`\
-`#> `` 9`` sample_na… stem  8808… adc8e7… a40dc…  1.74``e``9 ``<chr>`` 2026-09-13 ``09:27:31`` s93b `\
-`#> ``10`` settings   stem  fe90… f6eacb… cb306… -``4.16``e``8 ``<chr>`` 2026-09-13 ``09:27:31`` s359b`\
-`#> ``11`` data_8d48… bran… 4997… 35b78a… 2c530… -``1.19``e``9 ``<chr>`` 2026-09-13 ``09:27:31`` s82b `\
-`#> ``12`` data_32fd… bran… 9033… 35b78a… 2c530…  1.54``e``9 ``<chr>`` 2026-09-13 ``09:27:31`` s83b `\
+`#> `` 3`` input_lis… stem  3b58… 4a6b3c… 2c530… -``1.91``e``9 ``<chr>`` 2026-11-11 ``10:56:50`` s187b`\
+`#> `` 4`` extra_file stem  95ba… e69214… 2c530…  1.24``e``9 ``<chr>`` 2026-11-11 ``10:56:50`` s114b`\
+`#> `` 5`` sample_na… stem  8808… 266c4d… 2c530…  7.22``e``8 ``<chr>`` 2026-11-11 ``10:56:50`` s93b `\
+`#> `` 6`` settings_… stem  fe90… 6e70c5… 2c530…  8.94``e``7 ``<chr>`` 2026-11-11 ``10:56:50`` s359b`\
+`#> `` 7`` input_list stem  3b58… ac6520… e9076… -``1.62``e``9 ``<chr>`` 2026-11-11 ``10:56:51`` s187b`\
+`#> `` 8`` extra      stem  95ba… 686f35… 6fc76…  1.41``e``9 ``<chr>`` 2026-11-11 ``10:56:51`` s114b`\
+`#> `` 9`` sample_na… stem  8808… adc8e7… a40dc…  1.74``e``9 ``<chr>`` 2026-11-11 ``10:56:51`` s93b `\
+`#> ``10`` settings   stem  fe90… f6eacb… cb306… -``4.16``e``8 ``<chr>`` 2026-11-11 ``10:56:51`` s359b`\
+`#> ``11`` data_8d48… bran… 4997… 35b78a… 2c530… -``1.19``e``9 ``<chr>`` 2026-11-11 ``10:56:51`` s82b `\
+`#> ``12`` data_32fd… bran… 9033… 35b78a… 2c530…  1.54``e``9 ``<chr>`` 2026-11-11 ``10:56:51`` s83b `\
 `#> ``13`` data       patt… c8eb… 35b78a… ``NA``      3.36``e``7 ``<chr>`` ``NA``                  ``NA``   `\
-`#> ``14`` n_samples  stem  1129… ac7f03… bb03f… -``2.13``e``9 ``<chr>`` 2026-09-13 ``09:27:31`` s72b `\
-`#> ``15`` n_4c34120… bran… 95f4… f11f69… 7776a… -``1.32``e``9 ``<chr>`` 2026-09-13 ``09:27:31`` s72b `\
-`#> ``16`` n_6db1158… bran… 95f4… f11f69… f4a5e… -``2.75``e``8 ``<chr>`` 2026-09-13 ``09:27:31`` s72b `\
+`#> ``14`` n_samples  stem  1129… ac7f03… bb03f… -``2.13``e``9 ``<chr>`` 2026-11-11 ``10:56:51`` s72b `\
+`#> ``15`` n_4c34120… bran… 95f4… f11f69… 7776a… -``1.32``e``9 ``<chr>`` 2026-11-11 ``10:56:51`` s72b `\
+`#> ``16`` n_6db1158… bran… 95f4… f11f69… f4a5e… -``2.75``e``8 ``<chr>`` 2026-11-11 ``10:56:51`` s72b `\
 `#> ``17`` n          patt… 82b0… f11f69… ``NA``     -``2.68``e``8 ``<chr>`` ``NA``                  ``NA``   `\
 `#> ``# ℹ 9 more variables: bytes <dbl>, format <chr>, repository <chr>,`\
 `#> ``#   iteration <chr>, parent <chr>, children <list>, seconds <dbl>,`\
@@ -665,7 +665,7 @@ Collect every branch of an iterated target into one object.
 
 \
 [`show_targets_script`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)`(``pipe``)`\
-`## tidytargets-15f7482d7c82.R`\
+`## tidytargets-1809339e1f18.R`\
 \
 `    `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
 `    `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`\
@@ -676,7 +676,7 @@ Collect every branch of an iterated target into one object.
 `    `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`\
 `    ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `\
 `        storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``"continue"``, `\
-`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/temp_computing_resources.qs"``)``, `\
+`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/temp_computing_resources.qs"``)``, `\
 `        format ``=`` ``"qs"``, packages ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"dplyr"``, ``"tidytargets"``, ``"qs2"`\
 `        ``)``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`\
 `scale_values`` ``<-`` ``function`` ``(``x``)`` `\
@@ -685,25 +685,25 @@ Collect every branch of an iterated target into one object.
 [`round`](https://rdrr.io/r/base/Round.html)`(``scale_values``(``x``)``, ``2``)`\
 `target_list`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``sample_names_file``)``)``, target_output ``=`` ``"sample_names"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``input_list_file``)``)``, target_output ``=`` ``"input_list"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``extra_file``)``)``, target_output ``=`` ``"extra"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``settings_file``)``)``, target_output ``=`` ``"settings"``, deployment ``=`` ``"main"``)`\
@@ -737,12 +737,12 @@ the split runs in the pipeline.
 `split_pipe`` ``<-`` `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(``)`` ``|>`\
 `  `[`tt_data`](https://stemangiola.github.io/tidytargets/reference/tt_data.md)`(``grid_split``)`` ``|>`\
 `  `[`tt_split`](https://stemangiola.github.io/tidytargets/reference/tt_split.md)`(``settings`` ``<-`` ``grid_split`` ``|>`` ``group_split``(``row_number``(``)``)``)`\
-`#> tidytargets says: the store is ./tidytargets-15f726323529`\
+`#> tidytargets says: the store is ./tidytargets-1809741e9e4`\
 `#> tidytargets says: these packages from the session will be loaded on workers: dplyr, tidytargets, qs2`
 
 \
 [`show_targets_script`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)`(``split_pipe``)`\
-`## tidytargets-15f726323529.R`\
+`## tidytargets-1809741e9e4.R`\
 \
 `    `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
 `    `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`\
@@ -753,12 +753,12 @@ the split runs in the pipeline.
 `    `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`\
 `    ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `\
 `        storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``"continue"``, `\
-`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f726323529/temp_computing_resources.qs"``)``, `\
+`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809741e9e4/temp_computing_resources.qs"``)``, `\
 `        format ``=`` ``"qs"``, packages ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"dplyr"``, ``"tidytargets"``, ``"qs2"`\
 `        ``)``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`\
 `target_list`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f726323529/grid_split_data.qs"``, target_output ``=`` ``"grid_split_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809741e9e4/grid_split_data.qs"``, target_output ``=`` ``"grid_split_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``grid_split_file``)``)``, target_output ``=`` ``"grid_split"``, deployment ``=`` ``"main"``)`\
@@ -801,7 +801,7 @@ grammar only writes the target.
 
 \
 [`show_targets_script`](https://stemangiola.github.io/tidytargets/reference/show_targets_script.md)`(``pipe``)`\
-`## tidytargets-15f7482d7c82.R`\
+`## tidytargets-1809339e1f18.R`\
 \
 `    `[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
 `    `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``"dplyr"``)``)`\
@@ -812,7 +812,7 @@ grammar only writes the target.
 `    `[`lapply`](https://rdrr.io/r/base/lapply.html)`(`[`character`](https://rdrr.io/r/base/character.html)`(``0``)``, ``function``(``pkg``)`` `[`do.call`](https://rdrr.io/r/base/do.call.html)`(``"library"``, `[`list`](https://rdrr.io/r/base/list.html)`(``pkg``)``)``)`\
 `    ``tar_option_set``(``memory ``=`` ``"transient"``, garbage_collection ``=`` ``0``, `\
 `        storage ``=`` ``"worker"``, retrieval ``=`` ``"worker"``, error ``=`` ``"continue"``, `\
-`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/temp_computing_resources.qs"``)``, `\
+`        debug ``=`` ``NULL``, cue ``=`` ``tar_cue``(``mode ``=`` ``"thorough"``)``, controller ``=`` ``qs_read``(``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/temp_computing_resources.qs"``)``, `\
 `        format ``=`` ``"qs"``, packages ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"dplyr"``, ``"tidytargets"``, ``"qs2"`\
 `        ``)``, trust_timestamps ``=`` ``TRUE``, workspace_on_error ``=`` ``FALSE``)`\
 `scale_values`` ``<-`` ``function`` ``(``x``)`` `\
@@ -821,25 +821,25 @@ grammar only writes the target.
 [`round`](https://rdrr.io/r/base/Round.html)`(``scale_values``(``x``)``, ``2``)`\
 `target_list`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/sample_names.qs"``, target_output ``=`` ``"sample_names_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``sample_names_file``)``)``, target_output ``=`` ``"sample_names"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/input_file.qs"``, target_output ``=`` ``"input_list_file"``, format ``=`` ``"file"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``input_list_file``)``)``, target_output ``=`` ``"input_list"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/extra_data.qs"``, target_output ``=`` ``"extra_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``extra_file``)``)``, target_output ``=`` ``"extra"``, deployment ``=`` ``"main"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
+[`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/settings_data.qs"``, target_output ``=`` ``"settings_file"``, format ``=`` ``"file"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(``qs_read``(``settings_file``)``)``, target_output ``=`` ``"settings"``, deployment ``=`` ``"main"``)`\
@@ -857,7 +857,7 @@ grammar only writes the target.
 [`tt_factory`](https://stemangiola.github.io/tidytargets/reference/tt_factory.md)`(``command ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(`[`sum`](https://rdrr.io/r/base/sum.html)`(`[`unlist`](https://rdrr.io/r/base/unlist.html)`(``n``)``)``)``, target_output ``=`` ``"n_total"``)`\
 `)`\
 `target_list`` ``<-`` ``target_list`` ``|>`` `[`target_append`](https://stemangiola.github.io/tidytargets/reference/target_append.md)`(`\
-[`tt_internal_report`](https://stemangiola.github.io/tidytargets/reference/tt_internal_report.md)`(``target_output ``=`` ``"report"``, rmd_path ``=`` ``"example-report.qmd"``, output_file ``=`` ``"/tmp/Rtmp3vwgvz/tidytargets-vignette-15f77f4ce64d/tidytargets-15f7482d7c82/external/report"``, render_arguments ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(`[`list`](https://rdrr.io/r/base/list.html)`(``params ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``n_total ``=`` ``n_total``, n_samples ``=`` ``n_samples``)``)``)``)`\
+[`tt_internal_report`](https://stemangiola.github.io/tidytargets/reference/tt_internal_report.md)`(``target_output ``=`` ``"report"``, rmd_path ``=`` ``"example-report.qmd"``, output_file ``=`` ``"/tmp/Rtmp82uBvf/tidytargets-vignette-180910dc8021/tidytargets-1809339e1f18/external/report"``, render_arguments ``=`` `[`quote`](https://rdrr.io/r/base/substitute.html)`(`[`list`](https://rdrr.io/r/base/list.html)`(``params ``=`` `[`list`](https://rdrr.io/r/base/list.html)`(``n_total ``=`` ``n_total``, n_samples ``=`` ``n_samples``)``)``)``)`\
 `)`\
 `target_list`
 
@@ -878,3 +878,105 @@ package.
 `    ``transformed`` ``<-`` ``my_transform``(``data``)``,`\
 `    user_function_source_path ``=`` ``"helpers.R"`\
 `  ``)`
+
+## Submitting jobs to a remote HPC from your local machine
+
+The controller stays in the R session on your machine. A
+`command_submit` wrapper copies each job script to Gadi and runs `qsub`
+there. The worker dials back through an SSH tunnel: a compute node has
+no route to your machine, and Gadi only lets that tunnel listen on the
+login node’s `127.0.0.1`, so `nc` on the login node accepts the compute
+node and forwards it into the tunnel. The job runs `nc` again, so the
+worker keeps dialling `127.0.0.1`, which is the address in the
+certificate [crew](https://wlandau.github.io/crew/) creates. One SSH
+master connection carries the tunnel, the relay, and `qsub`, so all
+three land on the same login node.
+
+`storage` and `retrieval` have to be `"main"`. The default `"worker"`
+fails: the compute node tries to read and write the store, and the store
+is on your machine. `"main"` sends every input to the worker and every
+result back, so each object passes through the R session on your
+machine. tidytargets drops an object once it has been saved, but the
+session holds whatever is in flight. One large object costs about its
+size in memory, and several workers finishing together cost that several
+times over.
+
+Save this file, then run the terminal commands, then run the R code.
+
+**File `remote_qsub.sh`.** Save it on your machine, in the directory
+where you start R, and run `chmod +x remote_qsub.sh`.
+[crew](https://wlandau.github.io/crew/) calls this file instead of
+`qsub`. It rewrites the script Gadi rejects, copies it to
+`gadi.nci.org.au`, and submits it. `sed -i ''` is the macOS form.
+
+``` bash
+#!/bin/bash
+# remote_qsub.sh
+set -euo pipefail
+script=$1
+remote=YOUR_USER@gadi.nci.org.au
+dir=/scratch/YOUR_PROJECT/$USER/crew_scripts
+sed -i '' \
+  -e '/^#PBS -J 1-1$/d' \
+  -e 's/^#PBS -l ppn=/#PBS -l ncpus=/' \
+  -e 's/^#PBS -l mem=\([0-9.]*\)gb$/#PBS -l mem=\1GB/' \
+  "$script"
+ssh -S /tmp/gadi.sock "$remote" "mkdir -p $dir && cat > $dir/$(basename "$script")" < "$script"
+ssh -S /tmp/gadi.sock "$remote" "/opt/pbs/default/bin/qsub $dir/$(basename "$script")"
+```
+
+**Run in your terminal.** The first command logs in to `gadi.nci.org.au`
+and opens the tunnel back to your machine. The second runs `nc` on that
+login node and keeps running: it listens on the login node’s own address
+and forwards each connection into the tunnel. Leave it running until the
+pipeline finishes. Bash cannot listen on a port. `nc` on Gadi is ncat,
+and `-k` keeps it accepting connections. `hostname -I` prints the login
+node’s address; the R code below calls it `LOGIN_NODE_IP`.
+
+``` bash
+ssh -o ControlMaster=yes -o ControlPath=/tmp/gadi.sock -o ControlPersist=2h \
+  -fN -R 127.0.0.1:47200:127.0.0.1:47200 YOUR_USER@gadi.nci.org.au
+ssh -S /tmp/gadi.sock YOUR_USER@gadi.nci.org.au \
+  'nc -k -l $(hostname -I | cut -d" " -f1) 47201 -c "nc 127.0.0.1 47200"'
+```
+
+**Run in R.** `host` and `port` are the tunnel on your machine.
+Everything else here is what Gadi needs to start the worker and send it
+back through that tunnel. The controller uses
+[crew](https://wlandau.github.io/crew/)’s default of one worker, which
+is the job `remote_qsub.sh` accepts.
+
+\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`crew.cluster`](https://wlandau.github.io/crew.cluster/)`)`\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`tidytargets`](https://stemangiola.github.io/tidytargets/)`)`\
+\
+`computing_resources`` ``<-`` `[`crew_controller_pbs`](https://wlandau.github.io/crew.cluster/reference/crew_controller_pbs.html)`(`\
+`  host ``=`` ``"127.0.0.1"``,`\
+`  port ``=`` ``47200``,`\
+`  options_cluster ``=`` `[`crew_options_pbs`](https://wlandau.github.io/crew.cluster/reference/crew_options_pbs.html)`(`\
+`    command_submit ``=`` ``"./remote_qsub.sh"``,`\
+`    script_lines ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(`\
+`      ``"#PBS -P YOUR_PROJECT"``,`\
+`      ``"#PBS -q express"``,`\
+`      ``"#PBS -l storage=scratch/YOUR_PROJECT"``,`\
+`      ``"source /etc/profile.d/modules.sh"``,`\
+`      ``"module load intel-compiler-llvm/2025.3.2"``,`\
+`      ``"module load intel-mkl/2025.0.1"``,`\
+`      ``"module load R/4.5.0"``,`\
+`      ``"export R_LIBS_USER=/scratch/YOUR_PROJECT/$USER/Rlib"``,`\
+`      ``"nc -k -l 127.0.0.1 47200 -c 'nc LOGIN_NODE_IP 47201' &"``,`\
+`      ``"sleep 2"`\
+`    ``)`\
+`  ``)`\
+`)`\
+\
+`inputs`` ``<-`` `[`list`](https://rdrr.io/r/base/list.html)`(``sample_a ``=`` ``1``:``3``, sample_b ``=`` ``4``:``6``)`\
+`inputs`` ``|>`\
+`  `[`tt_initialise`](https://stemangiola.github.io/tidytargets/reference/tt_initialise.md)`(`\
+`    computing_resources ``=`` ``computing_resources``,`\
+`    packages ``=`` ``"tidytargets"``,`\
+`    storage ``=`` ``"main"``,`\
+`    retrieval ``=`` ``"main"`\
+`  ``)`` ``|>`\
+`  `[`tt_iterate`](https://stemangiola.github.io/tidytargets/reference/tt_iterate.md)`(``summaries`` ``<-`` `[`summary`](https://rdrr.io/r/base/summary.html)`(``input_list``)``)`` ``|>`\
+`  `[`tt_evaluate`](https://stemangiola.github.io/tidytargets/reference/tt_evaluate.md)`(``)`

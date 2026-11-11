@@ -34,7 +34,9 @@ tt_initialise(
   garbage_collection = 0,
   workspace_on_error = FALSE,
   packages = attached_packages(),
-  target_output = "input_list"
+  target_output = "input_list",
+  storage = "worker",
+  retrieval = "worker"
 )
 ```
 
@@ -119,6 +121,20 @@ tt_initialise(
   Character name of the mapped input target. Default: `"input_list"`.
   Ignored when `tt_input` is `NULL`. A companion file-tracking target is
   registered as `{target_output}_file`.
+
+- storage:
+
+  Where a target's value is written, passed to
+  `targets::tar_option_set(storage = )`. `"worker"` (the default) writes
+  it on the worker, which needs to see the store. `"main"` writes it in
+  the session running the pipeline, so workers only return the value.
+
+- retrieval:
+
+  Where a target reads an upstream value from, passed to
+  `targets::tar_option_set(retrieval = )`. `"worker"` (the default)
+  reads it on the worker. `"main"` reads it in the session running the
+  pipeline and sends the value to the worker.
 
 ## Value
 

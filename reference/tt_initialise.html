@@ -25,7 +25,7 @@ rather than appearing to do nothing."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">tidytargets</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.14</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.15</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ rather than appearing to do nothing."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Initialise a tidytargets Pipeline</h1>
-      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/main/R/tt_initialise.R" class="external-link"><code>R/tt_initialise.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/stemangiola/tidytargets/blob/allow-remote-connection/R/tt_initialise.R" class="external-link"><code>R/tt_initialise.R</code></a></small>
       <div class="d-none name"><code>tt_initialise.Rd</code></div>
     </div>
 
@@ -81,7 +81,9 @@ rather than appearing to do nothing.</p>
 <span>  garbage_collection <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  workspace_on_error <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  packages <span class="op">=</span> <span class="fu">attached_packages</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  target_output <span class="op">=</span> <span class="st">"input_list"</span></span>
+<span>  target_output <span class="op">=</span> <span class="st">"input_list"</span>,</span>
+<span>  storage <span class="op">=</span> <span class="st">"worker"</span>,</span>
+<span>  retrieval <span class="op">=</span> <span class="st">"worker"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -159,6 +161,20 @@ HPC nodes will need to have installed.</p></dd>
 <dd><p>Character name of the mapped input target. Default:
 <code>"input_list"</code>. Ignored when <code>tt_input</code> is <code>NULL</code>. A companion
 file-tracking target is registered as <code>{target_output}_file</code>.</p></dd>
+
+
+<dt id="arg-storage">storage<a class="anchor" aria-label="anchor" href="#arg-storage"></a></dt>
+<dd><p>Where a target's value is written, passed to
+<code>targets::tar_option_set(storage = )</code>. <code>"worker"</code> (the default) writes it
+on the worker, which needs to see the store. <code>"main"</code> writes it in the
+session running the pipeline, so workers only return the value.</p></dd>
+
+
+<dt id="arg-retrieval">retrieval<a class="anchor" aria-label="anchor" href="#arg-retrieval"></a></dt>
+<dd><p>Where a target reads an upstream value from, passed to
+<code>targets::tar_option_set(retrieval = )</code>. <code>"worker"</code> (the default) reads it
+on the worker. <code>"main"</code> reads it in the session running the pipeline and
+sends the value to the worker.</p></dd>
 
 </dl></div>
     <div class="section level2">
