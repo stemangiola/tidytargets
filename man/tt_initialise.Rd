@@ -15,7 +15,9 @@ tt_initialise(
   garbage_collection = 0,
   workspace_on_error = FALSE,
   packages = attached_packages(),
-  target_output = "input_list"
+  target_output = "input_list",
+  storage = "worker",
+  retrieval = "worker"
 )
 }
 \arguments{
@@ -68,6 +70,16 @@ HPC nodes will need to have installed.}
 \item{target_output}{Character name of the mapped input target. Default:
 \code{"input_list"}. Ignored when \code{tt_input} is \code{NULL}. A companion
 file-tracking target is registered as \verb{\{target_output\}_file}.}
+
+\item{storage}{Where a target's value is written, passed to
+\code{targets::tar_option_set(storage = )}. \code{"worker"} (the default) writes it
+on the worker, which needs to see the store. \code{"main"} writes it in the
+session running the pipeline, so workers only return the value.}
+
+\item{retrieval}{Where a target reads an upstream value from, passed to
+\code{targets::tar_option_set(retrieval = )}. \code{"worker"} (the default) reads it
+on the worker. \code{"main"} reads it in the session running the pipeline and
+sends the value to the worker.}
 }
 \value{
 A \code{tidytargets} S3 object with \verb{$initialisation} (constructor

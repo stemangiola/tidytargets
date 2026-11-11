@@ -1,5 +1,18 @@
 # tidytargets NEWS
 
+## tidytargets 0.0.15
+
+* The file targets `tt_initialise()` creates, `sample_names_file` and
+  `{target_output}_file`, run with `deployment = "main"`. They only check that
+  a small file in the store exists, and that check has to happen in the
+  session that wrote the store.
+* `tt_initialise(storage = , retrieval = )` sets where target values are
+  written and where upstream values are read, passed through to
+  `targets::tar_option_set()`. Both default to `"worker"`. `"main"` keeps the
+  store in the session running the pipeline, which is what a controller on
+  your own machine needs when its workers run somewhere that cannot see that
+  store.
+
 ## tidytargets 0.0.14
 
 * `tt_global()` declares session objects, typically helper functions, so every

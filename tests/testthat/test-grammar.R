@@ -33,6 +33,9 @@ test_that("tt_initialise returns a tidytargets object with input targets", {
   expect_null(hpc$initialisation$computing_resources)
 
   script <- readLines(tidytargets:::write_script(hpc))
+  script_text <- paste(script, collapse = " ")
+  expect_match(script_text, 'target_output = "sample_names_file".*deployment = "main"')
+  expect_match(script_text, 'target_output = "input_list_file".*deployment = "main"')
   expect_false(any(grepl('library\\("crew', script)))
   expect_false(any(grepl("crew_controller_group", script)))
   expect_true(any(grepl("controller = qs_read", script)))
@@ -916,6 +919,30 @@ test_that("tt_split marks a pipeline list as mapped units", {
 
 test_that("tt_split has no n_units argument", {
   expect_false("n_units" %in% names(formals(tt_split)))
+})
+
+test_that("storage and retrieval default to worker and can be set to main", {
+  tmp <- tempfile("tidytargets-")
+  dir.create(tmp)
+  old <- setwd(tmp)
+  on.exit(setwd(old), add = TRUE)
+
+  worker <- tt_initialise(store = file.path(tmp, "worker"), packages = "tidytargets")
+  worker_script <- paste(readLines(tidytargets:::write_script(worker)), collapse = "\n")
+  expect_equal(worker$initialisation$storage, "worker")
+  expect_equal(worker$initialisation$retrieval, "worker")
+  expect_match(worker_script, 'storage = "worker"')
+  expect_match(worker_script, 'retrieval = "worker"')
+
+  main <- tt_initialise(
+    store = file.path(tmp, "main"),
+    packages = "tidytargets",
+    storage = "main",
+    retrieval = "main"
+  )
+  main_script <- paste(readLines(tidytargets:::write_script(main)), collapse = "\n")
+  expect_match(main_script, 'storage = "main"')
+  expect_match(main_script, 'retrieval = "main"')
 })
 
 test_that("tt_initialise snapshots attached package names, not session objects", {
