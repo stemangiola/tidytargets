@@ -65,7 +65,9 @@ tt_controller_elastic_slurm(
 - seconds_idle:
 
   Numeric seconds each worker idles before shutting down, passed to
-  every `crew_controller_slurm()`. Default: `30`.
+  every
+  [`crew_controller_slurm()`](https://wlandau.github.io/crew.cluster/reference/crew_controller_slurm.html).
+  Default: `30`.
 
 - ...:
 
